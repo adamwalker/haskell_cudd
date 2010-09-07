@@ -1,0 +1,14 @@
+*.swo
+*.swp
+*.hi
+*.o
+*_stub.*
+*.a
+*.hp
+*.stat
+*.dot
+*.ps
+cscope.out
+Cudd.hs
+CuddInternal.hs
+main
