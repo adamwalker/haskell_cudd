@@ -81,16 +81,16 @@ int *oneSat(DdManager *m, DdNode *n, /*int *nterms,*/ int *nvars){
     gen = Cudd_FirstCube (m, n, &cube, &value);
     //printf("gen= %p\n", gen);
     if (Cudd_IsGenEmpty(gen)) {
-	printf("empty\n");
-	Cudd_GenFree (gen);
-	return NULL;
+        printf("empty\n");
+        Cudd_GenFree (gen);
+        return NULL;
     }
     
     int *result = malloc(sizeof(int) * size);
     assert(result);
     for(j=0; j<size; j++){
-	printf("%d ", cube[j]);
-	result[j] = cube[j];
+        printf("%d ", cube[j]);
+        result[j] = cube[j];
     }
     printf("\n");
     Cudd_GenFree (gen);
