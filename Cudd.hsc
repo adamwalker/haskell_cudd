@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, bddToString, bddFromString) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, bddToString, bddFromString) where
 
 import System.IO
 import Directory
@@ -250,6 +250,9 @@ foreign import ccall unsafe "cudd.h Cudd_SupportIndex"
 
 foreign import ccall unsafe "cudd.h Cudd_ReadSize"
 	c_cuddReadSize :: Ptr CDdManager -> IO CInt
+
+cuddReadSize :: DdManager -> Int
+cuddReadSize (DdManager m) = fromIntegral $ unsafePerformIO $ c_cuddReadSize m
 
 cuddSupportIndex :: DdManager -> DdNode -> [Bool]
 cuddSupportIndex (DdManager m) (DdNode n) = unsafePerformIO $ 
