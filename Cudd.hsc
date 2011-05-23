@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, bddToString, bddFromString) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, bddToString, bddFromString) where
 
 import System.IO
 import Directory
@@ -328,22 +328,24 @@ cuddBddPermute (DdManager m) (DdNode d) indexes = DdNode $ unsafePerformIO $ do
 foreign import ccall unsafe "cudd.h Cudd_Xgty"
 	c_cuddXgty :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
 
-cuddXgty :: DdManager -> Int -> [DdNode] -> [DdNode] -> DdNode
-cuddXgty (DdManager m) n x y = DdNode $ unsafePerformIO $ do
-    withForeignArrayPtr (map unDdNode x) $ \xp -> do
-    withForeignArrayPtr (map unDdNode y) $ \yp -> do
-    node <- c_cuddXgty m (fromIntegral n) nullPtr xp yp
+cuddXgty :: DdManager -> [DdNode] -> [DdNode] -> DdNode
+cuddXgty (DdManager m) x y = DdNode $ unsafePerformIO $ do
+    withForeignArrayPtrLen (map unDdNode x) $ \xl xp -> do
+    withForeignArrayPtrLen (map unDdNode y) $ \yl yp -> do
+    when (xl /= yl) (error "cuddXgty: variable lists have different sizes")
+    node <- c_cuddXgty m (fromIntegral xl) nullPtr xp yp
     cuddRef node
     newForeignPtrEnv deref m node
 
 foreign import ccall unsafe "cudd.h Cudd_Xeqy"
 	c_cuddXeqy :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
 
-cuddXeqy :: DdManager -> Int -> [DdNode] -> [DdNode] -> DdNode
-cuddXeqy (DdManager m) n x y = DdNode $ unsafePerformIO $ do
-    withForeignArrayPtr (map unDdNode x) $ \xp -> do
-    withForeignArrayPtr (map unDdNode y) $ \yp -> do
-    node <- c_cuddXeqy m (fromIntegral n) xp yp
+cuddXeqy :: DdManager -> [DdNode] -> [DdNode] -> DdNode
+cuddXeqy (DdManager m) x y = DdNode $ unsafePerformIO $ do
+    withForeignArrayPtrLen (map unDdNode x) $ \xl xp -> do
+    withForeignArrayPtrLen (map unDdNode y) $ \yl yp -> do
+    when (xl /= yl) (error "cuddXeqy: variable lists have different sizes")
+    node <- c_cuddXeqy m (fromIntegral xl) xp yp
     cuddRef node
     newForeignPtrEnv deref m node
 
