@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, bddToString, bddFromString) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString) where
 
 import System.IO
 import Directory
@@ -368,6 +368,16 @@ cuddDisequality (DdManager m) n c x y = DdNode $ unsafePerformIO $ do
     withForeignArrayPtr (map unDdNode x) $ \xp -> do
     withForeignArrayPtr (map unDdNode y) $ \yp -> do
     node <- c_cuddDisequality m (fromIntegral n) (fromIntegral c) xp yp
+    cuddRef node
+    newForeignPtrEnv deref m node
+
+foreign import ccall unsafe "cudd.h Cudd_bddInterval"
+    c_cuddBddInterval :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> CInt -> CInt -> IO (Ptr CDdNode)
+
+cuddBddInterval :: DdManager -> [DdNode] -> Int -> Int -> DdNode
+cuddBddInterval (DdManager m) vararr lower upper =  DdNode $ unsafePerformIO $ do
+    withForeignArrayPtrLen (map unDdNode vararr) $ \sz vp -> do
+    node <- c_cuddBddInterval m (fromIntegral sz) vp (fromIntegral lower) (fromIntegral upper)
     cuddRef node
     newForeignPtrEnv deref m node
 
