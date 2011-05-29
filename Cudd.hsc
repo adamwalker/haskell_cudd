@@ -315,7 +315,7 @@ cuddBddSwapVariables (DdManager m) (DdNode d) s1 s2 = DdNode $ unsafePerformIO $
     newForeignPtrEnv deref m node
 
 foreign import ccall unsafe "cudd.h Cudd_bddPermute"
-    c_cuddBddPermute :: Ptr CDdManager -> Ptr CDdNode -> Ptr Int -> IO (Ptr CDdNode)
+    c_cuddBddPermute :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CDdNode)
 
 cuddBddPermute :: DdManager -> DdNode -> [Int] -> DdNode 
 cuddBddPermute (DdManager m) (DdNode d) indexes = DdNode $ unsafePerformIO $ do
