@@ -1,5 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
-module CuddInternal (CDdManager(..), DdManager(..), STDdManager(..), CDdNode(..), DdNode(..), c_cuddRecursiveDeref, cuddRef, withForeignArray, withForeignArrayPtr, withForeignArrayPtrLen) where
+module CuddInternal (CDdManager(..), DdManager(..), STDdManager(..), CDdNode(..), DdNode(..), c_cuddRecursiveDeref, cuddRef, withForeignArray, withForeignArrayPtr, withForeignArrayPtrLen, ddNodeToInt) where
 
 import System.IO
 import Foreign
@@ -33,6 +33,8 @@ instance Storable CDdNode where
 		(#poke DdNode, ref) ptr ref
 
 newtype DdNode = DdNode {unDdNode :: (ForeignPtr CDdNode)} deriving (Ord, Eq, Show)
+
+ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
 
 foreign import ccall unsafe "cudd.h &Cudd_RecursiveDeref"
 	c_cuddRecursiveDeref :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
