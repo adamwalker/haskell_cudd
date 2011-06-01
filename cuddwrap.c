@@ -45,8 +45,6 @@ int **allSat(DdManager *m, DdNode *n, int *nterms, int *nvars){
 
     *nterms = num;
     *nvars = size;
-    printf("Support: %d\n", size);
-    printf("num minterms: %f %d\n", Cudd_CountPathsToNonZero(n), num);
 
     int **result = malloc(sizeof(int *)*num);
     assert(result);
@@ -55,10 +53,8 @@ int **allSat(DdManager *m, DdNode *n, int *nterms, int *nvars){
         assert(result[i]);
         int j;
         for(j=0; j<size; j++){
-            printf("%d ", cube[j]);
             result[i][j] = cube[j];
         }
-        printf("\n");
         i++;
     }
 
@@ -75,13 +71,11 @@ int *oneSat(DdManager *m, DdNode *n, /*int *nterms,*/ int *nvars){
 
     //*nterms = num;
     *nvars = size;
-    printf("Support: %d\n", size);
     //printf("num minterms: %f %d\n", Cudd_CountPathsToNonZero(n), num);
 
     gen = Cudd_FirstCube (m, n, &cube, &value);
     //printf("gen= %p\n", gen);
     if (Cudd_IsGenEmpty(gen)) {
-        printf("empty\n");
         Cudd_GenFree (gen);
         return NULL;
     }
@@ -89,10 +83,8 @@ int *oneSat(DdManager *m, DdNode *n, /*int *nterms,*/ int *nvars){
     int *result = malloc(sizeof(int) * size);
     assert(result);
     for(j=0; j<size; j++){
-        printf("%d ", cube[j]);
         result[j] = cube[j];
     }
-    printf("\n");
     Cudd_GenFree (gen);
 
     return result;
