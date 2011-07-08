@@ -14,6 +14,7 @@ import Foreign.Marshal.Utils
 import Control.Monad.ST.Lazy
 import Control.Monad
 import Data.Binary
+import Data.List
 
 import CuddInternal
 
@@ -37,6 +38,7 @@ foreign import ccall unsafe "cudd.h Cudd_ShuffleHeap"
 
 cuddInitOrder :: [Int] -> DdManager
 cuddInitOrder order = DdManager $ unsafePerformIO $ withArrayLen (map fromIntegral order) $ \size ptr -> do
+    when (sort order /= [0..size-1]) (error "cuddInitOrder: order does not contain each variable once") 
     m <- c_cuddInit (fromIntegral size) 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
     res <- c_cuddShuffleHeap m ptr
     when ((fromIntegral res) /= 1) (error "shuffleHeap failed")
