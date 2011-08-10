@@ -32,7 +32,7 @@ instance Storable CDdNode where
 		(#poke DdNode, index) ptr index
 		(#poke DdNode, ref) ptr ref
 
-newtype DdNode = DdNode {unDdNode :: (ForeignPtr CDdNode)} deriving (Ord, Eq, Show)
+newtype DdNode = DdNode {unDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
 
 ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
 
@@ -44,7 +44,7 @@ foreign import ccall unsafe "cuddwrap.h wrappedCuddRef"
 
 withForeignArray :: [ForeignPtr a] -> ([Ptr a] -> IO b) -> IO b
 withForeignArray [] func = func []
-withForeignArray (p:ptrs) func = withForeignPtr p $ \ptr -> do 
+withForeignArray (p:ptrs) func = withForeignPtr p $ \ptr -> 
     withForeignArray ptrs $ \x -> func (ptr:x)
 
 withForeignArrayPtr :: [ForeignPtr a] -> (Ptr (Ptr a) -> IO b) -> IO b

@@ -1,9 +1,9 @@
-{-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
+{-# LANGUAGE ForeignFunctionInterface, CPP #-}
 
 module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp) where
 
 import System.IO
-import Directory
+import System.Directory
 import Foreign
 import Foreign.Ptr
 import Foreign.C.Types
@@ -34,18 +34,18 @@ cuddInitST = unsafeIOToST $ do
     return $ STDdManager cm
 
 foreign import ccall unsafe "cudd.h Cudd_ShuffleHeap"
-    c_cuddShuffleHeap :: Ptr CDdManager -> Ptr CInt -> IO (CInt)
+    c_cuddShuffleHeap :: Ptr CDdManager -> Ptr CInt -> IO CInt
 
 cuddInitOrder :: [Int] -> DdManager
 cuddInitOrder order = DdManager $ unsafePerformIO $ withArrayLen (map fromIntegral order) $ \size ptr -> do
     when (sort order /= [0..size-1]) (error "cuddInitOrder: order does not contain each variable once") 
     m <- c_cuddInit (fromIntegral size) 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
     res <- c_cuddShuffleHeap m ptr
-    when ((fromIntegral res) /= 1) (error "shuffleHeap failed")
+    when (fromIntegral res /= 1) (error "shuffleHeap failed")
     return m
 
 cuddShuffleHeapST :: STDdManager s -> [Int] -> ST s ()
-cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $ do
+cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $ 
     withArrayLen (map fromIntegral order) $ \size ptr -> do
     res1 <- c_cuddBddIthVar m (fromIntegral size)
     when (res1 == nullPtr) (error "cuddShuffleHeapST: Failed to resize table")
@@ -54,11 +54,11 @@ cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $ do
     return ()
 
 foreign import ccall unsafe "cudd.h Cudd_SetVarMap"
-    c_cuddSetVarMap :: Ptr CDdManager -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> CInt -> IO (CInt)
+    c_cuddSetVarMap :: Ptr CDdManager -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> CInt -> IO CInt
 
 cuddSetVarMapST :: STDdManager s -> [DdNode] -> [DdNode] -> ST s ()
-cuddSetVarMapST (STDdManager m) v1 v2 = unsafeIOToST $ do
-    withForeignArrayPtrLen (map unDdNode v1) $ \s1 v1p -> do
+cuddSetVarMapST (STDdManager m) v1 v2 = unsafeIOToST $ 
+    withForeignArrayPtrLen (map unDdNode v1) $ \s1 v1p -> 
     withForeignArrayPtrLen (map unDdNode v2) $ \s2 v2p -> do
     when (s1 /= s2) (error "cuddSetVarMapST: variable list lengths are not equal")
     res <- c_cuddSetVarMap m v1p v2p (fromIntegral s1)
@@ -69,7 +69,7 @@ foreign import ccall unsafe "cudd.h Cudd_bddVarMap"
     c_cuddBddVarMap :: Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddVarMapST :: STDdManager s-> DdNode -> ST s DdNode
-cuddBddVarMapST (STDdManager m) (DdNode node) = unsafeIOToST $ do
+cuddBddVarMapST (STDdManager m) (DdNode node) = unsafeIOToST $ 
     withForeignPtr node $ \np -> do
     node <- c_cuddBddVarMap m np
     cuddRef node
@@ -107,24 +107,24 @@ cuddBddIthVar (DdManager d) i = DdNode $ unsafePerformIO $ do
 	newForeignPtr_ node
 
 cuddArg1 :: (Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)) -> DdManager -> DdNode -> DdNode
-cuddArg1 f (DdManager m) (DdNode x) = DdNode $ unsafePerformIO $ do
+cuddArg1 f (DdManager m) (DdNode x) = DdNode $ unsafePerformIO $ 
 	withForeignPtr x $ \xp -> do
 	node <- f m xp
 	cuddRef node
 	newForeignPtrEnv deref m node
 
 cuddArg2 :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)) -> DdManager -> DdNode -> DdNode-> DdNode
-cuddArg2 f (DdManager m) (DdNode l) (DdNode r) = DdNode $ unsafePerformIO $ do
- 	withForeignPtr l $ \lp -> do
+cuddArg2 f (DdManager m) (DdNode l) (DdNode r) = DdNode $ unsafePerformIO $ 
+ 	withForeignPtr l $ \lp -> 
 	withForeignPtr r $ \rp -> do
 	node <- f m lp rp
 	cuddRef node
 	newForeignPtrEnv deref m node
 
 cuddArg3 :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)) -> DdManager -> DdNode -> DdNode-> DdNode -> DdNode
-cuddArg3 f (DdManager m) (DdNode l) (DdNode r) (DdNode x) = DdNode $ unsafePerformIO $ do
- 	withForeignPtr l $ \lp -> do
-	withForeignPtr r $ \rp -> do
+cuddArg3 f (DdManager m) (DdNode l) (DdNode r) (DdNode x) = DdNode $ unsafePerformIO $ 
+ 	withForeignPtr l $ \lp -> 
+	withForeignPtr r $ \rp -> 
 	withForeignPtr x $ \xp -> do
 	node <- f m lp rp xp
 	cuddRef node
@@ -186,8 +186,8 @@ foreign import ccall unsafe "cuddwrap.h wrappedCuddDumpDot"
 
 cuddDumpDot :: DdManager -> DdNode -> String -> IO ()
 cuddDumpDot (DdManager m) (DdNode n) s  = 
-	withForeignPtr n $ \np -> do
-		withCAString s $ \str -> do
+	withForeignPtr n $ \np -> 
+		withCAString s $ \str -> 
 			c_cuddDumpDot m np str
 
 cudd_unique_slots :: Int
@@ -213,9 +213,8 @@ foreign import ccall unsafe "cudd.h Cudd_PrintMinterm"
     c_cuddPrintMinterm :: Ptr CDdManager -> Ptr CDdNode -> IO ()
 
 cuddPrintMinterm :: DdManager -> DdNode -> IO ()
-cuddPrintMinterm (DdManager m) (DdNode n) = do
-    withForeignPtr n $ \np -> 
-        c_cuddPrintMinterm m np
+cuddPrintMinterm (DdManager m) (DdNode n) = 
+    withForeignPtr n $ c_cuddPrintMinterm m 
 
 foreign import ccall unsafe "cuddwrap.h allSat"
     c_allSat :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> Ptr CInt -> IO (Ptr (Ptr CInt))
@@ -225,22 +224,22 @@ foreign import ccall unsafe "cuddwrap.h oneSat"
 
 cuddAllSat :: DdManager -> DdNode -> [[Int]]
 cuddAllSat (DdManager m) (DdNode n) = unsafePerformIO $ 
-    alloca $ \nvarsptr -> do
-    alloca $ \ntermsptr -> do
+    alloca $ \nvarsptr -> 
+    alloca $ \ntermsptr -> 
     withForeignPtr n $ \np -> do
     res <- c_allSat m np ntermsptr nvarsptr
     nterms <- liftM fromIntegral $ peek ntermsptr
     res <- peekArray nterms res
     nvars <- liftM fromIntegral $ peek nvarsptr
-    res <- sequence $ map (peekArray nvars) res
+    res <- mapM (peekArray nvars) res
     return $ map (map fromIntegral) res
 
 cuddOneSat :: DdManager -> DdNode -> Maybe [Int]
 cuddOneSat (DdManager m) (DdNode n) = unsafePerformIO $ 
     alloca $ \nvarsptr ->
-            withForeignPtr n $ (\np -> do
+            withForeignPtr n (\np -> do
 				      res <- c_oneSat m np nvarsptr
-				      if (res == nullPtr)
+				      if res == nullPtr
 					  then return Nothing
 					  else do nvars <- liftM fromIntegral $ peek nvarsptr
 					          res <- peekArray nvars res
@@ -270,7 +269,7 @@ foreign import ccall unsafe "cuddwrap.h testnew"
     c_testnew :: IO (Ptr CInt)
 
 foreign import ccall unsafe "cuddwrap.h testnext"
-    c_testnext :: Ptr CInt -> IO (CInt)
+    c_testnext :: Ptr CInt -> IO CInt
 
 testnew :: ST s (STInt s)
 testnew = unsafeIOToST $ do
@@ -307,9 +306,9 @@ foreign import ccall unsafe "cudd.h Cudd_bddSwapVariables"
     c_cuddBddSwapVariables :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
 
 cuddBddSwapVariables :: DdManager -> DdNode -> [DdNode] -> [DdNode] -> DdNode
-cuddBddSwapVariables (DdManager m) (DdNode d) s1 s2 = DdNode $ unsafePerformIO $ do
-    withForeignPtr d $ \dp -> do
-    withForeignArrayPtrLen (map unDdNode s1) $ \s1 s1ps -> do
+cuddBddSwapVariables (DdManager m) (DdNode d) s1 s2 = DdNode $ unsafePerformIO $ 
+    withForeignPtr d $ \dp -> 
+    withForeignArrayPtrLen (map unDdNode s1) $ \s1 s1ps -> 
     withForeignArrayPtrLen (map unDdNode s2) $ \s2 s2ps -> do
     when (s1 /= s2) (error "cuddBddSwapVariables: variable lists have different sizes")
     node <- c_cuddBddSwapVariables m dp s1ps s2ps (fromIntegral s1)
@@ -320,8 +319,8 @@ foreign import ccall unsafe "cudd.h Cudd_bddPermute"
     c_cuddBddPermute :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CDdNode)
 
 cuddBddPermute :: DdManager -> DdNode -> [Int] -> DdNode 
-cuddBddPermute (DdManager m) (DdNode d) indexes = DdNode $ unsafePerformIO $ do
-    withForeignPtr d $ \dp -> do
+cuddBddPermute (DdManager m) (DdNode d) indexes = DdNode $ unsafePerformIO $ 
+    withForeignPtr d $ \dp -> 
     withArray (map fromIntegral indexes) $ \ip -> do
     node <- c_cuddBddPermute m dp ip 
     cuddRef node
@@ -331,8 +330,8 @@ foreign import ccall unsafe "cudd.h Cudd_Xgty"
 	c_cuddXgty :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
 
 cuddXgty :: DdManager -> [DdNode] -> [DdNode] -> DdNode
-cuddXgty (DdManager m) x y = DdNode $ unsafePerformIO $ do
-    withForeignArrayPtrLen (map unDdNode x) $ \xl xp -> do
+cuddXgty (DdManager m) x y = DdNode $ unsafePerformIO $ 
+    withForeignArrayPtrLen (map unDdNode x) $ \xl xp -> 
     withForeignArrayPtrLen (map unDdNode y) $ \yl yp -> do
     when (xl /= yl) (error "cuddXgty: variable lists have different sizes")
     node <- c_cuddXgty m (fromIntegral xl) nullPtr xp yp
@@ -343,8 +342,8 @@ foreign import ccall unsafe "cudd.h Cudd_Xeqy"
 	c_cuddXeqy :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
 
 cuddXeqy :: DdManager -> [DdNode] -> [DdNode] -> DdNode
-cuddXeqy (DdManager m) x y = DdNode $ unsafePerformIO $ do
-    withForeignArrayPtrLen (map unDdNode x) $ \xl xp -> do
+cuddXeqy (DdManager m) x y = DdNode $ unsafePerformIO $ 
+    withForeignArrayPtrLen (map unDdNode x) $ \xl xp -> 
     withForeignArrayPtrLen (map unDdNode y) $ \yl yp -> do
     when (xl /= yl) (error "cuddXeqy: variable lists have different sizes")
     node <- c_cuddXeqy m (fromIntegral xl) xp yp
@@ -355,8 +354,8 @@ foreign import ccall unsafe "cudd.h Cudd_Inequality"
 	c_cuddInequality :: Ptr CDdManager -> CInt -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
 
 cuddInequality :: DdManager -> Int -> Int -> [DdNode] -> [DdNode] -> DdNode
-cuddInequality (DdManager m) n c x y = DdNode $ unsafePerformIO $ do
-    withForeignArrayPtr (map unDdNode x) $ \xp -> do
+cuddInequality (DdManager m) n c x y = DdNode $ unsafePerformIO $ 
+    withForeignArrayPtr (map unDdNode x) $ \xp -> 
     withForeignArrayPtr (map unDdNode y) $ \yp -> do
     node <- c_cuddInequality m (fromIntegral n) (fromIntegral c) xp yp
     cuddRef node
@@ -366,8 +365,8 @@ foreign import ccall unsafe "cudd.h Cudd_Disequality"
 	c_cuddDisequality :: Ptr CDdManager -> CInt -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
 
 cuddDisequality :: DdManager -> Int -> Int -> [DdNode] -> [DdNode] -> DdNode
-cuddDisequality (DdManager m) n c x y = DdNode $ unsafePerformIO $ do
-    withForeignArrayPtr (map unDdNode x) $ \xp -> do
+cuddDisequality (DdManager m) n c x y = DdNode $ unsafePerformIO $
+    withForeignArrayPtr (map unDdNode x) $ \xp -> 
     withForeignArrayPtr (map unDdNode y) $ \yp -> do
     node <- c_cuddDisequality m (fromIntegral n) (fromIntegral c) xp yp
     cuddRef node
@@ -377,7 +376,7 @@ foreign import ccall unsafe "cudd.h Cudd_bddInterval"
     c_cuddBddInterval :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> CInt -> CInt -> IO (Ptr CDdNode)
 
 cuddBddInterval :: DdManager -> [DdNode] -> Int -> Int -> DdNode
-cuddBddInterval (DdManager m) vararr lower upper =  DdNode $ unsafePerformIO $ do
+cuddBddInterval (DdManager m) vararr lower upper =  DdNode $ unsafePerformIO $ 
     withForeignArrayPtrLen (map unDdNode vararr) $ \sz vp -> do
     node <- c_cuddBddInterval m (fromIntegral sz) vp (fromIntegral lower) (fromIntegral upper)
     cuddRef node
@@ -387,22 +386,18 @@ foreign import ccall unsafe "cudd.h Cudd_NodeReadIndex"
     c_cuddNodeReadIndex :: Ptr CDdNode -> IO CInt
 
 cuddNodeReadIndex :: DdNode -> Int
-cuddNodeReadIndex (DdNode d) = fromIntegral $ unsafePerformIO $ do
-    withForeignPtr d $ \dp -> do
-    c_cuddNodeReadIndex dp
+cuddNodeReadIndex (DdNode d) = fromIntegral $ unsafePerformIO $ withForeignPtr d c_cuddNodeReadIndex 
 
 foreign import ccall unsafe "cudd.h Cudd_DagSize"
     c_cuddDagSize :: Ptr CDdNode -> IO CInt
 
-cuddDagSize (DdNode d) = fromIntegral $ unsafePerformIO $ do
-    withForeignPtr d $ \dp -> do
-    c_cuddDagSize dp
+cuddDagSize (DdNode d) = fromIntegral $ unsafePerformIO $ withForeignPtr d c_cuddDagSize 
 
 foreign import ccall unsafe "cudd.h Cudd_IndicesToCube"
     c_cuddIndicesToCube :: Ptr CDdManager -> Ptr CInt -> CInt -> IO (Ptr CDdNode)
 
 cuddIndicesToCube :: DdManager -> [Int] -> DdNode
-cuddIndicesToCube (DdManager m) indices = DdNode $ unsafePerformIO $ do
+cuddIndicesToCube (DdManager m) indices = DdNode $ unsafePerformIO $ 
     withArrayLen (map fromIntegral indices) $ \size ip -> do
     node <- c_cuddIndicesToCube m ip (fromIntegral size)
     cuddRef node
@@ -446,13 +441,13 @@ newtype Dddmp_Status = Dddmp_Status {dddmpStatus :: CInt} deriving (Eq, Show)
 
 
 foreign import ccall unsafe "dddmp.h Dddmp_cuddBddStore"
-    c_dddmpBddStore :: Ptr CDdManager -> CString -> Ptr CDdNode -> Ptr CString -> Ptr CInt -> CInt -> CInt -> CString -> Ptr CFile -> IO (CInt)
+    c_dddmpBddStore :: Ptr CDdManager -> CString -> Ptr CDdNode -> Ptr CString -> Ptr CInt -> CInt -> CInt -> CString -> Ptr CFile -> IO CInt
 
-cuddBddStore :: DdManager -> String -> DdNode -> [Int] -> Dddmp_Mode -> Dddmp_VarInfoType -> String -> IO(Dddmp_Status)
+cuddBddStore :: DdManager -> String -> DdNode -> [Int] -> Dddmp_Mode -> Dddmp_VarInfoType -> String -> IO Dddmp_Status
 cuddBddStore (DdManager m) name (DdNode node) auxids mode varinfo fname = do
     pauxids <- case auxids of
                 [] -> return nullPtr
-                _ -> newArray ((map fromIntegral auxids)::[CInt])
+                _ -> newArray (map fromIntegral auxids :: [CInt])
     withForeignPtr node $ \dp -> do 
     withCString name $ \pname -> do
     withCString fname $ \pfname -> do
@@ -462,15 +457,15 @@ cuddBddStore (DdManager m) name (DdNode node) auxids mode varinfo fname = do
 -- Extremely ugly and unsafe way to convert BDD to String via file
 bddToString :: DdManager -> DdNode -> Either String String
 bddToString m node = unsafePerformIO $ 
-    catch (do let fname = (show $ unDdNode node) ++ ".bdd"
+    catch (do let fname = show (unDdNode node) ++ ".bdd"
               ret <- cuddBddStore m fname node [] dddmp_mode_text dddmp_varids fname
               --putStrLn $ "ret = " ++ (show ret)
               if ret == dddmp_success
                       then do str <- readFile fname
                               removeFile fname
                               return $ Right str
-                      else return $ Left $ "Failed to serialise BDD (status: " ++ (show $ dddmpStatus ret) ++ ")")
-          (\e -> return $ Left $ show e)
+                      else return $ Left $ "Failed to serialise BDD (status: " ++ show (dddmpStatus ret) ++ ")")
+          (return . Left . show)
     
 
 newtype Dddmp_VarMatchType = Dddmp_VarMatchType {dddmpMatchType :: CInt} deriving (Eq, Show)
@@ -485,14 +480,14 @@ newtype Dddmp_VarMatchType = Dddmp_VarMatchType {dddmpMatchType :: CInt} derivin
 foreign import ccall unsafe "dddmp.h Dddmp_cuddBddLoad"
     c_dddmpBddLoad :: Ptr CDdManager -> CInt -> Ptr CString -> Ptr CInt -> Ptr CInt -> CInt -> CString -> Ptr CFile -> IO (Ptr CDdNode)
 
-cuddBddLoad :: DdManager -> Dddmp_VarMatchType -> [Int] -> [Int] -> Dddmp_Mode -> String -> IO(DdNode)
+cuddBddLoad :: DdManager -> Dddmp_VarMatchType -> [Int] -> [Int] -> Dddmp_Mode -> String -> IO DdNode
 cuddBddLoad (DdManager m) matchtype auxids composeids mode fname = do
     pauxids <- case auxids of
                  [] -> return nullPtr
-                 _ -> newArray ((map fromIntegral auxids)::[CInt])
+                 _ -> newArray (map fromIntegral auxids :: [CInt])
     pcomposeids <- case auxids of
                      [] -> return nullPtr
-                     _ -> newArray ((map fromIntegral composeids)::[CInt])
+                     _ -> newArray (map fromIntegral composeids :: [CInt])
     withCString fname $ \pfname -> do
         node <- c_dddmpBddLoad m (dddmpMatchType matchtype) nullPtr pauxids pcomposeids (dddmpMode mode) pfname nullPtr
         if node == nullPtr
@@ -509,7 +504,7 @@ bddFromString m str = unsafePerformIO $
               node <- cuddBddLoad m dddmp_var_matchids [] [] dddmp_mode_text fname
               removeFile fname
               return $ Right node)
-          (\e -> return $ Left $ show e)
+          (return . Left . show)
 
 --Bdd implication
 cuddBddImp :: DdManager -> DdNode -> DdNode -> DdNode
