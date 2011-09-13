@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm) where
 
 import System.IO
 import System.Directory
@@ -509,4 +509,15 @@ bddFromString m str = unsafePerformIO $
 --Bdd implication
 cuddBddImp :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddImp m l r = cuddBddOr m (cuddNot m l) r
+
+foreign import ccall unsafe "cudd.h Cudd_bddPickOneMinterm"
+	c_cuddBddPickOneMinterm :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
+
+cuddBddPickOneMinterm :: DdManager -> DdNode -> [DdNode] -> DdNode
+cuddBddPickOneMinterm (DdManager m) (DdNode d) vars = DdNode $ unsafePerformIO $
+	withForeignPtr d $ \dp -> 
+	withForeignArrayPtrLen (map unDdNode vars) $ \vs vp -> do
+	node <- c_cuddBddPickOneMinterm m dp vp (fromIntegral vs)
+	cuddRef node
+	newForeignPtrEnv deref m node
 
