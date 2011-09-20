@@ -513,11 +513,13 @@ cuddBddImp m l r = cuddBddOr m (cuddNot m l) r
 foreign import ccall unsafe "cudd.h Cudd_bddPickOneMinterm"
 	c_cuddBddPickOneMinterm :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
 
-cuddBddPickOneMinterm :: DdManager -> DdNode -> [DdNode] -> DdNode
-cuddBddPickOneMinterm (DdManager m) (DdNode d) vars = DdNode $ unsafePerformIO $
+cuddBddPickOneMinterm :: DdManager -> DdNode -> [DdNode] -> Maybe DdNode
+cuddBddPickOneMinterm (DdManager m) (DdNode d) vars = unsafePerformIO $
 	withForeignPtr d $ \dp -> 
 	withForeignArrayPtrLen (map unDdNode vars) $ \vs vp -> do
 	node <- c_cuddBddPickOneMinterm m dp vp (fromIntegral vs)
-	cuddRef node
-	newForeignPtrEnv deref m node
+	if (node == nullPtr) then return Nothing else do
+		cuddRef node
+		nd <- newForeignPtrEnv deref m node
+		return $ Just $ DdNode nd
 

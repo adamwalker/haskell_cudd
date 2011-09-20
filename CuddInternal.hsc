@@ -34,6 +34,7 @@ instance Storable CDdNode where
 
 newtype DdNode = DdNode {unDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
 
+ddNodeToInt :: Integral i => DdNode -> i
 ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
 
 foreign import ccall unsafe "cudd.h &Cudd_RecursiveDeref"
