@@ -3,7 +3,7 @@ INCLUDE=-I${CUDD_PATH}/include
 
 CFLAGS+=${INCLUDE} -g
 
-default: libcuddwrap.a Cudd.hs CuddInternal.hs
+default: libcuddwrap.a Cudd.hs CuddInternal.hs CuddReorder.hs
 
 cuddwrap.o: cuddwrap.c cuddwrap.h
 	@echo "[CC] $@"
@@ -16,3 +16,5 @@ libcuddwrap.a: cuddwrap.o
 %.hs: %.hsc
 	hsc2hs $< $(INCLUDE)
 
+%.hs: %.chs
+	c2hs --cppopts="$(INCLUDE)" $<
