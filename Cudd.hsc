@@ -523,3 +523,14 @@ cuddBddPickOneMinterm (DdManager m) (DdNode d) vars = unsafePerformIO $
 		nd <- newForeignPtrEnv deref m node
 		return $ Just $ DdNode nd
 
+foreign import ccall unsafe "cudd.h Cudd_PrintInfo"
+	c_cuddPrintInfo :: Ptr CDdManager -> Ptr CFile -> IO (CInt)
+
+cuddPrintInfo :: DdManager -> Ptr CFile -> IO (Int)
+cuddPrintInfo (DdManager m) cf = liftM fromIntegral $ c_cuddPrintInfo m cf
+
+foreign import ccall unsafe "cuddWrap.h getStdOut"
+	c_getStdOut :: IO (Ptr CFile)
+
+cStdOut = unsafePerformIO c_getStdOut
+
