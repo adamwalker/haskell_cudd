@@ -103,3 +103,12 @@ int testnext(int *i){
     return *i;
 }
 
+int PreGCHook(DdManager *dd, const char *str, void *data){
+	printf("Performing %s garbage collection...", str);
+	return 1;
+}
+
+int PostGCHook(DdManager *dd, const char *str, void *data){
+	printf("%s GC done\n", str);
+	return 1;
+}

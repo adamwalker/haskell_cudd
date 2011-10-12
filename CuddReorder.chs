@@ -13,6 +13,7 @@ import Foreign.Marshal.Utils
 import Control.Monad
 
 import CuddInternal
+import CuddHook
 
 #include <stdio.h>
 #include <cudd.h>
@@ -69,18 +70,49 @@ foreign import ccall unsafe "cudd.h Cudd_ReadReorderings"
 cuddReadReorderings :: DdManager -> IO (Int)
 cuddReadReorderings = readIntegral c_cuddReadReorderings
 
+--Hooks
+foreign import ccall unsafe "cudd.h &Cudd_StdPreReordHook"
+	c_cuddStdPreReordHook :: HookFP
+
+foreign import ccall unsafe "cudd.h &Cudd_StdPostReordHook"
+	c_cuddStdPostReordHook :: HookFP
+
+foreign import ccall unsafe "cudd.h Cudd_EnableReorderingReporting"
+	c_cuddEnableReorderingReporting :: Ptr CDdManager -> IO (CInt)
+
+cuddEnableReorderingReporting :: DdManager -> IO (Int)
+cuddEnableReorderingReporting (DdManager m) = liftM fromIntegral $ c_cuddEnableReorderingReporting m
+
+foreign import ccall unsafe "cudd.h Cudd_DisableReorderingReporting"
+	c_cuddDisableReorderingReporting :: Ptr CDdManager -> IO (CInt)
+
+cuddDisableReorderingReporting :: DdManager -> IO (Int)
+cuddDisableReorderingReporting (DdManager m) = liftM fromIntegral $ c_cuddDisableReorderingReporting m
+
+foreign import ccall unsafe "cudd.h Cudd_ReorderingReporting"
+	c_cuddReorderingReporting :: Ptr CDdManager -> IO (CInt)
+
+cuddReorderingReporting :: DdManager -> IO (Int)
+cuddReorderingReporting (DdManager m) = liftM fromIntegral $ c_cuddReorderingReporting m
+
+regStdPreReordHook :: DdManager -> IO (Int)
+regStdPreReordHook m = cuddAddHook m c_cuddStdPreReordHook CuddPreReorderingHook
+
+regStdPostReordHook :: DdManager -> IO (Int)
+regStdPostReordHook m = cuddAddHook m c_cuddStdPostReordHook CuddPostReorderingHook
+
 --Universal reordering params
-foreign import ccall unsafe "cudd.h Cudd_TurnOffDeadCount"
-	c_cuddTurnOffDeadCount :: Ptr CDdManager -> IO ()
+foreign import ccall unsafe "cudd.h Cudd_TurnOffCountDead"
+	c_cuddTurnOffCountDead :: Ptr CDdManager -> IO ()
 
-cuddturnOffDeadCount :: DdManager -> IO ()
-cuddturnOffDeadCount (DdManager m) = c_cuddTurnOffDeadCount m
+cuddturnOffCountDead :: DdManager -> IO ()
+cuddturnOffCountDead (DdManager m) = c_cuddTurnOffCountDead m
 
-foreign import ccall unsafe "cudd.h Cudd_TurnOnDeadCount"
-	c_cuddTurnOnDeadCount :: Ptr CDdManager -> IO ()
+foreign import ccall unsafe "cudd.h Cudd_TurnOnCountDead"
+	c_cuddTurnOnCountDead :: Ptr CDdManager -> IO ()
 
-cuddTurnOnDeadCount :: DdManager -> IO ()
-cuddTurnOnDeadCount (DdManager m) = c_cuddTurnOnDeadCount m
+cuddTurnOnCountDead :: DdManager -> IO ()
+cuddTurnOnCountDead (DdManager m) = c_cuddTurnOnCountDead m
 
 foreign import ccall unsafe "cudd.h Cudd_DeadAreCounted"
 	c_cuddDeadAreCounted :: Ptr CDdManager -> IO CInt
@@ -101,13 +133,13 @@ foreign import ccall unsafe "cudd.h Cudd_SetSiftMaxSwap"
 cuddSetSiftMaxSwap :: DdManager -> Int -> IO ()
 cuddSetSiftMaxSwap = setIntegral c_cuddSetSiftMaxSwap 
 
-foreign import ccall unsafe "cudd.h c_cuddReadSiftMaxVar"
+foreign import ccall unsafe "cudd.h Cudd_ReadSiftMaxVar"
 	c_cuddReadSiftMaxVar :: Ptr CDdManager -> IO (Int)
 
 cuddReadSiftMaxVar :: DdManager -> IO (Int)
 cuddReadSiftMaxVar = readIntegral c_cuddReadSiftMaxVar
 
-foreign import ccall unsafe "cudd.h c_cuddSetSiftMaxVar"
+foreign import ccall unsafe "cudd.h Cudd_SetSiftMaxVar"
 	c_cuddSetSiftMaxVar :: Ptr CDdManager -> CInt -> IO ()
 
 cuddSetsiftMaxVar :: DdManager -> Int -> IO ()

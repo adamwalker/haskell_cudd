@@ -13,6 +13,7 @@ import Foreign.Marshal.Utils
 import Control.Monad
 
 import CuddInternal
+import CuddHook
 
 #include <stdio.h>
 #include <cudd.h>
@@ -35,4 +36,15 @@ foreign import ccall unsafe "cudd.h Cudd_GarbageCollectionEnabled"
 cuddGarbageCollectionEnabled :: DdManager -> IO (Int)
 cuddGarbageCollectionEnabled (DdManager m) = liftM fromIntegral $ c_cuddGarbageCollectionEnabled m
 
+foreign import ccall unsafe "cuddwrap.h &PreGCHook"
+	c_PreGCHook :: HookFP
+
+foreign import ccall unsafe "cuddwrap.h &PostGCHook"
+	c_PostGCHook :: HookFP
+
+regPreGCHook :: DdManager -> IO (Int)
+regPreGCHook m = cuddAddHook m c_PreGCHook CuddPreGcHook
+
+regPostGCHook :: DdManager -> IO (Int)
+regPostGCHook m = cuddAddHook m c_PostGCHook CuddPostGcHook
 
