@@ -15,6 +15,7 @@ import Control.Monad.ST.Lazy
 import Control.Monad
 import Data.Binary
 import Data.List
+import Control.DeepSeq
 
 import CuddInternal
 
@@ -534,3 +535,4 @@ foreign import ccall unsafe "cuddWrap.h getStdOut"
 
 cStdOut = unsafePerformIO c_getStdOut
 
+instance NFData DdNode
