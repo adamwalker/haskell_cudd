@@ -57,6 +57,13 @@ foreign import ccall unsafe "cudd.h Cudd_ReduceHeap"
 cuddReduceHeap :: DdManager -> CuddReorderingType -> Int -> IO (Int)
 cuddReduceHeap (DdManager m) typ minsize = liftM fromIntegral $ c_cuddReduceHeap m (fromIntegral $ fromEnum typ) (fromIntegral minsize)
 
+--Grouping
+foreign import ccall unsafe "cudd.h Cudd_MakeTreeNode"
+	c_cuddMakeTreeNode :: Ptr CDdManager -> CUInt -> CUInt -> CUInt -> IO (Ptr ())
+
+cuddMakeTreeNode :: DdManager -> Int -> Int -> Int -> IO (Ptr ())
+cuddMakeTreeNode (DdManager m) low size typ = c_cuddMakeTreeNode m (fromIntegral low) (fromIntegral size) (fromIntegral typ)
+
 --Reordering stats
 foreign import ccall unsafe "cudd.h Cudd_ReadReorderingTime"
 	c_cuddReadReorderingTime :: Ptr CDdManager -> IO (CLong)
