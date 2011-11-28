@@ -62,7 +62,10 @@ foreign import ccall unsafe "cudd.h Cudd_MakeTreeNode"
 	c_cuddMakeTreeNode :: Ptr CDdManager -> CUInt -> CUInt -> CUInt -> IO (Ptr ())
 
 cuddMakeTreeNode :: DdManager -> Int -> Int -> Int -> IO (Ptr ())
-cuddMakeTreeNode (DdManager m) low size typ = c_cuddMakeTreeNode m (fromIntegral low) (fromIntegral size) (fromIntegral typ)
+cuddMakeTreeNode (DdManager m) low size typ = do
+    res <- c_cuddMakeTreeNode m (fromIntegral low) (fromIntegral size) (fromIntegral typ)
+    when (res==nullPtr) (error "cuddMakeTreeNode returned error")
+    return res
 
 --Reordering stats
 foreign import ccall unsafe "cudd.h Cudd_ReadReorderingTime"
