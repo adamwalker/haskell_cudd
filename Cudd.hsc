@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm) where
 
 import System.IO
 import System.Directory
@@ -17,6 +17,8 @@ import Data.Binary
 import Data.List
 import Control.DeepSeq
 import Control.Monad.Error
+import Data.Array hiding (indices)
+import Control.Exception hiding (catch)
 
 import CuddInternal
 
@@ -325,6 +327,22 @@ cuddBddPermute (DdManager m) (DdNode d) indexes = DdNode $ unsafePerformIO $
     withForeignPtr d $ \dp -> 
     withArray (map fromIntegral indexes) $ \ip -> do
     node <- c_cuddBddPermute m dp ip 
+    cuddRef node
+    newForeignPtrEnv deref m node
+
+makePermutArray :: Int -> [Int] -> [Int] -> [Int]
+makePermutArray size x y = elems $ accumArray (flip const) 0 (0, size-1) ascList
+    where
+    ascList = [(i, i) | i <- [0..size-1]] ++ zip x y 
+
+cuddBddShift :: DdManager -> DdNode -> [Int] -> [Int] -> DdNode
+cuddBddShift (DdManager m) (DdNode d) from to = DdNode $ unsafePerformIO $
+    withForeignPtr d $ \dp -> do
+    dp <- evaluate dp
+    size <- c_cuddReadSize m 
+    let perm = makePermutArray (fromIntegral size) from to
+    withArray (map fromIntegral perm) $ \pp -> do
+    node <- c_cuddBddPermute m dp pp
     cuddRef node
     newForeignPtrEnv deref m node
 
