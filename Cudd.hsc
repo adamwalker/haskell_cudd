@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms) where
 
 import System.IO
 import System.Directory
@@ -555,3 +555,22 @@ foreign import ccall unsafe "cuddWrap.h getStdOut"
 cStdOut = unsafePerformIO c_getStdOut
 
 instance NFData DdNode
+
+foreign import ccall unsafe "cudd.h Cudd_ReadPerm"
+    c_cuddReadPerm :: Ptr CDdManager -> CInt -> IO CInt
+
+cuddReadPerm :: DdManager -> Int -> Int
+cuddReadPerm (DdManager m) i = fromIntegral $ unsafePerformIO $ c_cuddReadPerm m (fromIntegral i)
+
+foreign import ccall unsafe "cudd.h Cudd_ReadInvPerm"
+    c_cuddReadInvPerm :: Ptr CDdManager -> CInt -> IO CInt
+
+cuddReadInvPerm :: DdManager -> Int -> Int
+cuddReadInvPerm (DdManager m) i = fromIntegral $ unsafePerformIO $ c_cuddReadInvPerm m (fromIntegral i)
+
+cuddReadPerms :: DdManager -> [Int]
+cuddReadPerms m = map (cuddReadPerm m) [0..(cuddReadSize m - 1)]
+
+cuddReadInvPerms :: DdManager -> [Int]
+cuddReadInvPerms m = map (cuddReadInvPerm m) [0..(cuddReadSize m -1)]
+
