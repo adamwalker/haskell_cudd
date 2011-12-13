@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms, cuddReadTree) where
 
 import System.IO
 import System.Directory
@@ -21,6 +21,7 @@ import Data.Array hiding (indices)
 import Control.Exception hiding (catch)
 
 import CuddInternal
+import MTR
 
 #include "cudd.h"
 #include "cuddwrap.h"
@@ -573,4 +574,10 @@ cuddReadPerms m = map (cuddReadPerm m) [0..(cuddReadSize m - 1)]
 
 cuddReadInvPerms :: DdManager -> [Int]
 cuddReadInvPerms m = map (cuddReadInvPerm m) [0..(cuddReadSize m -1)]
+
+foreign import ccall unsafe "cudd.h Cudd_ReadTree"
+    c_cuddReadTree :: Ptr CDdManager -> IO (Ptr CMtrNode)
+
+cuddReadTree :: DdManager -> IO MtrNode 
+cuddReadTree (DdManager m) = liftM MtrNode $ c_cuddReadTree m
 
