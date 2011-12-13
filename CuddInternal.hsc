@@ -42,10 +42,10 @@ instance NFData (STDdNode s)
 ddNodeToInt :: Integral i => DdNode -> i
 ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
 
-foreign import ccall unsafe "cudd.h &Cudd_RecursiveDeref"
+foreign import ccall safe "cudd.h &Cudd_RecursiveDeref"
 	c_cuddRecursiveDeref :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
 
-foreign import ccall unsafe "cuddwrap.h wrappedCuddRef"
+foreign import ccall safe "cuddwrap.h wrappedCuddRef"
 	cuddRef :: Ptr CDdNode -> IO ()
 
 withForeignArray :: [ForeignPtr a] -> ([Ptr a] -> IO b) -> IO b

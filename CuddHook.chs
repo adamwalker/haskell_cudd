@@ -19,15 +19,16 @@ import CuddInternal
 
 {#enum Cudd_HookType as CuddHookType {underscoreToCase} deriving (Show, Eq) #}
 
-type HookFP = FunPtr (Ptr CDdManager -> CString -> Ptr () -> IO (CInt))
+type HookTyp = Ptr CDdManager -> CString -> Ptr () -> IO (CInt)
+type HookFP  = FunPtr HookTyp
 
-foreign import ccall unsafe "cudd.h Cudd_AddHook"
+foreign import ccall safe "cudd.h Cudd_AddHook"
 	c_cuddAddHook :: Ptr CDdManager -> HookFP -> CInt -> IO (CInt)
 
 cuddAddHook :: DdManager -> HookFP -> CuddHookType -> IO Int
 cuddAddHook (DdManager m) fp typ = liftM fromIntegral $ c_cuddAddHook m fp (fromIntegral $ fromEnum typ)
 	
-foreign import ccall unsafe "cudd.h Cudd_RemoveHook"
+foreign import ccall safe "cudd.h Cudd_RemoveHook"
 	c_cuddRemoveHook :: Ptr CDdManager -> HookFP -> CInt -> IO (CInt)
 
 cuddRemoveHook :: DdManager -> HookFP -> CuddHookType -> IO Int
