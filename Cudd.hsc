@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms, cuddReadTree) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddIthVarST, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms, cuddReadTree) where
 
 import System.IO
 import System.Directory
@@ -61,10 +61,10 @@ cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $
 foreign import ccall unsafe "cudd.h Cudd_SetVarMap"
     c_cuddSetVarMap :: Ptr CDdManager -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> CInt -> IO CInt
 
-cuddSetVarMapST :: STDdManager s -> [DdNode] -> [DdNode] -> ST s ()
+cuddSetVarMapST :: STDdManager s -> [STDdNode s] -> [STDdNode s] -> ST s ()
 cuddSetVarMapST (STDdManager m) v1 v2 = unsafeIOToST $ 
-    withForeignArrayPtrLen (map unDdNode v1) $ \s1 v1p -> 
-    withForeignArrayPtrLen (map unDdNode v2) $ \s2 v2p -> do
+    withForeignArrayPtrLen (map unSTDdNode v1) $ \s1 v1p -> 
+    withForeignArrayPtrLen (map unSTDdNode v2) $ \s2 v2p -> do
     when (s1 /= s2) (error "cuddSetVarMapST: variable list lengths are not equal")
     res <- c_cuddSetVarMap m v1p v2p (fromIntegral s1)
     when (fromIntegral res /= 1) (error "cuddSetVarMapST: Cudd_SetVarMap failed")
@@ -73,13 +73,13 @@ cuddSetVarMapST (STDdManager m) v1 v2 = unsafeIOToST $
 foreign import ccall unsafe "cudd.h Cudd_bddVarMap"
     c_cuddBddVarMap :: Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
 
-cuddBddVarMapST :: STDdManager s-> DdNode -> ST s DdNode
-cuddBddVarMapST (STDdManager m) (DdNode node) = unsafeIOToST $ 
+cuddBddVarMapST :: STDdManager s -> STDdNode s -> ST s (STDdNode s)
+cuddBddVarMapST (STDdManager m) (STDdNode node) = unsafeIOToST $ 
     withForeignPtr node $ \np -> do
     node <- c_cuddBddVarMap m np
     cuddRef node
     fp <- newForeignPtrEnv deref m node
-    return $ DdNode fp
+    return $ STDdNode fp
 
 getManagerST :: STDdManager s -> ST s DdManager
 getManagerST (STDdManager m) = return $ DdManager m
@@ -110,6 +110,12 @@ cuddBddIthVar (DdManager d) i = DdNode $ unsafePerformIO $ do
 	node <- c_cuddBddIthVar d (fromIntegral i)
 	cuddRef node
 	newForeignPtr_ node
+
+cuddBddIthVarST :: STDdManager s -> Int -> ST s (STDdNode s)
+cuddBddIthVarST (STDdManager d) i = (liftM STDdNode) $ unsafeIOToST $ do
+    node <- c_cuddBddIthVar d (fromIntegral i)
+    cuddRef node
+    newForeignPtr_ node
 
 cuddArg1 :: (Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)) -> DdManager -> DdNode -> DdNode
 cuddArg1 f (DdManager m) (DdNode x) = DdNode $ unsafePerformIO $ 

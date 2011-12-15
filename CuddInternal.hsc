@@ -1,5 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
-module CuddInternal (CDdManager(..), DdManager(..), STDdManager(..), CDdNode(..), DdNode(..), c_cuddRecursiveDeref, cuddRef, withForeignArray, withForeignArrayPtr, withForeignArrayPtrLen, ddNodeToInt) where
+module CuddInternal (CDdManager(..), DdManager(..), STDdManager(..), STDdNode(..), CDdNode(..), DdNode(..), c_cuddRecursiveDeref, cuddRef, withForeignArray, withForeignArrayPtr, withForeignArrayPtrLen, ddNodeToInt) where
 
 import System.IO
 import Foreign
@@ -11,6 +11,7 @@ import Foreign.Marshal.Array
 import Foreign.Marshal.Utils
 import Control.Monad.ST.Lazy
 import Control.Monad
+import Control.DeepSeq
 
 #include "cudd.h"
 #include "cuddwrap.h"
@@ -18,7 +19,7 @@ import Control.Monad
 data CDdManager
 newtype DdManager = DdManager (Ptr CDdManager)
 
-newtype STDdManager s = STDdManager (Ptr CDdManager)
+newtype STDdManager s = STDdManager {unSTDdManager :: Ptr CDdManager}
 
 data CDdNode = CDdNode {index :: CInt, ref :: CInt}
 instance Storable CDdNode where
@@ -33,6 +34,10 @@ instance Storable CDdNode where
 		(#poke DdNode, ref) ptr ref
 
 newtype DdNode = DdNode {unDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
+
+newtype STDdNode s = STDdNode {unSTDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
+
+instance NFData (STDdNode s)
 
 ddNodeToInt :: Integral i => DdNode -> i
 ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
