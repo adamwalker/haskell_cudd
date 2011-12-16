@@ -84,6 +84,9 @@ cuddBddVarMapST (STDdManager m) (STDdNode node) = unsafeIOToST $
 getManagerST :: STDdManager s -> ST s DdManager
 getManagerST (STDdManager m) = return $ DdManager m
 
+getNodeST :: STDdNode s -> ST s DdNode
+getNodeST (STDdNode m) = return $ DdNode m
+
 foreign import ccall unsafe "cudd.h Cudd_ReadOne"
 	c_cuddReadOne :: Ptr CDdManager -> IO (Ptr CDdNode)
 
