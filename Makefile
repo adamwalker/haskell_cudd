@@ -9,9 +9,13 @@ cuddwrap.o: cuddwrap.c cuddwrap.h
 	@echo "[CC] $@"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-libcuddwrap.a: cuddwrap.o
+stubs.o: stubs.c stubs.h
+	@echo "[CC] $@"
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+libcuddwrap.a: cuddwrap.o stubs.o
 	@echo "[AR] $@"
-	@$(AR) rcs libcuddwrap.a cuddwrap.o
+	@$(AR) rcs libcuddwrap.a cuddwrap.o stubs.o
 
 %.hs: %.hsc
 	hsc2hs $< $(INCLUDE)
