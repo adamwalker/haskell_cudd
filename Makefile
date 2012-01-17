@@ -18,7 +18,9 @@ libcuddwrap.a: cuddwrap.o stubs.o
 	@$(AR) rcs libcuddwrap.a cuddwrap.o stubs.o
 
 %.hs: %.hsc
-	hsc2hs $< $(INCLUDE)
+	@echo "[HSC2HS] $@"
+	@hsc2hs $< $(INCLUDE)
 
 %.hs: %.chs
-	c2hs --cppopts="$(INCLUDE)" $<
+	@echo "[C2HS] $@"
+	@c2hs --cppopts="$(INCLUDE)" $<
