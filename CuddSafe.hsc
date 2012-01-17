@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
 
-module CuddSafe (DDPure, ManagerPure, DDContainer, runDDST, runDDSTNodes, runDDIO, purifyN, purifyM, purifyX, notb, andb, orb, xnorb, xorb, impb, iteb, existsb, forallb, getVar) where
+module CuddSafe (DDPure, ManagerPure, DDContainer, runDDST, runDDSTNodes, runDDIO, purifyN, purifyM, notb, andb, orb, xnorb, xorb, impb, iteb, existsb, forallb, getVar) where
 
 import Control.DeepSeq
 import Control.Exception
@@ -53,9 +53,6 @@ purifyM = DDContainer . ManagerPure . unSTDdManager
 purifyN :: STDdNode s -> DDContainer s t (DDPure t)
 purifyN = DDContainer . DDPure . unSTDdNode
 
-purifyX :: s -> DDContainer s t t
-purifyX _ = undefined
-
 safeArg0 :: (DdManager -> DdNode) -> ManagerPure t -> DDPure t
 safeArg0 f (ManagerPure m) = DDPure $ unDdNode $ f (DdManager m)
 
@@ -90,49 +87,4 @@ forallb = safeArg2 cuddBddUnivAbstract
 
 getVar :: ManagerPure t -> Int -> DDPure t
 getVar (ManagerPure m) i = DDPure $ unDdNode $ cuddBddIthVar (DdManager m) i
-
-getVarBad :: Int -> DDPure t
-getVarBad = undefined
-
-getVarLessBad :: t -> Int -> DDPure t
-getVarLessBad _ = undefined
-
-testFunc :: ManagerPure t -> DDPure t -> DDPure t -> DDPure t -> DDPure t
-testFunc m x y z = orb m x (andb m y z)
-
-testFunc2 :: ManagerPure t -> DDPure t -> DDPure t -> DDPure t -> String
-testFunc2 _ _ _ _ = "hello"
-
-getS :: ST s s
-getS = undefined
-
-test = runST $ do
-	s <- getS
-	m <- cuddInitST
-	cuddShuffleHeapST m [0..9]
-	v1 <- cuddBddIthVarST m 0
-	v2 <- cuddBddIthVarST m 1
-	v3 <- cuddBddIthVarST m 2
-	res1 <- liftM runIdentity $ runDDSTNodes (Identity <$> (testFunc <$> purifyM m <*> purifyN v1 <*> purifyN v2 <*> purifyN v3))
-	res2 <- runDDST (testFunc2 <$> purifyM m <*> purifyN v1 <*> purifyN v2 <*> purifyN v3)
-	res3 <- liftM runIdentity $ runDDSTNodes (Identity <$> ((getVar <$> purifyM m <*> pure 1)))
-	res4 <- liftM runIdentity $ runDDSTNodes (Identity <$> (pure $ getVarBad 1))
-	res5 <- runDDST (pure $ getVarBad 1)
-	let a = getVarLessBad <$> purifyX s <*> pure 1
-	let b = testFunc2 <$> purifyM m <*> purifyN v1 <*> purifyN v2 <*> purifyN v3
-	--res6 <- runDDSTNodes undefined
-	let c = getVar <$> purifyM m <*> pure 1 
-	return ()
-
-test2 = runST $ return $ newSTRef 5
-
-f :: ManagerPure t -> DDPure t -> IO (String)
-f = undefined
-
-test3 = do
-	m <- stToIO cuddInitST
-	n <- stToIO $ cuddBddIthVarST m 0
-	stToIO $ cuddShuffleHeapST m [0..9]
-	res <- runDDIO $ f <$> purifyM m <*> purifyN n
-	return res
 
