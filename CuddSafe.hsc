@@ -1,6 +1,27 @@
 {-# LANGUAGE RankNTypes #-}
 
-module CuddSafe (DDPure, ManagerPure, DDContainer, runDDST, runDDSTNodes, runDDIO, purifyN, purifyM, notb, andb, orb, xnorb, xorb, impb, iteb, existsb, forallb, getVar) where
+module CuddSafe (
+    DDPure, 
+    ManagerPure, 
+    DDContainer, 
+    runDDST, 
+    runDDSTNodes, 
+    runDDIO, 
+    purifyN, 
+    purifyM, 
+    notb, 
+    andb, 
+    orb, 
+    xnorb, 
+    xorb, 
+    impb, 
+    iteb, 
+    existsb, 
+    forallb, 
+    getVar, 
+    bb, 
+    tb
+    ) where
 
 import Control.DeepSeq
 import Control.Exception
