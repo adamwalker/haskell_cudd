@@ -1,6 +1,12 @@
 {-#LANGUAGE ForeignFunctionInterface #-}
 
-module CuddGC where
+module CuddGC (
+    cuddEnableGarbageCollection,
+    cuddDisableGarbageCollection,
+    cuddGarbageCollectionEnabled,
+    regPreGCHook,
+    regPostGCHook
+    ) where
 
 import System.IO
 import Foreign

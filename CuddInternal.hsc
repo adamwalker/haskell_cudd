@@ -1,5 +1,18 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
-module CuddInternal (CDdManager(..), DdManager(..), STDdManager(..), STDdNode(..), CDdNode(..), DdNode(..), c_cuddRecursiveDeref, cuddRef, withForeignArray, withForeignArrayPtr, withForeignArrayPtrLen, ddNodeToInt) where
+module CuddInternal (
+    CDdManager(..), 
+    DdManager(..), 
+    STDdManager(..), 
+    STDdNode(..), 
+    CDdNode(..), 
+    DdNode(..), 
+    c_cuddRecursiveDeref, 
+    cuddRef, 
+    withForeignArray, 
+    withForeignArrayPtr, 
+    withForeignArrayPtrLen, 
+    ddNodeToInt
+    ) where
 
 import System.IO
 import Foreign

@@ -1,6 +1,12 @@
 {-#LANGUAGE ForeignFunctionInterface #-}
 
-module CuddHook where
+module CuddHook (
+    cuddAddHook,
+    cuddRemoveHook,
+    HookTyp,
+    HookFP,
+    CuddHookType(..)
+    ) where
 
 import System.IO
 import Foreign

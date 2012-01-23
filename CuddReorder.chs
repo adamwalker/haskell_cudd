@@ -1,6 +1,35 @@
 {-#LANGUAGE ForeignFunctionInterface #-}
 
-module CuddReorder where
+module CuddReorder (
+    CuddReorderingType(..),
+    cuddReorderingStatus,
+    cuddAutodynEnable,
+    cuddReduceHeap,
+    cuddMakeTreeNode,
+    cuddReadReorderingTime,
+    cuddReadReorderings,
+    cuddEnableReorderingReporting,
+    cuddDisableReorderingReporting,
+    cuddReorderingReporting,
+    regStdPreReordHook,
+    regStdPostReordHook,
+    cuddTurnOnCountDead,
+    cuddTurnOffCountDead,
+    cuddDeadAreCounted,
+    cuddReadSiftMaxSwap,
+    cuddSetSiftMaxSwap,
+    cuddReadNextReordering,
+    cuddSetNextReordering,
+    cuddReadMaxGrowthAlternate,
+    cuddSetMaxGrowthAlternate,
+    cuddReadMaxGrowth,
+    cuddReadReorderingCycle,
+    cuddSetReorderingCycle,
+    cuddSetPopulationSize,
+    cuddReadNumberXovers,
+    cuddSetNumberXovers,
+    regReordGCHook
+    ) where
 
 import System.IO
 import System.Mem
@@ -116,8 +145,8 @@ regStdPostReordHook m = cuddAddHook m c_cuddStdPostReordHook CuddPostReorderingH
 foreign import ccall safe "cudd.h Cudd_TurnOffCountDead"
 	c_cuddTurnOffCountDead :: Ptr CDdManager -> IO ()
 
-cuddturnOffCountDead :: DdManager -> IO ()
-cuddturnOffCountDead (DdManager m) = c_cuddTurnOffCountDead m
+cuddTurnOffCountDead :: DdManager -> IO ()
+cuddTurnOffCountDead (DdManager m) = c_cuddTurnOffCountDead m
 
 foreign import ccall safe "cudd.h Cudd_TurnOnCountDead"
 	c_cuddTurnOnCountDead :: Ptr CDdManager -> IO ()
