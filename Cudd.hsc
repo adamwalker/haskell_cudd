@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddIthVarST, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms, cuddReadTree) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddIthVarST, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms, cuddReadTree, cuddCountLeaves, cuddCountMinterm, cuddCountPath, cuddCountPathsToNonZero, cuddPrintDebug) where
 
 import System.IO
 import System.Directory
@@ -572,4 +572,44 @@ foreign import ccall safe "cudd.h Cudd_ReadTree"
 
 cuddReadTree :: DdManager -> IO MtrNode 
 cuddReadTree (DdManager m) = liftM MtrNode $ c_cuddReadTree m
+
+foreign import ccall safe "cudd,h Cudd_CountLeaves"
+    c_cuddCountLeaves :: Ptr CDdNode -> IO CInt
+
+cuddCountLeaves :: DdNode -> Int
+cuddCountLeaves (DdNode d) = fromIntegral $ unsafePerformIO $ 
+    withForeignPtr d $ \dp -> 
+    c_cuddCountLeaves dp
+
+foreign import ccall safe "cudd.h Cudd_CountMinterm"
+    c_cuddCountMinterm :: Ptr CDdManager -> Ptr CDdNode -> CInt -> IO CDouble
+
+cuddCountMinterm :: DdManager -> DdNode -> Int -> Double
+cuddCountMinterm (DdManager m) (DdNode d) n = realToFrac $ unsafePerformIO $
+    withForeignPtr d $ \dp -> 
+    c_cuddCountMinterm m dp (fromIntegral n) 
+
+foreign import ccall safe "cudd.h Cudd_CountPathsToNonZero"
+    c_cuddCountPathsToNonZero :: Ptr CDdNode -> IO CDouble
+
+cuddCountPathsToNonZero :: DdNode -> Double
+cuddCountPathsToNonZero (DdNode d) = realToFrac $ unsafePerformIO $
+    withForeignPtr d $ \dp ->
+    c_cuddCountPathsToNonZero dp
+
+foreign import ccall safe "cudd.h Cudd_CountPath"
+    c_cuddCountPath :: Ptr CDdNode -> IO CDouble
+
+cuddCountPath :: DdNode -> Double
+cuddCountPath (DdNode d) = realToFrac $ unsafePerformIO $
+    withForeignPtr d $ \dp -> 
+    c_cuddCountPath dp
+
+foreign import ccall safe "cudd.h Cudd_PrintDebug"
+    c_cuddPrintDebug :: Ptr CDdManager -> Ptr CDdNode -> CInt -> CInt -> IO (CInt)
+
+cuddPrintDebug :: DdManager -> DdNode -> Int -> Int -> IO (Int)
+cuddPrintDebug (DdManager m) (DdNode d) n pr = liftM fromIntegral $ 
+    withForeignPtr d $ \dp -> 
+    c_cuddPrintDebug m dp (fromIntegral n) (fromIntegral pr)
 
