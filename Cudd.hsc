@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts #-}
 
-module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddIthVarST, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms, cuddReadTree, cuddCountLeaves, cuddCountMinterm, cuddCountPath, cuddCountPathsToNonZero, cuddPrintDebug, STDdNode, STDdManager) where
+module Cudd (DdManager(), DdNode(),  cuddInit, cuddInitOrder,  cuddReadOne, cuddReadLogicZero, cuddBddIthVar, cuddBddIthVarST, cuddBddAnd, cuddBddOr, cuddBddNand, cuddBddNor, cuddBddXor, cuddBddXnor, cuddNot, cuddDumpDot, cudd_cache_slots, cudd_unique_slots, cuddEval, cuddPrintMinterm, cuddAllSat, cuddOneSat, testnew, testnext, cuddSupportIndex, cuddBddExistAbstract, cuddBddUnivAbstract, cuddBddIte, cuddBddPermute, cuddBddShift, cuddBddSwapVariables, cuddNodeReadIndex, cuddDagSize, cuddIndicesToCube, cuddInitST, cuddShuffleHeapST, cuddSetVarMapST, cuddBddVarMapST, getManagerST, getNodeST, cuddBddLICompaction, cuddBddMinimize, cuddReadSize, cuddXeqy, cuddXgty, cuddBddInterval, cuddDisequality, cuddInequality, bddToString, bddFromString, ddNodeToInt, cuddBddImp, cuddBddPickOneMinterm, cuddReadPerm, cuddReadInvPerm, cuddReadPerms, cuddReadInvPerms, cuddReadTree, cuddCountLeaves, cuddCountMinterm, cuddCountPath, cuddCountPathsToNonZero, cuddPrintDebug, STDdNode, STDdManager) where
 
 import System.IO
 import System.Directory
@@ -80,11 +80,11 @@ cuddBddVarMapST (STDdManager m) (STDdNode node) = unsafeIOToST $
     fp <- newForeignPtrEnv deref m node
     return $ STDdNode fp
 
-getManagerST :: STDdManager s -> ST s DdManager
-getManagerST (STDdManager m) = return $ DdManager m
+getManagerST :: STDdManager s -> DdManager
+getManagerST (STDdManager m) = DdManager m
 
-getNodeST :: STDdNode s -> ST s DdNode
-getNodeST (STDdNode n) = return $ DdNode n
+getNodeST :: STDdNode s -> DdNode
+getNodeST (STDdNode n) = DdNode n
 
 foreign import ccall safe "cudd.h Cudd_ReadOne_s"
 	c_cuddReadOne :: Ptr CDdManager -> IO (Ptr CDdNode)

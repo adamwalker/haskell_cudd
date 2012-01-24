@@ -5,6 +5,7 @@ module CuddSafe (
     ManagerPure, 
     DDContainer, 
     runDDST, 
+    runDDSTNode,
     runDDSTNodes, 
     runDDIO, 
     purifyN, 
@@ -67,6 +68,9 @@ instance (NFData a) => NFData (Identity a) where
 
 runDDSTNodes :: (Functor a, NFData (a (STDdNode s))) => (forall t. DDContainer s t (a (DDPure t))) -> ST s (a (STDdNode s))
 runDDSTNodes (DDContainer x) = unsafeIOToST $ evaluate $ force $ fmap (STDdNode . unDDPure) x
+
+runDDSTNode :: (forall t. DDContainer s t (DDPure t)) -> ST s (STDdNode s)
+runDDSTNode (DDContainer x) = unsafeIOToST $ evaluate $ STDdNode $ unDDPure x
 
 purifyM :: STDdManager s -> DDContainer s t (ManagerPure t)
 purifyM = DDContainer . ManagerPure . unSTDdManager
