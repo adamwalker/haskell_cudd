@@ -52,7 +52,8 @@ cuddInitOrder order = DdManager $ unsafePerformIO $ withArrayLen (map fromIntegr
 cuddShuffleHeapST :: STDdManager s -> [Int] -> ST s ()
 cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $ 
     withArrayLen (map fromIntegral order) $ \size ptr -> do
-    res1 <- c_cuddBddIthVar m (fromIntegral size)
+    when (sort order /= [0..size-1]) (error "cuddInitOrder: order does not contain each variable once") 
+    res1 <- c_cuddBddIthVar m (fromIntegral (size - 1))
     when (res1 == nullPtr) (error "cuddShuffleHeapST: Failed to resize table")
     res2 <- c_cuddShuffleHeap m ptr
     when (fromIntegral res2 /= 1) (error "cuddShuffleHeapST: Cudd_ShuffleHeap failed")
