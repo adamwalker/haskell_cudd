@@ -4,6 +4,7 @@ module CuddReorder (
     CuddReorderingType(..),
     cuddReorderingStatus,
     cuddAutodynEnable,
+    cuddAutodynDisable,
     cuddReduceHeap,
     cuddMakeTreeNode,
     cuddReadReorderingTime,
@@ -79,6 +80,12 @@ foreign import ccall safe "cudd.h Cudd_AutodynEnable"
 
 cuddAutodynEnable :: DdManager -> CuddReorderingType -> IO ()
 cuddAutodynEnable (DdManager m) t = c_cuddAutodynEnable m (fromIntegral $ fromEnum t)
+
+foreign import ccall safe "cudd.h Cudd_AutodynDisable"
+	c_cuddAutodynDisable :: Ptr CDdManager -> IO ()
+
+cuddAutodynDisable :: DdManager -> IO ()
+cuddAutodynDisable (DdManager m) = c_cuddAutodynDisable m
 
 --Reorder right now
 foreign import ccall safe "cudd.h Cudd_ReduceHeap"
