@@ -19,6 +19,8 @@ module CuddReorder (
     cuddDeadAreCounted,
     cuddReadSiftMaxSwap,
     cuddSetSiftMaxSwap,
+    cuddReadSiftMaxVar,
+    cuddSetSiftMaxVar,
     cuddReadNextReordering,
     cuddSetNextReordering,
     cuddReadMaxGrowthAlternate,
@@ -189,8 +191,8 @@ cuddReadSiftMaxVar = readIntegral c_cuddReadSiftMaxVar
 foreign import ccall safe "cudd.h Cudd_SetSiftMaxVar"
 	c_cuddSetSiftMaxVar :: Ptr CDdManager -> CInt -> IO ()
 
-cuddSetsiftMaxVar :: DdManager -> Int -> IO ()
-cuddSetsiftMaxVar = setIntegral c_cuddSetSiftMaxVar
+cuddSetSiftMaxVar :: DdManager -> Int -> IO ()
+cuddSetSiftMaxVar = setIntegral c_cuddSetSiftMaxVar
 	
 foreign import ccall safe "cudd.h Cudd_ReadNextReordering"
 	c_cuddReadNextReordering :: Ptr CDdManager -> IO (Int)
