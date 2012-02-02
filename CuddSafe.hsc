@@ -21,7 +21,9 @@ module CuddSafe (
     forallb, 
     getVar, 
     bb, 
-    tb
+    tb,
+    swap,
+    permute
     ) where
 
 import Control.DeepSeq
@@ -112,4 +114,10 @@ forallb = safeArg2 cuddBddUnivAbstract
 
 getVar :: ManagerPure t -> Int -> DDPure t
 getVar (ManagerPure m) i = DDPure $ unDdNode $ cuddBddIthVar (DdManager m) i
+
+permute :: ManagerPure t -> DDPure t -> [Int] -> DDPure t
+permute (ManagerPure m) (DDPure d) perm = DDPure $ unDdNode $ cuddBddPermute (DdManager m) (DdNode d) perm
+
+swap :: ManagerPure t -> DDPure t -> [DDPure t] -> [DDPure t] -> DDPure t
+swap (ManagerPure m) (DDPure d) x y = DDPure $ unDdNode $ cuddBddSwapVariables (DdManager m) (DdNode d) (map (DdNode . unDDPure) x) (map (DdNode . unDDPure) y) 
 
