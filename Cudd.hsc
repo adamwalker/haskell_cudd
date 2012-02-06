@@ -23,8 +23,6 @@ module Cudd (
     cuddPrintMinterm,
     cuddAllSat,
     cuddOneSat,
-    testnew,
-    testnext,
     cuddSupportIndex,
     cuddBddExistAbstract,
     cuddBddUnivAbstract,
@@ -337,24 +335,6 @@ cuddSupportIndex (DdManager m) (DdNode n) = unsafePerformIO $
     size <- c_cuddReadSize m
     res <- peekArray (fromIntegral size) res
     return $ map toBool res
-
-data STInt s = STInt (Ptr CInt)
-
-foreign import ccall safe "cuddwrap.h testnew"
-    c_testnew :: IO (Ptr CInt)
-
-foreign import ccall safe "cuddwrap.h testnext"
-    c_testnext :: Ptr CInt -> IO CInt
-
-testnew :: ST s (STInt s)
-testnew = unsafeIOToST $ do
-    val <- c_testnew
-    return $ STInt val
-
-testnext :: STInt s -> ST s Int
-testnext (STInt p) = unsafeIOToST $ do
-    val <- c_testnext p
-    return $ fromIntegral val
 
 foreign import ccall safe "cudd.h Cudd_FirstCube"
     c_cuddFirstCube :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CInt) -> Ptr CInt
