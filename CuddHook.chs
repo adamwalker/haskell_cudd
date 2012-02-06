@@ -17,6 +17,7 @@ import Foreign.ForeignPtr
 import Foreign.Marshal.Array
 import Foreign.Marshal.Utils
 import Control.Monad
+import Control.Monad.ST.Lazy
 
 import CuddInternal
 
@@ -31,11 +32,11 @@ type HookFP  = FunPtr HookTyp
 foreign import ccall safe "cudd.h Cudd_AddHook"
 	c_cuddAddHook :: Ptr CDdManager -> HookFP -> CInt -> IO (CInt)
 
-cuddAddHook :: DdManager -> HookFP -> CuddHookType -> IO Int
-cuddAddHook (DdManager m) fp typ = liftM fromIntegral $ c_cuddAddHook m fp (fromIntegral $ fromEnum typ)
+cuddAddHook :: STDdManager s -> HookFP -> CuddHookType -> ST s Int
+cuddAddHook (STDdManager m) fp typ = unsafeIOToST $ liftM fromIntegral $ c_cuddAddHook m fp (fromIntegral $ fromEnum typ)
 	
 foreign import ccall safe "cudd.h Cudd_RemoveHook"
 	c_cuddRemoveHook :: Ptr CDdManager -> HookFP -> CInt -> IO (CInt)
 
-cuddRemoveHook :: DdManager -> HookFP -> CuddHookType -> IO Int
-cuddRemoveHook (DdManager m) fp typ = liftM fromIntegral $ c_cuddRemoveHook m fp (fromIntegral $ fromEnum typ)
+cuddRemoveHook :: STDdManager s -> HookFP -> CuddHookType -> ST s Int
+cuddRemoveHook (STDdManager m) fp typ = unsafeIOToST $ liftM fromIntegral $ c_cuddRemoveHook m fp (fromIntegral $ fromEnum typ)
