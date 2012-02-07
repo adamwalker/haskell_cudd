@@ -25,3 +25,4 @@ DdNode *Cudd_ReadLogicZero_s(DdManager *m);
 DdNode *Cudd_ReadOne_s(DdManager *m);
 DdNode *Cudd_bddVarMap_s(DdManager *m, DdNode *x);
 DdNode *Cudd_bddAndAbstract_s(DdManager *m, DdNode *x, DdNode *y, DdNode *z);
+DdNode *Cudd_bddXorExistAbstract_s(DdManager *m, DdNode *x, DdNode *y, DdNode *z);

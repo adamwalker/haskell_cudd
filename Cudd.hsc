@@ -64,7 +64,8 @@ module Cudd (
     cuddPrintDebug,
     STDdNode,
     STDdManager, 
-    cuddBddAndAbstract
+    cuddBddAndAbstract,
+    cuddBddXorExistAbstract
     ) where
 
 import System.IO
@@ -667,3 +668,8 @@ foreign import ccall safe "cudd.h Cudd_bddAndAbstract_s"
 cuddBddAndAbstract :: DdManager -> DdNode -> DdNode -> DdNode -> DdNode  
 cuddBddAndAbstract = cuddArg3 c_cuddBddAndAbstract
 
+foreign import ccall safe "cudd.h Cudd_bddXorExistAbstract_s"
+    c_cuddBddXorExistAbstract :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+cuddBddXorExistAbstract :: DdManager -> DdNode -> DdNode -> DdNode -> DdNode  
+cuddBddXorExistAbstract = cuddArg3 c_cuddBddXorExistAbstract

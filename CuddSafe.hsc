@@ -25,7 +25,8 @@ module CuddSafe (
     swap,
     permute,
     varMap,
-    andAbs
+    andAbs,
+    xorAbs
     ) where
 
 import Control.DeepSeq
@@ -128,4 +129,7 @@ varMap (ManagerPure m) (DDPure d) = DDPure $ unSTDdNode $ unsafePerformIO $ stTo
 
 andAbs :: ManagerPure t -> DDPure t -> DDPure t -> DDPure t -> DDPure t
 andAbs = safeArg3 cuddBddAndAbstract
+
+xorAbs :: ManagerPure t -> DDPure t -> DDPure t -> DDPure t -> DDPure t
+xorAbs = safeArg3 cuddBddXorExistAbstract
 

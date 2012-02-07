@@ -191,3 +191,11 @@ DdNode *Cudd_bddAndAbstract_s(DdManager *m, DdNode *x, DdNode *y, DdNode *z){
     Cudd_Ref(r);
     return r;
 }
+
+DdNode *Cudd_bddXorExistAbstract_s(DdManager *m, DdNode *x, DdNode *y, DdNode *z){
+    DdNode *r = Cudd_bddXorExistAbstract(m, x, y, z);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+
