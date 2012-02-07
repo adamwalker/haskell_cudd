@@ -185,3 +185,9 @@ DdNode *Cudd_bddPickOneMinterm_s(DdManager *m, DdNode *x, DdNode **y, int i){
     return r;
 }
 
+DdNode *Cudd_bddAndAbstract_s(DdManager *m, DdNode *x, DdNode *y, DdNode *z){
+    DdNode *r = Cudd_bddAndAbstract(m, x, y, z);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}

@@ -24,3 +24,4 @@ DdNode *Cudd_bddIthVar_s(DdManager *m, int i);
 DdNode *Cudd_ReadLogicZero_s(DdManager *m);
 DdNode *Cudd_ReadOne_s(DdManager *m);
 DdNode *Cudd_bddVarMap_s(DdManager *m, DdNode *x);
+DdNode *Cudd_bddAndAbstract_s(DdManager *m, DdNode *x, DdNode *y, DdNode *z);

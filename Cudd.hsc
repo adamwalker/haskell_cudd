@@ -661,7 +661,7 @@ cuddPrintDebug (DdManager m) (DdNode d) n pr = liftM fromIntegral $
     withForeignPtr d $ \dp -> 
     c_cuddPrintDebug m dp (fromIntegral n) (fromIntegral pr)
 
-foreign import ccall safe "cudd.h Cudd_bddAndAbstract"
+foreign import ccall safe "cudd.h Cudd_bddAndAbstract_s"
     c_cuddBddAndAbstract :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddAndAbstract :: DdManager -> DdNode -> DdNode -> DdNode -> DdNode  
