@@ -263,7 +263,7 @@ foreign import ccall safe "cuddwrap.h &deref"
 	derefHook :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
 
 --deref = derefHook
-deref = c_cuddRecursiveDeref
+deref = c_cuddIterDerefBdd
 
 --cuddRecursiveDeref :: DdManager -> DdNode -> IO ()
 --cuddRecursiveDeref (DdManager m) (DdNode d) = c_cuddRecursiveDeref m d

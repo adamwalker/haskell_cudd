@@ -7,6 +7,8 @@ module CuddInternal (
     CDdNode(..), 
     DdNode(..), 
     c_cuddRecursiveDeref, 
+    c_cuddDelayedDerefBdd,
+    c_cuddIterDerefBdd,
     cuddRef, 
     withForeignArray, 
     withForeignArrayPtr, 
@@ -57,6 +59,12 @@ ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode
 
 foreign import ccall safe "cudd.h &Cudd_RecursiveDeref"
 	c_cuddRecursiveDeref :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
+
+foreign import ccall safe "cudd.h &Cudd_DelayedDerefBdd"
+	c_cuddDelayedDerefBdd :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
+
+foreign import ccall safe "cudd.h &Cudd_IterDerefBdd"
+	c_cuddIterDerefBdd :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
 
 foreign import ccall safe "cuddwrap.h wrappedCuddRef"
 	cuddRef :: Ptr CDdNode -> IO ()
