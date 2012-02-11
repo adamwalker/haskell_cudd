@@ -90,19 +90,6 @@ int *oneSat(DdManager *m, DdNode *n, /*int *nterms,*/ int *nvars){
     return result;
 }
 
-
-int *testnew(){
-    int *i = malloc(sizeof(int));
-    *i = 0;
-    return i;
-}
-
-int testnext(int *i){
-    printf("called\n");
-    (*i)++;
-    return *i;
-}
-
 int PreGCHook(DdManager *dd, const char *str, void *data){
 	printf("Performing %s garbage collection...", str);
 	return 1;
