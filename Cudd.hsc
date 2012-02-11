@@ -67,7 +67,8 @@ module Cudd (
     cuddBddXorExistAbstract,
     withManagerST,
     withManagerIO,
-    cuddBddTransfer
+    cuddBddTransfer,
+    cuddBddMakePrime
     ) where
 
 import System.IO
@@ -694,4 +695,10 @@ cuddBddTransfer (DdManager m1) (DdManager m2) (DdNode x) = DdNode $ unsafePerfor
     withForeignPtr x $ \xp -> do
         node <- c_cuddBddTransfer m1 m2 xp
         newForeignPtrEnv deref m2 node
+
+foreign import ccall safe "cudd.h Cudd_bddMakePrime_s"
+    c_cuddBddMakePrime :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+cuddBddMakePrime :: DdManager -> DdNode -> DdNode -> DdNode
+cuddBddMakePrime = cuddArg2 c_cuddBddMakePrime
 

@@ -199,3 +199,9 @@ DdNode *Cudd_bddXorExistAbstract_s(DdManager *m, DdNode *x, DdNode *y, DdNode *z
     return r;
 }
 
+DdNode *Cudd_bddMakePrime_s(DdManager *m, DdNode *c, DdNode *f){
+    DdNode *r = Cudd_bddMakePrime(m, c, f);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
