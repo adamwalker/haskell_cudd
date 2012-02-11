@@ -115,7 +115,7 @@ cuddReadReorderingTime :: STDdManager s u -> ST s Int
 cuddReadReorderingTime = readIntegral c_cuddReadReorderingTime
 
 foreign import ccall safe "cudd.h Cudd_ReadReorderings"
-	c_cuddReadReorderings :: Ptr CDdManager -> IO (CInt)
+	c_cuddReadReorderings :: Ptr CDdManager -> IO (CUInt)
 
 cuddReadReorderings :: STDdManager s u -> ST s Int
 cuddReadReorderings = readIntegral c_cuddReadReorderings
