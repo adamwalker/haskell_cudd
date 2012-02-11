@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts #-}
+{-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts, RankNTypes #-}
 
 module Cudd (
     DdManager(),
@@ -33,7 +33,6 @@ module Cudd (
     cuddNodeReadIndex,
     cuddDagSize,
     cuddIndicesToCube,
-    cuddInitST,
     cuddShuffleHeapST,
     cuddSetVarMapST,
     cuddBddVarMapST,
@@ -65,7 +64,10 @@ module Cudd (
     STDdNode,
     STDdManager, 
     cuddBddAndAbstract,
-    cuddBddXorExistAbstract
+    cuddBddXorExistAbstract,
+    withManagerST,
+    withManagerIO,
+    cuddBddTransfer
     ) where
 
 import System.IO
@@ -99,10 +101,20 @@ foreign import ccall safe "cudd.h Cudd_Init"
 cuddInit :: DdManager
 cuddInit = DdManager $ unsafePerformIO $ c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
 
-cuddInitST :: ST s (STDdManager s)
+cuddInitST :: ST s (STDdManager s u)
 cuddInitST = unsafeIOToST $ do
     cm <- c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
     return $ STDdManager cm
+
+withManagerST :: (forall u. STDdManager s u -> ST s a) -> ST s a
+withManagerST f = do
+    res <- cuddInitST
+    f res 
+
+withManagerIO :: MonadIO m => (forall u. STDdManager RealWorld u -> m a) -> m a
+withManagerIO f = do
+    res <- liftIO $ stToIO cuddInitST
+    f res
 
 foreign import ccall safe "cudd.h Cudd_ShuffleHeap"
     c_cuddShuffleHeap :: Ptr CDdManager -> Ptr CInt -> IO CInt
@@ -115,7 +127,7 @@ cuddInitOrder order = DdManager $ unsafePerformIO $ withArrayLen (map fromIntegr
     when (fromIntegral res /= 1) (error "shuffleHeap failed")
     return m
 
-cuddShuffleHeapST :: STDdManager s -> [Int] -> ST s ()
+cuddShuffleHeapST :: STDdManager s u -> [Int] -> ST s ()
 cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $ 
     withArrayLen (map fromIntegral order) $ \size ptr -> do
     when (sort order /= [0..size-1]) (error "cuddInitOrder: order does not contain each variable once") 
@@ -128,7 +140,7 @@ cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $
 foreign import ccall safe "cudd.h Cudd_SetVarMap"
     c_cuddSetVarMap :: Ptr CDdManager -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> CInt -> IO CInt
 
-cuddSetVarMapST :: STDdManager s -> [STDdNode s] -> [STDdNode s] -> ST s ()
+cuddSetVarMapST :: STDdManager s u -> [STDdNode s u] -> [STDdNode s u] -> ST s ()
 cuddSetVarMapST (STDdManager m) v1 v2 = unsafeIOToST $ 
     withForeignArrayPtrLen (map unSTDdNode v1) $ \s1 v1p -> 
     withForeignArrayPtrLen (map unSTDdNode v2) $ \s2 v2p -> do
@@ -140,17 +152,17 @@ cuddSetVarMapST (STDdManager m) v1 v2 = unsafeIOToST $
 foreign import ccall safe "cudd.h Cudd_bddVarMap_s"
     c_cuddBddVarMap :: Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
 
-cuddBddVarMapST :: STDdManager s -> STDdNode s -> ST s (STDdNode s)
+cuddBddVarMapST :: STDdManager s u -> STDdNode s u -> ST s (STDdNode s u)
 cuddBddVarMapST (STDdManager m) (STDdNode node) = unsafeIOToST $ 
     withForeignPtr node $ \np -> do
     node <- c_cuddBddVarMap m np
     fp <- newForeignPtrEnv deref m node
     return $ STDdNode fp
 
-getManagerST :: STDdManager s -> DdManager
+getManagerST :: STDdManager s u -> DdManager
 getManagerST (STDdManager m) = DdManager m
 
-getNodeST :: STDdNode s -> DdNode
+getNodeST :: STDdNode s u -> DdNode
 getNodeST (STDdNode n) = DdNode n
 
 foreign import ccall safe "cudd.h Cudd_ReadOne_s"
@@ -177,7 +189,7 @@ cuddBddIthVar (DdManager d) i = DdNode $ unsafePerformIO $ do
 	node <- c_cuddBddIthVar d (fromIntegral i)
 	newForeignPtr_ node
 
-cuddBddIthVarST :: STDdManager s -> Int -> ST s (STDdNode s)
+cuddBddIthVarST :: STDdManager s u -> Int -> ST s (STDdNode s u)
 cuddBddIthVarST (STDdManager d) i = (liftM STDdNode) $ unsafeIOToST $ do
     node <- c_cuddBddIthVar d (fromIntegral i)
     cuddRef node
@@ -673,3 +685,13 @@ foreign import ccall safe "cudd.h Cudd_bddXorExistAbstract_s"
 
 cuddBddXorExistAbstract :: DdManager -> DdNode -> DdNode -> DdNode -> DdNode  
 cuddBddXorExistAbstract = cuddArg3 c_cuddBddXorExistAbstract
+
+foreign import ccall safe "cudd.h Cudd_bddTransfer"
+    c_cuddBddTransfer :: Ptr CDdManager -> Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+cuddBddTransfer :: DdManager -> DdManager -> DdNode -> DdNode
+cuddBddTransfer (DdManager m1) (DdManager m2) (DdNode x) = DdNode $ unsafePerformIO $ do
+    withForeignPtr x $ \xp -> do
+        node <- c_cuddBddTransfer m1 m2 xp
+        newForeignPtrEnv deref m2 node
+

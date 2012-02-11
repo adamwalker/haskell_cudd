@@ -32,7 +32,7 @@ import Control.DeepSeq
 data CDdManager
 newtype DdManager = DdManager (Ptr CDdManager)
 
-newtype STDdManager s = STDdManager {unSTDdManager :: Ptr CDdManager}
+newtype STDdManager s u = STDdManager {unSTDdManager :: Ptr CDdManager}
 
 data CDdNode = CDdNode {index :: CInt, ref :: CInt}
 instance Storable CDdNode where
@@ -48,9 +48,9 @@ instance Storable CDdNode where
 
 newtype DdNode = DdNode {unDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
 
-newtype STDdNode s = STDdNode {unSTDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
+newtype STDdNode s u = STDdNode {unSTDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
 
-instance NFData (STDdNode s)
+instance NFData (STDdNode s u)
 
 ddNodeToInt :: Integral i => DdNode -> i
 ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
