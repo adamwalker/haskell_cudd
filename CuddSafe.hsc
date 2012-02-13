@@ -9,6 +9,7 @@ module CuddSafe (
     runDDSTNodes, 
     runDDIO, 
     purifyN, 
+    purifyNT,
     purifyM, 
     notb, 
     andb, 
@@ -42,6 +43,7 @@ import Data.STRef
 import Control.Monad
 import Control.Applicative
 import Control.Monad.Identity
+import Data.Traversable
 
 import CuddInternal
 import Cudd
@@ -83,6 +85,9 @@ purifyM = DDContainer . ManagerPure . unSTDdManager
 
 purifyN :: STDdNode s u -> DDContainer s t (DDPure t u)
 purifyN = DDContainer . DDPure . unSTDdNode
+
+purifyNT :: (Traversable f) => f (STDdNode s u) -> DDContainer s t (f (DDPure t u))
+purifyNT = traverse purifyN
 
 safeArg0 :: (DdManager -> DdNode) -> ManagerPure t u -> DDPure t u
 safeArg0 f (ManagerPure m) = DDPure $ unDdNode $ f (DdManager m)
