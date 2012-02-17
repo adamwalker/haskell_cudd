@@ -205,3 +205,18 @@ DdNode *Cudd_bddMakePrime_s(DdManager *m, DdNode *c, DdNode *f){
     Cudd_Ref(r);
     return r;
 }
+
+DdNode *Cudd_bddRestrict_s(DdManager *m, DdNode *f, DdNode *c){
+    DdNode *r = Cudd_bddRestrict(m, f, c);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+
+DdNode *Cudd_bddConstrain_s(DdManager *m, DdNode *f, DdNode *c){
+    DdNode *r = Cudd_bddConstrain(m, f, c);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+

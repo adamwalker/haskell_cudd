@@ -30,7 +30,9 @@ module CuddSafe (
     xorAbs,
     transfer,
     liCompaction,
-    minimize
+    minimize,
+    constrain,
+    restrict
     ) where
 
 import Control.DeepSeq
@@ -142,7 +144,9 @@ xorAbs = safeArg3 cuddBddXorExistAbstract
 transfer :: ManagerPure t u -> ManagerPure t v -> DDPure t u -> DDPure t v
 transfer (ManagerPure m1) (ManagerPure m2) (DDPure d1) = DDPure $ unDdNode $ cuddBddTransfer (DdManager m1) (DdManager m2) (DdNode d1)
 
-liCompaction, minimize :: ManagerPure t u -> DDPure t u -> DDPure t u -> DDPure t u
+liCompaction, minimize, constrain, restrict :: ManagerPure t u -> DDPure t u -> DDPure t u -> DDPure t u
 liCompaction = safeArg2 cuddBddLICompaction
 minimize     = safeArg2 cuddBddMinimize
+constrain   = safeArg2 cuddBddConstrain
+restrict     = safeArg2 cuddBddRestrict
 

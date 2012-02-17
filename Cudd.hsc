@@ -68,7 +68,9 @@ module Cudd (
     withManagerST,
     withManagerIO,
     cuddBddTransfer,
-    cuddBddMakePrime
+    cuddBddMakePrime,
+    cuddBddConstrain,
+    cuddBddRestrict
     ) where
 
 import System.IO
@@ -701,4 +703,16 @@ foreign import ccall safe "cudd.h Cudd_bddMakePrime_s"
 
 cuddBddMakePrime :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddMakePrime = cuddArg2 c_cuddBddMakePrime
+
+foreign import ccall safe "cudd.h Cudd_bddConstrain_s"
+    c_cuddBddConstrain :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+cuddBddConstrain :: DdManager -> DdNode -> DdNode -> DdNode
+cuddBddConstrain = cuddArg2 c_cuddBddConstrain
+
+foreign import ccall safe "cudd.h Cudd_bddRestrict_s"
+    c_cuddBddRestrict :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+cuddBddRestrict :: DdManager -> DdNode -> DdNode -> DdNode
+cuddBddRestrict = cuddArg2 c_cuddBddRestrict
 
