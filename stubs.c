@@ -213,6 +213,13 @@ DdNode *Cudd_bddRestrict_s(DdManager *m, DdNode *f, DdNode *c){
     return r;
 }
 
+DdNode *Cudd_bddSqueeze_s(DdManager *m, DdNode *l, DdNode *u){
+    DdNode *r = Cudd_bddSqueeze(m, l, u);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+
 DdNode *Cudd_bddConstrain_s(DdManager *m, DdNode *f, DdNode *c){
     DdNode *r = Cudd_bddConstrain(m, f, c);
     assert(r);
