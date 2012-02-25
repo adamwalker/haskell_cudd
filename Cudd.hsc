@@ -327,14 +327,12 @@ cuddAllSat (DdManager m) (DdNode n) = unsafePerformIO $
 cuddOneSat :: DdManager -> DdNode -> Maybe [Int]
 cuddOneSat (DdManager m) (DdNode n) = unsafePerformIO $ 
     alloca $ \nvarsptr ->
-            withForeignPtr n (\np -> do
-				      res <- c_oneSat m np nvarsptr
-				      if res == nullPtr
-					  then return Nothing
-					  else do nvars <- liftM fromIntegral $ peek nvarsptr
-					          res <- peekArray nvars res
-					          return $ Just $ map fromIntegral res)
-
+    withForeignPtr n (\np -> do
+    res <- c_oneSat m np nvarsptr
+    if res==nullPtr then (return Nothing) else do
+        nvars <- liftM fromIntegral $ peek nvarsptr
+        res <- peekArray nvars res
+        return $ Just $ map fromIntegral res)
 
 foreign import ccall safe "cudd.h Cudd_SupportIndex"
 	c_cuddSupportIndex :: Ptr CDdManager -> Ptr CDdNode -> IO(Ptr CInt)
