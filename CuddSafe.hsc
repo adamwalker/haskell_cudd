@@ -32,7 +32,8 @@ module CuddSafe (
     liCompaction,
     minimize,
     constrain,
-    restrict
+    restrict,
+    makePrime
     ) where
 
 import Control.DeepSeq
@@ -149,4 +150,7 @@ liCompaction = safeArg2 cuddBddLICompaction
 minimize     = safeArg2 cuddBddMinimize
 constrain   = safeArg2 cuddBddConstrain
 restrict     = safeArg2 cuddBddRestrict
+
+makePrime :: ManagerPure t u -> DDPure t u -> DDPure t u -> DDPure t u
+makePrime = safeArg2 cuddBddMakePrime
 
