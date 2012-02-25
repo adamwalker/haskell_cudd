@@ -23,6 +23,7 @@ module Cudd (
     cuddPrintMinterm,
     cuddAllSat,
     cuddOneSat,
+    cuddOnePrime,
     cuddSupportIndex,
     cuddBddExistAbstract,
     cuddBddUnivAbstract,
@@ -327,12 +328,26 @@ cuddAllSat (DdManager m) (DdNode n) = unsafePerformIO $
 cuddOneSat :: DdManager -> DdNode -> Maybe [Int]
 cuddOneSat (DdManager m) (DdNode n) = unsafePerformIO $ 
     alloca $ \nvarsptr ->
-    withForeignPtr n (\np -> do
+    withForeignPtr n $ \np -> do
     res <- c_oneSat m np nvarsptr
     if res==nullPtr then (return Nothing) else do
         nvars <- liftM fromIntegral $ peek nvarsptr
         res <- peekArray nvars res
-        return $ Just $ map fromIntegral res)
+        return $ Just $ map fromIntegral res
+
+foreign import ccall safe "cuddwrap.h onePrime"
+    c_onePrime :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CInt)
+
+cuddOnePrime :: DdManager -> DdNode -> DdNode -> Maybe [Int]
+cuddOnePrime (DdManager m) (DdNode l) (DdNode u) = unsafePerformIO $ 
+    alloca $ \nvarsptr -> 
+    withForeignPtr l $ \lp -> 
+    withForeignPtr u $ \up -> do
+    res <- c_onePrime m lp up nvarsptr 
+    if res==nullPtr then (return Nothing) else do
+        nvars <- liftM fromIntegral $ peek nvarsptr
+        res <- peekArray nvars res
+        return $ Just $ map fromIntegral res
 
 foreign import ccall safe "cudd.h Cudd_SupportIndex"
 	c_cuddSupportIndex :: Ptr CDdManager -> Ptr CDdNode -> IO(Ptr CInt)
