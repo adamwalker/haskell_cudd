@@ -33,7 +33,8 @@ module CuddSafe (
     minimize,
     constrain,
     restrict,
-    makePrime
+    makePrime,
+    supportIndex
     ) where
 
 import Control.DeepSeq
@@ -154,3 +155,5 @@ restrict     = safeArg2 cuddBddRestrict
 makePrime :: ManagerPure t u -> DDPure t u -> DDPure t u -> DDPure t u
 makePrime = safeArg2 cuddBddMakePrime
 
+supportIndex :: ManagerPure t u -> DDPure t u -> [Bool]
+supportIndex (ManagerPure m) (DDPure d) = cuddSupportIndex (DdManager m) (DdNode d)
