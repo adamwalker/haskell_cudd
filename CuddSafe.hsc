@@ -34,7 +34,8 @@ module CuddSafe (
     constrain,
     restrict,
     makePrime,
-    supportIndex
+    supportIndex,
+    largestCube
     ) where
 
 import Control.DeepSeq
@@ -50,6 +51,7 @@ import Control.Monad
 import Control.Applicative
 import Control.Monad.Identity
 import Data.Traversable
+import Control.Arrow
 
 import CuddInternal
 import Cudd
@@ -157,3 +159,6 @@ makePrime = safeArg2 cuddBddMakePrime
 
 supportIndex :: ManagerPure t u -> DDPure t u -> [Bool]
 supportIndex (ManagerPure m) (DDPure d) = cuddSupportIndex (DdManager m) (DdNode d)
+
+largestCube :: ManagerPure t u -> DDPure t u -> (Int, DDPure t u)
+largestCube (ManagerPure m) (DDPure d) = second (DDPure . unDdNode) $ cuddLargestCube (DdManager m) (DdNode d)

@@ -73,7 +73,8 @@ module Cudd (
     cuddBddConstrain,
     cuddBddRestrict,
     cuddBddSqueeze,
-    SatBit(..)
+    SatBit(..),
+    cuddLargestCube
     ) where
 
 import System.IO
@@ -745,3 +746,15 @@ foreign import ccall safe "cudd.h Cudd_bddSqueeze_s"
 cuddBddSqueeze :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddSqueeze = cuddArg2 c_cuddBddSqueeze
 
+foreign import ccall safe "cudd.h Cudd_LargestCube_s"
+    c_cuddLargestCube :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CDdNode)
+
+cuddLargestCube :: DdManager -> DdNode -> (Int, DdNode)
+cuddLargestCube (DdManager m) (DdNode n) = unsafePerformIO $ 
+    alloca $ \lp ->
+    withForeignPtr n $ \np -> do
+    node <- c_cuddLargestCube m np lp
+    res <- newForeignPtrEnv deref m node
+    l <- peek lp
+    return (fromIntegral l, DdNode res)
+     

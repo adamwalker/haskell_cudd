@@ -227,3 +227,9 @@ DdNode *Cudd_bddConstrain_s(DdManager *m, DdNode *f, DdNode *c){
     return r;
 }
 
+DdNode *Cudd_LargestCube_s(DdManager *m, DdNode *f, int *length){
+    DdNode *r = Cudd_LargestCube(m, f, length);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
