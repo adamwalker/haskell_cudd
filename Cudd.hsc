@@ -72,7 +72,8 @@ module Cudd (
     cuddBddMakePrime,
     cuddBddConstrain,
     cuddBddRestrict,
-    cuddBddSqueeze
+    cuddBddSqueeze,
+    SatBit(..)
     ) where
 
 import System.IO
@@ -307,13 +308,21 @@ cuddPrintMinterm :: DdManager -> DdNode -> IO ()
 cuddPrintMinterm (DdManager m) (DdNode n) = 
     withForeignPtr n $ c_cuddPrintMinterm m 
 
+data SatBit = Zero | One | DontCare deriving (Eq)
+
+toSatBit :: Int -> SatBit
+toSatBit 0 = Zero
+toSatBit 1 = One
+toSatBit 2 = DontCare
+toSatBit _ = error "toSatBit: Invalid sat bit returned from CUDD"
+
 foreign import ccall safe "cuddwrap.h allSat"
     c_allSat :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> Ptr CInt -> IO (Ptr (Ptr CInt))
 
 foreign import ccall safe "cuddwrap.h oneSat"
     c_oneSat :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CInt)
 
-cuddAllSat :: DdManager -> DdNode -> [[Int]]
+cuddAllSat :: DdManager -> DdNode -> [[SatBit]]
 cuddAllSat (DdManager m) (DdNode n) = unsafePerformIO $ 
     alloca $ \nvarsptr -> 
     alloca $ \ntermsptr -> 
@@ -323,9 +332,9 @@ cuddAllSat (DdManager m) (DdNode n) = unsafePerformIO $
     res <- peekArray nterms res
     nvars <- liftM fromIntegral $ peek nvarsptr
     res <- mapM (peekArray nvars) res
-    return $ map (map fromIntegral) res
+    return $ map (map (toSatBit . fromIntegral)) res
 
-cuddOneSat :: DdManager -> DdNode -> Maybe [Int]
+cuddOneSat :: DdManager -> DdNode -> Maybe [SatBit]
 cuddOneSat (DdManager m) (DdNode n) = unsafePerformIO $ 
     alloca $ \nvarsptr ->
     withForeignPtr n $ \np -> do
@@ -333,7 +342,7 @@ cuddOneSat (DdManager m) (DdNode n) = unsafePerformIO $
     if res==nullPtr then (return Nothing) else do
         nvars <- liftM fromIntegral $ peek nvarsptr
         res <- peekArray nvars res
-        return $ Just $ map fromIntegral res
+        return $ Just $ map (toSatBit . fromIntegral) res
 
 foreign import ccall safe "cuddwrap.h onePrime"
     c_onePrime :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CInt)
