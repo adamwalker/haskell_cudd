@@ -35,7 +35,8 @@ module CuddSafe (
     restrict,
     makePrime,
     supportIndex,
-    largestCube
+    largestCube,
+    leq
     ) where
 
 import Control.DeepSeq
@@ -162,3 +163,7 @@ supportIndex (ManagerPure m) (DDPure d) = cuddSupportIndex (DdManager m) (DdNode
 
 largestCube :: ManagerPure t u -> DDPure t u -> (Int, DDPure t u)
 largestCube (ManagerPure m) (DDPure d) = second (DDPure . unDdNode) $ cuddLargestCube (DdManager m) (DdNode d)
+
+leq :: ManagerPure t u -> DDPure t u -> DDPure t u -> Bool
+leq (ManagerPure m) (DDPure l) (DDPure r) = cuddBddLeq (DdManager m) (DdNode l) (DdNode r)
+

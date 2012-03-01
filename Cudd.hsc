@@ -74,7 +74,8 @@ module Cudd (
     cuddBddRestrict,
     cuddBddSqueeze,
     SatBit(..),
-    cuddLargestCube
+    cuddLargestCube,
+    cuddBddLeq
     ) where
 
 import System.IO
@@ -758,3 +759,12 @@ cuddLargestCube (DdManager m) (DdNode n) = unsafePerformIO $
     l <- peek lp
     return (fromIntegral l, DdNode res)
      
+foreign import ccall safe "cudd.h Cudd_bddLeq"
+    c_cuddBddLeq :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO CInt
+
+cuddBddLeq :: DdManager -> DdNode -> DdNode -> Bool
+cuddBddLeq (DdManager m) (DdNode l) (DdNode r) = (==1) $ unsafePerformIO $ do
+    withForeignPtr l $ \lp -> do
+    withForeignPtr r $ \rp -> do
+    c_cuddBddLeq m lp rp
+
