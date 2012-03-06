@@ -56,6 +56,7 @@ import Control.Arrow
 
 import CuddInternal
 import Cudd
+import CuddST
 
 newtype DDPure t u = DDPure {unDDPure :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
 instance NFData (DDPure t u) 
