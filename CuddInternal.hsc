@@ -14,7 +14,9 @@ module CuddInternal (
     withForeignArrayPtr, 
     withForeignArrayPtrLen, 
     ddNodeToInt,
-    deref
+    deref,
+    cudd_unique_slots,
+    cudd_cache_slots
     ) where
 
 import System.IO
@@ -31,6 +33,12 @@ import Control.DeepSeq
 
 #include "cudd.h"
 #include "cuddwrap.h"
+
+cudd_unique_slots :: Int
+cudd_unique_slots = #const CUDD_UNIQUE_SLOTS
+
+cudd_cache_slots :: Int
+cudd_cache_slots = #const CUDD_CACHE_SLOTS
 
 data CDdManager
 newtype DdManager = DdManager (Ptr CDdManager)

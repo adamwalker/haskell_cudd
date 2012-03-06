@@ -219,12 +219,6 @@ cuddDumpDot (DdManager m) (DdNode n) s  =
 		withCAString s $ \str -> 
 			c_cuddDumpDot m np str
 
-cudd_unique_slots :: Int
-cudd_unique_slots = #const CUDD_UNIQUE_SLOTS
-
-cudd_cache_slots :: Int
-cudd_cache_slots = #const CUDD_CACHE_SLOTS
-
 foreign import ccall safe "cuddwrap.h wrappedCuddIsComplement"
     c_cuddIsComplement :: Ptr CDdNode -> CInt
 

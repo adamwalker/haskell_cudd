@@ -2,8 +2,11 @@
 
 module CuddST (
         cuddInitST,
+        cuddInitSTDefaults,
         withManagerST,
+        withManagerSTDefaults,
         withManagerIO,
+        withManagerIODefaults,
         cuddShuffleHeapST,
         cuddSetVarMapST,
         cuddBddVarMapST,
@@ -11,49 +14,48 @@ module CuddST (
     ) where
 
 import System.IO
-import System.Directory
 import Foreign
 import Foreign.Ptr
 import Foreign.C.Types
-import Foreign.C.String
 import Foreign.ForeignPtr
-import Foreign.Marshal.Array
-import Foreign.Marshal.Utils
 import Control.Monad.ST.Lazy
 import Control.Monad
-import Data.Binary
 import Data.List
-import Control.DeepSeq
-import Control.Monad.Error
-import Data.Array hiding (indices)
-import Control.Exception hiding (catch)
+import Control.Monad.IO.Class
 
 import CuddInternal
 
 #include "cudd.h"
 
-cudd_unique_slots :: Int
-cudd_unique_slots = #const CUDD_UNIQUE_SLOTS
-
-cudd_cache_slots :: Int
-cudd_cache_slots = #const CUDD_CACHE_SLOTS
-
 foreign import ccall safe "cudd.h Cudd_Init"
 	c_cuddInit :: CInt -> CInt -> CInt -> CInt -> CInt -> IO (Ptr CDdManager)
 
-cuddInitST :: ST s (STDdManager s u)
-cuddInitST = unsafeIOToST $ do
-    cm <- c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
+cuddInitST :: Int -> Int -> Int -> Int -> Int -> ST s (STDdManager s u)
+cuddInitST numVars numVarsZ numSlots cacheSize maxMemory = unsafeIOToST $ do
+    cm <- c_cuddInit (fromIntegral numVars) (fromIntegral numVarsZ) (fromIntegral numSlots) (fromIntegral cacheSize) (fromIntegral maxMemory)
     return $ STDdManager cm
 
-withManagerST :: (forall u. STDdManager s u -> ST s a) -> ST s a
-withManagerST f = do
-    res <- cuddInitST
+cuddInitSTDefaults :: ST s (STDdManager s u)
+cuddInitSTDefaults = cuddInitST 0 0 cudd_unique_slots cudd_cache_slots 0
+
+withManagerST :: Int -> Int -> Int -> Int -> Int -> (forall u. STDdManager s u -> ST s a) -> ST s a
+withManagerST numVars numVarsZ numSlots cacheSize maxMemory f = do
+    res <- cuddInitST numVars numVarsZ numSlots cacheSize maxMemory
     f res 
 
-withManagerIO :: MonadIO m => (forall u. STDdManager RealWorld u -> m a) -> m a
-withManagerIO f = do
-    res <- liftIO $ stToIO cuddInitST
+withManagerSTDefaults :: (forall u. STDdManager s u -> ST s a) -> ST s a
+withManagerSTDefaults f = do
+    res <- cuddInitSTDefaults
+    f res 
+
+withManagerIO :: MonadIO m => Int -> Int -> Int -> Int -> Int -> (forall u. STDdManager RealWorld u -> m a) -> m a
+withManagerIO numVars numVarsZ numSlots cacheSize maxMemory f = do
+    res <- liftIO $ stToIO $ cuddInitST numVars numVarsZ numSlots cacheSize maxMemory
+    f res
+
+withManagerIODefaults :: MonadIO m => (forall u. STDdManager RealWorld u -> m a) -> m a
+withManagerIODefaults f = do
+    res <- liftIO $ stToIO cuddInitSTDefaults
     f res
 
 foreign import ccall safe "cudd.h Cudd_ShuffleHeap"
