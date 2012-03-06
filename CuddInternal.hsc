@@ -13,7 +13,8 @@ module CuddInternal (
     withForeignArray, 
     withForeignArrayPtr, 
     withForeignArrayPtrLen, 
-    ddNodeToInt
+    ddNodeToInt,
+    deref
     ) where
 
 import System.IO
@@ -68,6 +69,8 @@ foreign import ccall safe "cudd.h &Cudd_IterDerefBdd"
 
 foreign import ccall safe "cuddwrap.h wrappedCuddRef"
 	cuddRef :: Ptr CDdNode -> IO ()
+
+deref = c_cuddIterDerefBdd
 
 withForeignArray :: [ForeignPtr a] -> ([Ptr a] -> IO b) -> IO b
 withForeignArray [] func = func []

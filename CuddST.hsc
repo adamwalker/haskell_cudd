@@ -32,8 +32,6 @@ import CuddInternal
 
 #include "cudd.h"
 
-deref = c_cuddIterDerefBdd
-
 cudd_unique_slots :: Int
 cudd_unique_slots = #const CUDD_UNIQUE_SLOTS
 
