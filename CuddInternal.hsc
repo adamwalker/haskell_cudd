@@ -31,6 +31,7 @@ import Control.Monad.ST.Lazy
 import Control.Monad
 import Control.DeepSeq
 
+#include <stdio.h>
 #include "cudd.h"
 #include "cuddwrap.h"
 

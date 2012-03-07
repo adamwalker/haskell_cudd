@@ -93,6 +93,7 @@ import Control.Exception hiding (catch)
 import CuddInternal
 import MTR
 
+#include <stdio.h>
 #include "cudd.h"
 #include "cuddwrap.h"
 #include "dddmp.h"

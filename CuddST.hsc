@@ -25,6 +25,7 @@ import Control.Monad.IO.Class
 
 import CuddInternal
 
+#include <stdio.h>
 #include "cudd.h"
 
 foreign import ccall safe "cudd.h Cudd_Init"
