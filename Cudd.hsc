@@ -34,6 +34,7 @@ module Cudd (
     cuddDagSize,
     cuddIndicesToCube,
     getManagerST,
+    getSTManager,
     getNodeST,
     cuddBddLICompaction,
     cuddBddMinimize,
@@ -117,6 +118,9 @@ cuddInitOrder order = DdManager $ unsafePerformIO $ withArrayLen (map fromIntegr
 
 getManagerST :: STDdManager s u -> DdManager
 getManagerST (STDdManager m) = DdManager m
+
+getSTManager :: DdManager -> STDdManager s u
+getSTManager (DdManager m) = STDdManager m
 
 getNodeST :: STDdNode s u -> DdNode
 getNodeST (STDdNode n) = DdNode n
