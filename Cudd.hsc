@@ -93,22 +93,18 @@ import Control.Monad.Error
 import Data.Array hiding (indices)
 import Control.Exception hiding (catch)
 
+import ForeignHelpers
 import CuddInternal
 import MTR
+import CuddC
 
 #include <stdio.h>
 #include "cudd.h"
 #include "cuddwrap.h"
 #include "dddmp.h"
 
-foreign import ccall safe "cudd.h Cudd_Init"
-	c_cuddInit :: CInt -> CInt -> CInt -> CInt -> CInt -> IO (Ptr CDdManager)
-
 cuddInit :: DdManager
 cuddInit = DdManager $ unsafePerformIO $ c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
-
-foreign import ccall safe "cudd.h Cudd_ShuffleHeap"
-    c_cuddShuffleHeap :: Ptr CDdManager -> Ptr CInt -> IO CInt
 
 cuddInitOrder :: [Int] -> DdManager
 cuddInitOrder order = DdManager $ unsafePerformIO $ withArrayLen (map fromIntegral order) $ \size ptr -> do
@@ -127,24 +123,15 @@ getSTManager (DdManager m) = STDdManager m
 getNodeST :: STDdNode s u -> DdNode
 getNodeST (STDdNode n) = DdNode n
 
-foreign import ccall safe "cudd.h Cudd_ReadOne_s"
-	c_cuddReadOne :: Ptr CDdManager -> IO (Ptr CDdNode)
-
 cuddReadOne :: DdManager -> DdNode
 cuddReadOne (DdManager d) = DdNode $ unsafePerformIO $ do
 	node <- c_cuddReadOne d
 	newForeignPtrEnv deref d node
 
-foreign import ccall safe "cudd.h Cudd_ReadLogicZero_s"
-	c_cuddReadLogicZero :: Ptr CDdManager -> IO (Ptr CDdNode)
-
 cuddReadLogicZero :: DdManager -> DdNode
 cuddReadLogicZero (DdManager d) = DdNode $ unsafePerformIO $ do
 	node <- c_cuddReadLogicZero d
 	newForeignPtrEnv deref d node
-
-foreign import ccall safe "cudd.h Cudd_bddIthVar_s"
-	c_cuddBddIthVar :: Ptr CDdManager -> CInt -> IO (Ptr CDdNode)
 
 cuddBddIthVar :: DdManager -> Int -> DdNode
 cuddBddIthVar (DdManager d) i = DdNode $ unsafePerformIO $ do
@@ -157,7 +144,7 @@ cuddArg1 f (DdManager m) (DdNode x) = DdNode $ unsafePerformIO $
 	node <- f m xp
 	newForeignPtrEnv deref m node
 
-cuddArg2 :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)) -> DdManager -> DdNode -> DdNode-> DdNode
+cuddArg2 :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)) -> DdManager -> DdNode -> DdNode -> DdNode
 cuddArg2 f (DdManager m) (DdNode l) (DdNode r) = DdNode $ unsafePerformIO $ 
  	withForeignPtr l $ \lp -> 
 	withForeignPtr r $ \rp -> do
@@ -172,44 +159,23 @@ cuddArg3 f (DdManager m) (DdNode l) (DdNode r) (DdNode x) = DdNode $ unsafePerfo
 	node <- f m lp rp xp
 	newForeignPtrEnv deref m node
 
-foreign import ccall safe "cudd.h Cudd_bddAnd_s"
-	c_cuddBddAnd :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddAnd :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddAnd = cuddArg2 c_cuddBddAnd
-
-foreign import ccall safe "cudd.h Cudd_bddOr_s"
-	c_cuddBddOr :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddOr :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddOr = cuddArg2 c_cuddBddOr
 
-foreign import ccall safe "cudd.h Cudd_bddNand_s"
-	c_cuddBddNand :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddNand :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddNand = cuddArg2 c_cuddBddNand
-
-foreign import ccall safe "cudd.h Cudd_bddNor_s"
-	c_cuddBddNor :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddNor :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddNor = cuddArg2 c_cuddBddNor
 
-foreign import ccall safe "cudd.h Cudd_bddXor_s"
-	c_cuddBddXor :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddXor :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddXor = cuddArg2 c_cuddBddXor
 
-foreign import ccall safe "cudd.h Cudd_bddXnor_s"
-	c_cuddBddXnor :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddXnor :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddXnor = cuddArg2 c_cuddBddXnor
-
-foreign import ccall safe "cuddwrap.h wrappedCuddNot_s"
-	c_cuddNot :: Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddNot :: DdManager -> DdNode -> DdNode
 cuddNot = cuddArg1 (const c_cuddNot)
@@ -316,20 +282,11 @@ cuddSupportIndex (DdManager m) (DdNode n) = unsafePerformIO $
 foreign import ccall safe "cudd.h Cudd_FirstCube"
     c_cuddFirstCube :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CInt) -> Ptr CInt
 
-foreign import ccall safe "cudd.h Cudd_bddExistAbstract_s"
-	c_cuddBddExistAbstract :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddExistAbstract :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddExistAbstract = cuddArg2 c_cuddBddExistAbstract
 
-foreign import ccall safe "cudd.h Cudd_bddUnivAbstract_s"
-	c_cuddBddUnivAbstract :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddUnivAbstract :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddUnivAbstract = cuddArg2 c_cuddBddUnivAbstract
-
-foreign import ccall safe "cudd.h Cudd_bddIte_s"
-    c_cuddBddIte :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddIte :: DdManager -> DdNode -> DdNode -> DdNode -> DdNode
 cuddBddIte = cuddArg3 c_cuddBddIte

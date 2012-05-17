@@ -23,13 +23,12 @@ import Control.Monad
 import Data.List
 import Control.Monad.IO.Class
 
+import CuddC
 import CuddInternal
+import ForeignHelpers
 
 #include <stdio.h>
 #include "cudd.h"
-
-foreign import ccall safe "cudd.h Cudd_Init"
-	c_cuddInit :: CInt -> CInt -> CInt -> CInt -> CInt -> IO (Ptr CDdManager)
 
 cuddInitST :: Int -> Int -> Int -> Int -> Int -> ST s (STDdManager s u)
 cuddInitST numVars numVarsZ numSlots cacheSize maxMemory = unsafeIOToST $ do
@@ -59,9 +58,6 @@ withManagerIODefaults f = do
     res <- liftIO $ stToIO cuddInitSTDefaults
     f res
 
-foreign import ccall safe "cudd.h Cudd_ShuffleHeap"
-    c_cuddShuffleHeap :: Ptr CDdManager -> Ptr CInt -> IO CInt
-
 cuddShuffleHeapST :: STDdManager s u -> [Int] -> ST s ()
 cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $ 
     withArrayLen (map fromIntegral order) $ \size ptr -> do
@@ -72,9 +68,6 @@ cuddShuffleHeapST (STDdManager m) order = unsafeIOToST $
     when (fromIntegral res2 /= 1) (error "cuddShuffleHeapST: Cudd_ShuffleHeap failed")
     return ()
 
-foreign import ccall safe "cudd.h Cudd_SetVarMap"
-    c_cuddSetVarMap :: Ptr CDdManager -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> CInt -> IO CInt
-
 cuddSetVarMapST :: STDdManager s u -> [STDdNode s u] -> [STDdNode s u] -> ST s ()
 cuddSetVarMapST (STDdManager m) v1 v2 = unsafeIOToST $ 
     withForeignArrayPtrLen (map unSTDdNode v1) $ \s1 v1p -> 
@@ -84,9 +77,6 @@ cuddSetVarMapST (STDdManager m) v1 v2 = unsafeIOToST $
     when (fromIntegral res /= 1) (error "cuddSetVarMapST: Cudd_SetVarMap failed")
     return ()
 
-foreign import ccall safe "cudd.h Cudd_bddVarMap_s"
-    c_cuddBddVarMap :: Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddVarMapST :: STDdManager s u -> STDdNode s u -> ST s (STDdNode s u)
 cuddBddVarMapST (STDdManager m) (STDdNode node) = unsafeIOToST $ 
     withForeignPtr node $ \np -> do
@@ -94,11 +84,9 @@ cuddBddVarMapST (STDdManager m) (STDdNode node) = unsafeIOToST $
     fp <- newForeignPtrEnv deref m node
     return $ STDdNode fp
 
-foreign import ccall safe "cudd.h Cudd_bddIthVar_s"
-	c_cuddBddIthVar :: Ptr CDdManager -> CInt -> IO (Ptr CDdNode)
-
 cuddBddIthVarST :: STDdManager s u -> Int -> ST s (STDdNode s u)
 cuddBddIthVarST (STDdManager d) i = (liftM STDdNode) $ unsafeIOToST $ do
     node <- c_cuddBddIthVar d (fromIntegral i)
     cuddRef node
     newForeignPtr_ node
+

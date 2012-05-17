@@ -8,6 +8,8 @@
 *.stat
 *.dot
 *.ps
+*.chi
+*.chs.h
 cscope.out
 Cudd.hs
 CuddInternal.hs
