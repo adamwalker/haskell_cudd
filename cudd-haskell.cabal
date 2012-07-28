@@ -21,3 +21,4 @@ library
   build-tools:         c2hs, hsc2hs
   include-dirs:        .
   c-sources:           cuddwrap.c, stubs.c
+  extra-libraries:     cudd, mtr, st, util, epd, dddmp
