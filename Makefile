@@ -1,4 +1,5 @@
-CUDD_PATH=../../3rd_party/lib/cudd-2.4.2
+include ${COMMON}/Pathdefs.inc
+#CUDD_PATH=../../3rd_party/lib/cudd-2.4.2
 INCLUDE=-I${CUDD_PATH}/include
 
 CFLAGS+=${INCLUDE} -g
