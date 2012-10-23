@@ -241,3 +241,10 @@ DdNode *Cudd_bddComputeCube_s(DdManager *m, DdNode **vars, int *phase, int n){
     return r;
 }
 
+DdNode *Cudd_bddCompose_s(DdManager *m, DdNode *f, DdNode *g, int v){
+    DdNode *r = Cudd_bddCompose(m, f, g, v);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+

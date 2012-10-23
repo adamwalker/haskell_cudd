@@ -27,7 +27,8 @@ module CuddExplicitDeref (
     computeCube,
     nodesToCube,
     readSize,
-    satCube
+    satCube,
+    compose
     ) where
 
 import Foreign hiding (void)
@@ -144,6 +145,9 @@ satCube ma@(STDdManager m) (DDNode x) = unsafeIOToST $ do
     c_cuddBddToCubeArray m x resptr
     res <- peekArray size resptr
     return $ map fromIntegral res
+
+compose :: STDdManager s u -> DDNode s u -> DDNode s u -> Int -> ST s (DDNode s u)
+compose (STDdManager m) (DDNode f) (DDNode g) v = liftM DDNode $ unsafeIOToST $ c_cuddBddCompose m f g (fromIntegral v)
 
 {-
 refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)

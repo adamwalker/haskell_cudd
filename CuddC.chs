@@ -31,7 +31,8 @@ module CuddC (
     c_cuddIndicesToCube,
     c_cuddBddComputeCube,
     c_cuddBddToCubeArray,
-    c_cuddReadSize
+    c_cuddReadSize,
+    c_cuddBddCompose
     ) where
 
 import Foreign
@@ -140,4 +141,7 @@ foreign import ccall safe "cudd.h Cudd_BddToCubeArray"
 
 foreign import ccall safe "cudd.h Cudd_ReadSize"
 	c_cuddReadSize :: Ptr CDdManager -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_bddCompose_s"
+    c_cuddBddCompose :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> CInt -> IO (Ptr CDdNode)
 
