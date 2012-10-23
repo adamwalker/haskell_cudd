@@ -21,7 +21,13 @@ module CuddC (
     c_cuddInit,
     c_cuddShuffleHeap,
     c_cuddSetVarMap,
-    c_cuddBddVarMap
+    c_cuddBddVarMap,
+    c_cuddBddLeq,
+    c_cuddBddSwapVariables,
+    c_cuddLargestCube,
+    c_cuddBddMakePrime,
+    c_cuddSupportIndex,
+    c_cuddSupportIndices
     ) where
 
 import Foreign
@@ -100,4 +106,22 @@ foreign import ccall safe "cudd.h Cudd_SetVarMap"
 
 foreign import ccall safe "cudd.h Cudd_bddVarMap_s"
     c_cuddBddVarMap :: Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddLeq"
+    c_cuddBddLeq :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_bddSwapVariables_s"
+    c_cuddBddSwapVariables :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_LargestCube_s"
+    c_cuddLargestCube :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddMakePrime_s"
+    c_cuddBddMakePrime :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_SupportIndex"
+	c_cuddSupportIndex :: Ptr CDdManager -> Ptr CDdNode -> IO(Ptr CInt)
+
+foreign import ccall safe "cudd.h Cudd_SupportIndices"
+    c_cuddSupportIndices :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CInt) -> IO (CInt)
 

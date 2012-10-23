@@ -262,9 +262,6 @@ cuddOnePrime (DdManager m) (DdNode l) (DdNode u) = unsafePerformIO $
         res <- peekArray nvars res
         return $ Just $ map fromIntegral res
 
-foreign import ccall safe "cudd.h Cudd_SupportIndex"
-	c_cuddSupportIndex :: Ptr CDdManager -> Ptr CDdNode -> IO(Ptr CInt)
-
 foreign import ccall safe "cudd.h Cudd_ReadSize"
 	c_cuddReadSize :: Ptr CDdManager -> IO CInt
 
@@ -290,9 +287,6 @@ cuddBddUnivAbstract = cuddArg2 c_cuddBddUnivAbstract
 
 cuddBddIte :: DdManager -> DdNode -> DdNode -> DdNode -> DdNode
 cuddBddIte = cuddArg3 c_cuddBddIte
-
-foreign import ccall safe "cudd.h Cudd_bddSwapVariables_s"
-    c_cuddBddSwapVariables :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
 
 cuddBddSwapVariables :: DdManager -> DdNode -> [DdNode] -> [DdNode] -> DdNode
 cuddBddSwapVariables (DdManager m) (DdNode d) s1 s2 = DdNode $ unsafePerformIO $ 
@@ -616,9 +610,6 @@ cuddBddTransfer (DdManager m1) (DdManager m2) (DdNode x) = DdNode $ unsafePerfor
         node <- c_cuddBddTransfer m1 m2 xp
         newForeignPtrEnv deref m2 node
 
-foreign import ccall safe "cudd.h Cudd_bddMakePrime_s"
-    c_cuddBddMakePrime :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddMakePrime :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddMakePrime = cuddArg2 c_cuddBddMakePrime
 
@@ -640,9 +631,6 @@ foreign import ccall safe "cudd.h Cudd_bddSqueeze_s"
 cuddBddSqueeze :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddSqueeze = cuddArg2 c_cuddBddSqueeze
 
-foreign import ccall safe "cudd.h Cudd_LargestCube_s"
-    c_cuddLargestCube :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CDdNode)
-
 cuddLargestCube :: DdManager -> DdNode -> (Int, DdNode)
 cuddLargestCube (DdManager m) (DdNode n) = unsafePerformIO $ 
     alloca $ \lp ->
@@ -652,9 +640,6 @@ cuddLargestCube (DdManager m) (DdNode n) = unsafePerformIO $
     l <- peek lp
     return (fromIntegral l, DdNode res)
      
-foreign import ccall safe "cudd.h Cudd_bddLeq"
-    c_cuddBddLeq :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO CInt
-
 cuddBddLeq :: DdManager -> DdNode -> DdNode -> Bool
 cuddBddLeq (DdManager m) (DdNode l) (DdNode r) = (==1) $ unsafePerformIO $ do
     withForeignPtr l $ \lp -> do
