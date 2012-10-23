@@ -233,3 +233,11 @@ DdNode *Cudd_LargestCube_s(DdManager *m, DdNode *f, int *length){
     Cudd_Ref(r);
     return r;
 }
+
+DdNode *Cudd_bddComputeCube_s(DdManager *m, DdNode **vars, int *phase, int n){
+    DdNode *r = Cudd_bddComputeCube(m, vars, phase, n);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+

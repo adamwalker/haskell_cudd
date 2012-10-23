@@ -262,9 +262,6 @@ cuddOnePrime (DdManager m) (DdNode l) (DdNode u) = unsafePerformIO $
         res <- peekArray nvars res
         return $ Just $ map fromIntegral res
 
-foreign import ccall safe "cudd.h Cudd_ReadSize"
-	c_cuddReadSize :: Ptr CDdManager -> IO CInt
-
 cuddReadSize :: DdManager -> Int
 cuddReadSize (DdManager m) = fromIntegral $ unsafePerformIO $ c_cuddReadSize m
 
@@ -383,9 +380,6 @@ foreign import ccall safe "cudd.h Cudd_DagSize"
     c_cuddDagSize :: Ptr CDdNode -> IO CInt
 
 cuddDagSize (DdNode d) = fromIntegral $ unsafePerformIO $ withForeignPtr d c_cuddDagSize 
-
-foreign import ccall safe "cudd.h Cudd_IndicesToCube_s"
-    c_cuddIndicesToCube :: Ptr CDdManager -> Ptr CInt -> CInt -> IO (Ptr CDdNode)
 
 cuddIndicesToCube :: DdManager -> [Int] -> DdNode
 cuddIndicesToCube (DdManager m) indices = DdNode $ unsafePerformIO $ 

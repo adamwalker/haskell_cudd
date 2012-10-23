@@ -27,7 +27,11 @@ module CuddC (
     c_cuddLargestCube,
     c_cuddBddMakePrime,
     c_cuddSupportIndex,
-    c_cuddSupportIndices
+    c_cuddSupportIndices,
+    c_cuddIndicesToCube,
+    c_cuddBddComputeCube,
+    c_cuddBddToCubeArray,
+    c_cuddReadSize
     ) where
 
 import Foreign
@@ -124,4 +128,16 @@ foreign import ccall safe "cudd.h Cudd_SupportIndex"
 
 foreign import ccall safe "cudd.h Cudd_SupportIndices"
     c_cuddSupportIndices :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CInt) -> IO (CInt)
+
+foreign import ccall safe "cudd.h Cudd_IndicesToCube_s"
+    c_cuddIndicesToCube :: Ptr CDdManager -> Ptr CInt -> CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddComputeCube_s"
+    c_cuddBddComputeCube :: Ptr CDdManager -> Ptr (Ptr CDdNode) -> Ptr CInt -> CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_BddToCubeArray"
+    c_cuddBddToCubeArray :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (CInt)
+
+foreign import ccall safe "cudd.h Cudd_ReadSize"
+	c_cuddReadSize :: Ptr CDdManager -> IO CInt
 

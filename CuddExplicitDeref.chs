@@ -22,7 +22,12 @@ module CuddExplicitDeref (
     ref,
     largestCube,
     makePrime,
-    supportIndices
+    supportIndices,
+    indicesToCube,
+    computeCube,
+    nodesToCube,
+    readSize,
+    satCube
     ) where
 
 import Foreign hiding (void)
@@ -107,6 +112,37 @@ supportIndices (STDdManager m) (DDNode x) = unsafeIOToST $
     sz <- c_cuddSupportIndices m x arrp
     aaddr <- peek arrp
     res <- peekArray (fromIntegral sz) aaddr
+    return $ map fromIntegral res
+
+indicesToCube :: STDdManager s u -> [Int] -> ST s (DDNode s u)
+indicesToCube (STDdManager m) indices = unsafeIOToST $
+    withArrayLen (map fromIntegral indices) $ \sz pt -> do
+    res <- c_cuddIndicesToCube m pt (fromIntegral sz)
+    return $ DDNode res
+
+computeCube :: STDdManager s u -> [DDNode s u] -> [Bool] -> ST s (DDNode s u)
+computeCube (STDdManager m) nodes phases = unsafeIOToST $ 
+    withArrayLen (map unDDNode nodes) $ \szn ptn -> 
+    withArrayLen (map (fromIntegral . fromBool) phases) $ \szp ptp -> do
+    when (szn /= szp) $ error "computeCube: lists are different lengths"
+    res <- c_cuddBddComputeCube m ptn ptp (fromIntegral szn)
+    return $ DDNode res
+
+nodesToCube :: STDdManager s u -> [DDNode s u] -> ST s (DDNode s u)
+nodesToCube (STDdManager m) nodes = unsafeIOToST $
+    withArrayLen (map unDDNode nodes) $ \sz pt -> do
+    res <- c_cuddBddComputeCube m pt nullPtr (fromIntegral sz)
+    return $ DDNode res
+
+readSize :: STDdManager s u -> ST s Int
+readSize (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadSize m
+
+satCube :: STDdManager s u -> DDNode s u -> ST s [Int]
+satCube ma@(STDdManager m) (DDNode x) = unsafeIOToST $ do
+    size <- liftM fromIntegral $ c_cuddReadSize m
+    allocaArray size $ \resptr -> do
+    c_cuddBddToCubeArray m x resptr
+    res <- peekArray size resptr
     return $ map fromIntegral res
 
 {-
