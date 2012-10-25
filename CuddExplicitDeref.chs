@@ -28,7 +28,9 @@ module CuddExplicitDeref (
     nodesToCube,
     readSize,
     satCube,
-    compose
+    compose,
+    andAbstract,
+    xorExistAbstract
     ) where
 
 import Foreign hiding (void)
@@ -66,6 +68,9 @@ bxnor   = arg2 c_cuddBddXnor
 bite    = arg3 c_cuddBddIte
 bexists = arg2 c_cuddBddExistAbstract
 bforall = arg2 c_cuddBddUnivAbstract
+
+andAbstract      = arg3 c_cuddBddAndAbstract
+xorExistAbstract = arg3 c_cuddBddXorExistAbstract
 
 bnot (DDNode x) = DDNode $ unsafePerformIO $ c_cuddNot x
 bvar (STDdManager m) i = liftM DDNode $ unsafeIOToST $ c_cuddBddIthVar m (fromIntegral i)

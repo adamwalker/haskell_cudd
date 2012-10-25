@@ -32,7 +32,9 @@ module CuddC (
     c_cuddBddComputeCube,
     c_cuddBddToCubeArray,
     c_cuddReadSize,
-    c_cuddBddCompose
+    c_cuddBddCompose,
+    c_cuddBddAndAbstract,
+    c_cuddBddXorExistAbstract
     ) where
 
 import Foreign
@@ -144,4 +146,10 @@ foreign import ccall safe "cudd.h Cudd_ReadSize"
 
 foreign import ccall safe "cudd.h Cudd_bddCompose_s"
     c_cuddBddCompose :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddAndAbstract_s"
+    c_cuddBddAndAbstract :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddXorExistAbstract_s"
+    c_cuddBddXorExistAbstract :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
