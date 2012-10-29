@@ -154,6 +154,13 @@ satCube ma@(STDdManager m) (DDNode x) = unsafeIOToST $ do
 compose :: STDdManager s u -> DDNode s u -> DDNode s u -> Int -> ST s (DDNode s u)
 compose (STDdManager m) (DDNode f) (DDNode g) v = liftM DDNode $ unsafeIOToST $ c_cuddBddCompose m f g (fromIntegral v)
 
+arg3Bool :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO CInt) -> STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u  -> ST s Bool
+arg3Bool f (STDdManager m) (DDNode x) (DDNode y) (DDNode z) = liftM (==1) $ unsafeIOToST $ f m x y z
+
+leqUnless, equivDC :: STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u -> ST s Bool
+leqUnless = arg3Bool c_cuddBddLeqUnless
+equivDC   = arg3Bool c_cuddEquivDC
+
 {-
 refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)
 

@@ -34,7 +34,9 @@ module CuddC (
     c_cuddReadSize,
     c_cuddBddCompose,
     c_cuddBddAndAbstract,
-    c_cuddBddXorExistAbstract
+    c_cuddBddXorExistAbstract,
+    c_cuddBddLeqUnless,
+    c_cuddEquivDC
     ) where
 
 import Foreign
@@ -152,4 +154,10 @@ foreign import ccall safe "cudd.h Cudd_bddAndAbstract_s"
 
 foreign import ccall safe "cudd.h Cudd_bddXorExistAbstract_s"
     c_cuddBddXorExistAbstract :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddLeqUnless"
+    c_cuddBddLeqUnless :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_EquivDC"
+    c_cuddEquivDC :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO CInt
 
