@@ -30,7 +30,10 @@ module CuddExplicitDeref (
     satCube,
     compose,
     andAbstract,
-    xorExistAbstract
+    xorExistAbstract,
+    leqUnless,
+    equivDC,
+    xeqy
     ) where
 
 import Foreign hiding (void)
@@ -160,6 +163,20 @@ arg3Bool f (STDdManager m) (DDNode x) (DDNode y) (DDNode z) = liftM (==1) $ unsa
 leqUnless, equivDC :: STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u -> ST s Bool
 leqUnless = arg3Bool c_cuddBddLeqUnless
 equivDC   = arg3Bool c_cuddEquivDC
+
+xeqy :: STDdManager s u -> [DDNode s u] -> [DDNode s u] -> ST s (DDNode s u)
+xeqy (STDdManager m) xs ys = unsafeIOToST $ 
+    withArrayLen (map unDDNode xs) $ \xl xp -> 
+    withArrayLen (map unDDNode ys) $ \yl yp -> do
+    when (xl /= yl) (error "xeqy: lengths not equal")
+    res <- c_cuddXeqy m (fromIntegral xl) xp yp
+    return $ DDNode res
+
+debugCheck :: STDdManager s u -> ST s ()
+debugCheck (STDdManager m) = unsafeIOToST $ c_cuddDebugCheck m
+
+checkKeys :: STDdManager s u -> ST s ()
+checkKeys (STDdManager m) = unsafeIOToST $ c_cuddCheckKeys m
 
 {-
 refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)

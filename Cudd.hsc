@@ -330,9 +330,6 @@ cuddXgty (DdManager m) x y = DdNode $ unsafePerformIO $
     node <- c_cuddXgty m (fromIntegral xl) nullPtr xp yp
     newForeignPtrEnv deref m node
 
-foreign import ccall safe "cudd.h Cudd_Xeqy_s"
-	c_cuddXeqy :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
-
 cuddXeqy :: DdManager -> [DdNode] -> [DdNode] -> DdNode
 cuddXeqy (DdManager m) x y = DdNode $ unsafePerformIO $ 
     withForeignArrayPtrLen (map unDdNode x) $ \xl xp -> 
@@ -634,14 +631,8 @@ cuddBddLeq (DdManager m) (DdNode l) (DdNode r) = (==1) $ unsafePerformIO $ do
     withForeignPtr r $ \rp -> do
     c_cuddBddLeq m lp rp
 
-foreign import ccall safe "cudd.h Cudd_CheckKeys"
-    c_cuddCheckKeys :: Ptr CDdManager -> IO ()
-
 cuddCheckKeys :: DdManager -> ST s ()
 cuddCheckKeys (DdManager m) = unsafeIOToST $ c_cuddCheckKeys m
-
-foreign import ccall safe "cudd.h Cudd_DebugCheck"
-    c_cuddDebugCheck :: Ptr CDdManager -> IO ()
 
 cuddDebugCheck :: DdManager -> ST s ()
 cuddDebugCheck (DdManager m) = unsafeIOToST $ c_cuddDebugCheck m
