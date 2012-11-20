@@ -33,7 +33,9 @@ module CuddExplicitDeref (
     xorExistAbstract,
     leqUnless,
     equivDC,
-    xeqy
+    xeqy,
+    debugCheck,
+    checkKeys
     ) where
 
 import Foreign hiding (void)
