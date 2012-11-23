@@ -35,7 +35,9 @@ module CuddExplicitDeref (
     equivDC,
     xeqy,
     debugCheck,
-    checkKeys
+    checkKeys,
+    pickOneMinterm,
+    toInt
     ) where
 
 import Foreign hiding (void)
@@ -48,6 +50,9 @@ import CuddC
 import CuddInternal hiding (deref)
 
 newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
+
+toInt :: DDNode s u -> Int
+toInt (DDNode n) = fromIntegral $ ptrToIntPtr n
 
 arg0 :: (Ptr CDdManager -> IO (Ptr CDdNode)) -> STDdManager s u -> ST s (DDNode s u)
 arg0 f (STDdManager m) = liftM DDNode $ unsafeIOToST $ f m
@@ -179,6 +184,12 @@ debugCheck (STDdManager m) = unsafeIOToST $ c_cuddDebugCheck m
 
 checkKeys :: STDdManager s u -> ST s ()
 checkKeys (STDdManager m) = unsafeIOToST $ c_cuddCheckKeys m
+
+pickOneMinterm :: STDdManager s u -> DDNode s u -> [DDNode s u] -> ST s (DDNode s u)
+pickOneMinterm (STDdManager m) (DDNode d) vars = unsafeIOToST $ do
+    withArrayLen (map unDDNode vars) $ \vl vp -> do
+    res <- c_cuddBddPickOneMinterm m d vp (fromIntegral vl)
+    return $ DDNode res
 
 {-
 refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)

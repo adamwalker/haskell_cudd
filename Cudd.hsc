@@ -491,9 +491,6 @@ bddFromString m str = unsafePerformIO $
 cuddBddImp :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddImp m l r = cuddBddOr m (cuddNot m l) r
 
-foreign import ccall safe "cudd.h Cudd_bddPickOneMinterm_s"
-	c_cuddBddPickOneMinterm :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
-
 cuddBddPickOneMinterm :: DdManager -> DdNode -> [DdNode] -> Maybe DdNode
 cuddBddPickOneMinterm (DdManager m) (DdNode d) vars = unsafePerformIO $
 	withForeignPtr d $ \dp -> 

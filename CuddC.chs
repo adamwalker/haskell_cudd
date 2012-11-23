@@ -39,7 +39,8 @@ module CuddC (
     c_cuddEquivDC,
     c_cuddXeqy,
     c_cuddDebugCheck,
-    c_cuddCheckKeys
+    c_cuddCheckKeys,
+    c_cuddBddPickOneMinterm
     ) where
 
 import Foreign
@@ -172,3 +173,7 @@ foreign import ccall safe "cudd.h Cudd_DebugCheck"
 
 foreign import ccall safe "cudd.h Cudd_CheckKeys"
     c_cuddCheckKeys :: Ptr CDdManager -> IO ()
+
+foreign import ccall safe "cudd.h Cudd_bddPickOneMinterm_s"
+	c_cuddBddPickOneMinterm :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
+
