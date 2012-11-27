@@ -37,7 +37,8 @@ module CuddExplicitDeref (
     debugCheck,
     checkKeys,
     pickOneMinterm,
-    toInt
+    toInt,
+    checkZeroRef
     ) where
 
 import Foreign hiding (void)
@@ -190,6 +191,9 @@ pickOneMinterm (STDdManager m) (DDNode d) vars = unsafeIOToST $ do
     withArrayLen (map unDDNode vars) $ \vl vp -> do
     res <- c_cuddBddPickOneMinterm m d vp (fromIntegral vl)
     return $ DDNode res
+
+checkZeroRef :: STDdManager s u -> ST s (Int)
+checkZeroRef (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddCheckZeroRef m
 
 {-
 refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)
