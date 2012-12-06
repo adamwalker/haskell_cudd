@@ -41,7 +41,9 @@ module CuddC (
     c_cuddDebugCheck,
     c_cuddCheckKeys,
     c_cuddBddPickOneMinterm,
-    c_cuddCheckZeroRef
+    c_cuddCheckZeroRef,
+    c_cuddReadInvPerm,
+    c_cuddReadPerm
     ) where
 
 import Foreign
@@ -180,4 +182,10 @@ foreign import ccall safe "cudd.h Cudd_bddPickOneMinterm_s"
 
 foreign import ccall safe "cudd.h Cudd_CheckZeroRef"
     c_cuddCheckZeroRef :: Ptr CDdManager -> IO (CInt)
+
+foreign import ccall safe "cudd.h Cudd_ReadInvPerm"
+    c_cuddReadInvPerm :: Ptr CDdManager -> CInt -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_ReadPerm"
+    c_cuddReadPerm :: Ptr CDdManager -> CInt -> IO CInt
 

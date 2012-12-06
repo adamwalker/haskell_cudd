@@ -38,7 +38,9 @@ module CuddExplicitDeref (
     checkKeys,
     pickOneMinterm,
     toInt,
-    checkZeroRef
+    checkZeroRef,
+    readInvPerm,
+    readPerm
     ) where
 
 import Foreign hiding (void)
@@ -192,8 +194,14 @@ pickOneMinterm (STDdManager m) (DDNode d) vars = unsafeIOToST $ do
     res <- c_cuddBddPickOneMinterm m d vp (fromIntegral vl)
     return $ DDNode res
 
-checkZeroRef :: STDdManager s u -> ST s (Int)
+checkZeroRef :: STDdManager s u -> ST s Int
 checkZeroRef (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddCheckZeroRef m
+
+readInvPerm :: STDdManager s u -> Int -> ST s Int
+readInvPerm (STDdManager m) offs = liftM fromIntegral $ unsafeIOToST $ c_cuddReadInvPerm m (fromIntegral offs)
+
+readPerm :: STDdManager s u -> Int -> ST s Int
+readPerm (STDdManager m) offs = liftM fromIntegral $ unsafeIOToST $ c_cuddReadPerm m (fromIntegral offs)
 
 {-
 refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)

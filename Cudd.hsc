@@ -513,14 +513,8 @@ cStdOut = unsafePerformIO c_getStdOut
 
 instance NFData DdNode
 
-foreign import ccall safe "cudd.h Cudd_ReadPerm"
-    c_cuddReadPerm :: Ptr CDdManager -> CInt -> IO CInt
-
 cuddReadPerm :: DdManager -> Int -> Int
 cuddReadPerm (DdManager m) i = fromIntegral $ unsafePerformIO $ c_cuddReadPerm m (fromIntegral i)
-
-foreign import ccall safe "cudd.h Cudd_ReadInvPerm"
-    c_cuddReadInvPerm :: Ptr CDdManager -> CInt -> IO CInt
 
 cuddReadInvPerm :: DdManager -> Int -> Int
 cuddReadInvPerm (DdManager m) i = fromIntegral $ unsafePerformIO $ c_cuddReadInvPerm m (fromIntegral i)
