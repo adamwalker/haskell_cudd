@@ -77,21 +77,23 @@ module Cudd (
 
 import System.IO
 import System.Directory
-import Foreign
+import Foreign.Storable
 import Foreign.Ptr
 import Foreign.C.Types
 import Foreign.C.String
 import Foreign.ForeignPtr
+import Foreign.Marshal.Alloc
 import Foreign.Marshal.Array
 import Foreign.Marshal.Utils
-import Control.Monad.ST.Lazy
+import System.IO.Unsafe
+import Control.Monad.ST
 import Control.Monad
 import Data.Binary
 import Data.List
 import Control.DeepSeq
 import Control.Monad.Error
 import Data.Array hiding (indices)
-import Control.Exception hiding (catch)
+import Control.Exception
 
 import ForeignHelpers
 import CuddInternal
@@ -438,15 +440,15 @@ cuddBddStore (DdManager m) name (DdNode node) auxids mode varinfo fname = do
 -- Extremely ugly and unsafe way to convert BDD to String via file
 bddToString :: (MonadError String me) => DdManager -> DdNode -> me String
 bddToString m node = unsafePerformIO $ 
-    catch (do let fname = show (unDdNode node) ++ ".bdd"
-              ret <- cuddBddStore m fname node [] dddmp_mode_text dddmp_varids fname
-              --putStrLn $ "ret = " ++ (show ret)
-              if ret == dddmp_success
-                      then do str <- readFile fname
-                              removeFile fname
-                              return $ return str
-                      else return $ throwError $ "Failed to serialise BDD (status: " ++ show (dddmpStatus ret) ++ ")")
-          (return . throwError . show)
+    catchError (do let fname = show (unDdNode node) ++ ".bdd"
+                   ret <- cuddBddStore m fname node [] dddmp_mode_text dddmp_varids fname
+                   --putStrLn $ "ret = " ++ (show ret)
+                   if ret == dddmp_success
+                           then do str <- readFile fname
+                                   removeFile fname
+                                   return $ return str
+                           else return $ throwError $ "Failed to serialise BDD (status: " ++ show (dddmpStatus ret) ++ ")")
+               (return . throwError . show)
     
 
 newtype Dddmp_VarMatchType = Dddmp_VarMatchType {dddmpMatchType :: CInt} deriving (Eq, Show)
@@ -480,12 +482,12 @@ cuddBddLoad (DdManager m) matchtype auxids composeids mode fname = do
 -- BDD from string via file
 bddFromString :: MonadError String me => DdManager -> String -> me DdNode
 bddFromString m str = unsafePerformIO $ 
-    catch (do let fname = "_fromString.bdd"
-              writeFile fname str
-              node <- cuddBddLoad m dddmp_var_matchids [] [] dddmp_mode_text fname
-              removeFile fname
-              return $ return node)
-          (return . throwError . show)
+    catchError (do let fname = "_fromString.bdd"
+                   writeFile fname str
+                   node <- cuddBddLoad m dddmp_var_matchids [] [] dddmp_mode_text fname
+                   removeFile fname
+                   return $ return node)
+               (return . throwError . show)
 
 --Bdd implication
 cuddBddImp :: DdManager -> DdNode -> DdNode -> DdNode

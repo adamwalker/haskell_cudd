@@ -15,7 +15,7 @@ module CuddExplicitDeref (
     deref,
     setVarMap,
     mapVars,
-    DDNode,
+    DDNode(..),
     STDdManager,
     leq,
     CuddExplicitDeref.shift,
