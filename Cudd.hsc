@@ -375,9 +375,6 @@ foreign import ccall safe "cudd.h Cudd_NodeReadIndex"
 cuddNodeReadIndex :: DdNode -> Int
 cuddNodeReadIndex (DdNode d) = fromIntegral $ unsafePerformIO $ withForeignPtr d c_cuddNodeReadIndex 
 
-foreign import ccall safe "cudd.h Cudd_DagSize"
-    c_cuddDagSize :: Ptr CDdNode -> IO CInt
-
 cuddDagSize (DdNode d) = fromIntegral $ unsafePerformIO $ withForeignPtr d c_cuddDagSize 
 
 cuddIndicesToCube :: DdManager -> [Int] -> DdNode

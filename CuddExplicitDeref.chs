@@ -40,7 +40,8 @@ module CuddExplicitDeref (
     toInt,
     checkZeroRef,
     readInvPerm,
-    readPerm
+    readPerm,
+    dagSize
     ) where
 
 import Foreign hiding (void)
@@ -202,6 +203,9 @@ readInvPerm (STDdManager m) offs = liftM fromIntegral $ unsafeIOToST $ c_cuddRea
 
 readPerm :: STDdManager s u -> Int -> ST s Int
 readPerm (STDdManager m) offs = liftM fromIntegral $ unsafeIOToST $ c_cuddReadPerm m (fromIntegral offs)
+
+dagSize :: DDNode s u -> ST s Int
+dagSize (DDNode d) = liftM fromIntegral $ unsafeIOToST $ c_cuddDagSize d
 
 {-
 refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)
