@@ -18,7 +18,7 @@ import Foreign
 import Foreign.Ptr
 import Foreign.C.Types
 import Foreign.ForeignPtr
-import Control.Monad.ST.Lazy
+import Control.Monad.ST
 import Control.Monad
 import Data.List
 import Control.Monad.IO.Class

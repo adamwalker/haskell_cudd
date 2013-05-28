@@ -47,7 +47,7 @@ module CuddExplicitDeref (
 import Foreign hiding (void)
 import Foreign.Ptr
 import Foreign.C.Types
-import Control.Monad.ST.Lazy
+import Control.Monad.ST
 import Control.Monad
 
 import CuddC
