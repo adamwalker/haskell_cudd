@@ -44,7 +44,9 @@ module CuddC (
     c_cuddCheckZeroRef,
     c_cuddReadInvPerm,
     c_cuddReadPerm,
-    c_cuddDagSize
+    c_cuddDagSize,
+    c_cuddReadNodeCount,
+    c_cuddReadPeakNodeCount
     ) where
 
 import Foreign
@@ -192,4 +194,10 @@ foreign import ccall safe "cudd.h Cudd_ReadPerm"
 
 foreign import ccall safe "cudd.h Cudd_DagSize"
     c_cuddDagSize :: Ptr CDdNode -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_ReadNodeCount"
+    c_cuddReadNodeCount :: Ptr CDdManager -> IO CLong
+
+foreign import ccall safe "cudd.h Cudd_ReadPeakNodeCount"
+    c_cuddReadPeakNodeCount :: Ptr CDdManager -> IO CLong
 
