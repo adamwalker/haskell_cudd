@@ -46,7 +46,7 @@ import Foreign
 import Foreign.Ptr
 import Foreign.C.Types
 import Foreign.ForeignPtr
-import Control.Monad.ST.Lazy
+import Control.Monad.ST
 import Data.STRef
 import Control.Monad
 import Control.Applicative
