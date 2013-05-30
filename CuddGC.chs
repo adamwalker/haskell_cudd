@@ -17,7 +17,7 @@ import Foreign.ForeignPtr
 import Foreign.Marshal.Array
 import Foreign.Marshal.Utils
 import Control.Monad
-import Control.Monad.ST.Lazy
+import Control.Monad.ST
 
 import CuddInternal
 import CuddHook

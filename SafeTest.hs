@@ -4,7 +4,7 @@ import Control.Applicative
 import Control.Monad
 import Control.Monad.Identity
 import Control.DeepSeq
-import Control.Monad.ST.Lazy
+import Control.Monad.ST
 
 import Cudd
 import CuddSafe
