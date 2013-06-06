@@ -7,6 +7,11 @@
 #include "util.h"
 #include "cudd.h"
 
+DdNode *wrappedRegular(DdNode *f){
+    assert(f);
+    return Cudd_Regular(f);
+}
+
 void wrappedCuddRef(DdNode *f){
 	assert(f);
 	Cudd_Ref(f);

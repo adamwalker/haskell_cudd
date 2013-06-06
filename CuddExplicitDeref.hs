@@ -43,7 +43,8 @@ module CuddExplicitDeref (
     readPerm,
     dagSize,
     readNodeCount,
-    readPeakNodeCount
+    readPeakNodeCount,
+    regular
     ) where
 
 import Foreign hiding (void)
@@ -220,3 +221,9 @@ refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)
 
 unRefCount :: STDdManager s u -> DdNode s u -> ST s (STDdNode s u)
 -}
+
+foreign import ccall safe "cudd.h wrappedRegular"
+    c_wrappedRegular :: Ptr CDdNode -> IO (Ptr CDdNode)
+
+regular (DDNode x) = DDNode $ unsafePerformIO $ c_wrappedRegular x
+
