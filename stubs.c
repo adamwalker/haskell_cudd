@@ -14,14 +14,12 @@ DdNode *Cudd_bddVarMap_s(DdManager *m, DdNode *x){
 DdNode *Cudd_ReadOne_s(DdManager *m){
     DdNode *r = Cudd_ReadOne(m);
     assert(r);
-    Cudd_Ref(r);
     return r;
 }
 
 DdNode *Cudd_ReadLogicZero_s(DdManager *m){
     DdNode *r = Cudd_ReadLogicZero(m);
     assert(r);
-    Cudd_Ref(r);
     return r;
 }
 
@@ -74,9 +72,14 @@ DdNode *Cudd_bddXnor_s(DdManager *m, DdNode *x, DdNode *y){
     return r;
 }
 
-DdNode *wrappedCuddNot_s(DdNode *x){
+DdNode *Cudd_Not_s(DdNode *x){
     DdNode *r = Cudd_Not(x);
     Cudd_Ref(r);
+    return r;
+}
+
+DdNode *Cudd_NotNoRef_s(DdNode *x){
+    DdNode *r = Cudd_Not(x);
     return r;
 }
 

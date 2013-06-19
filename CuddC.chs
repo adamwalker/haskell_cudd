@@ -13,6 +13,7 @@ module CuddC (
     c_cuddBddXor,
     c_cuddBddXnor,
     c_cuddNot,
+    c_cuddNotNoRef,
     c_cuddBddIte,
     c_cuddBddExistAbstract,
     c_cuddBddUnivAbstract,
@@ -46,7 +47,12 @@ module CuddC (
     c_cuddReadPerm,
     c_cuddDagSize,
     c_cuddReadNodeCount,
-    c_cuddReadPeakNodeCount
+    c_cuddReadPeakNodeCount,
+    c_cuddReadMaxCache,
+    c_cuddReadMaxCacheHard,
+    c_cuddSetMaxCacheHard,
+    c_cuddReadCacheSlots,
+    c_cuddReadCacheUsedSlots
     ) where
 
 import Foreign
@@ -96,8 +102,11 @@ foreign import ccall safe "cudd.h Cudd_bddXor_s"
 foreign import ccall safe "cudd.h Cudd_bddXnor_s"
 	c_cuddBddXnor :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
-foreign import ccall safe "cuddwrap.h wrappedCuddNot_s"
+foreign import ccall safe "cudd.h Cudd_Not_s"
 	c_cuddNot :: Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_NotNoRef_s"
+	c_cuddNotNoRef :: Ptr CDdNode -> IO (Ptr CDdNode)
 
 foreign import ccall safe "cudd.h Cudd_bddIte_s"
     c_cuddBddIte :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
@@ -201,3 +210,17 @@ foreign import ccall safe "cudd.h Cudd_ReadNodeCount"
 foreign import ccall safe "cudd.h Cudd_ReadPeakNodeCount"
     c_cuddReadPeakNodeCount :: Ptr CDdManager -> IO CLong
 
+foreign import ccall safe "cudd.h Cudd_ReadMaxCache"
+    c_cuddReadMaxCache :: Ptr CDdManager -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_ReadMaxCacheHard"
+    c_cuddReadMaxCacheHard :: Ptr CDdManager -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_SetMaxCacheHard"
+    c_cuddSetMaxCacheHard :: Ptr CDdManager -> CInt -> IO ()
+
+foreign import ccall safe "cudd.h Cudd_ReadCacheSlots"
+    c_cuddReadCacheSlots :: Ptr CDdManager -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_ReadCacheUsedSlots"
+    c_cuddReadCacheUsedSlots :: Ptr CDdManager -> IO CInt

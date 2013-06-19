@@ -44,7 +44,14 @@ module CuddExplicitDeref (
     dagSize,
     readNodeCount,
     readPeakNodeCount,
-    regular
+    regular,
+    readMaxCache,
+    readMaxCacheHard,
+    setMaxCacheHard,
+    readCacheSlots,
+    readCacheUsedSlots,
+    cudd_unique_slots,
+    cudd_cache_slots
     ) where
 
 import Foreign hiding (void)
@@ -89,7 +96,7 @@ bforall = arg2 c_cuddBddUnivAbstract
 andAbstract      = arg3 c_cuddBddAndAbstract
 xorExistAbstract = arg3 c_cuddBddXorExistAbstract
 
-bnot (DDNode x) = DDNode $ unsafePerformIO $ c_cuddNot x
+bnot (DDNode x) = DDNode $ unsafePerformIO $ c_cuddNotNoRef x
 bvar (STDdManager m) i = liftM DDNode $ unsafeIOToST $ c_cuddBddIthVar m (fromIntegral i)
 
 deref :: STDdManager s u -> DDNode s u -> ST s ()
@@ -226,4 +233,19 @@ foreign import ccall safe "cudd.h wrappedRegular"
     c_wrappedRegular :: Ptr CDdNode -> IO (Ptr CDdNode)
 
 regular (DDNode x) = DDNode $ unsafePerformIO $ c_wrappedRegular x
+
+readMaxCache :: STDdManager s u -> ST s Int
+readMaxCache (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadMaxCache m
+
+readMaxCacheHard :: STDdManager s u -> ST s Int
+readMaxCacheHard (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadMaxCacheHard m
+
+setMaxCacheHard :: STDdManager s u -> Int -> ST s ()
+setMaxCacheHard (STDdManager m) x = unsafeIOToST $ c_cuddSetMaxCacheHard m (fromIntegral x)
+
+readCacheSlots :: STDdManager s u -> ST s Int
+readCacheSlots (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadCacheSlots m
+
+readCacheUsedSlots :: STDdManager s u -> ST s Int
+readCacheUsedSlots (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadCacheUsedSlots m
 
