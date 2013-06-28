@@ -52,7 +52,8 @@ module CuddC (
     c_cuddReadMaxCacheHard,
     c_cuddSetMaxCacheHard,
     c_cuddReadCacheSlots,
-    c_cuddReadCacheUsedSlots
+    c_cuddReadCacheUsedSlots,
+    c_cuddBddAndLimit
     ) where
 
 import Foreign
@@ -224,3 +225,7 @@ foreign import ccall safe "cudd.h Cudd_ReadCacheSlots"
 
 foreign import ccall safe "cudd.h Cudd_ReadCacheUsedSlots"
     c_cuddReadCacheUsedSlots :: Ptr CDdManager -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_bddAndLimit"
+    c_cuddBddAndLimit :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> CUInt -> IO (Ptr CDdNode)
+

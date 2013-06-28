@@ -51,7 +51,8 @@ module CuddExplicitDeref (
     readCacheSlots,
     readCacheUsedSlots,
     cudd_unique_slots,
-    cudd_cache_slots
+    cudd_cache_slots,
+    andLimit
     ) where
 
 import Foreign hiding (void)
@@ -248,4 +249,14 @@ readCacheSlots (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadC
 
 readCacheUsedSlots :: STDdManager s u -> ST s Int
 readCacheUsedSlots (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadCacheUsedSlots m
+
+--TODO handle null pointer
+andLimit :: STDdManager s u -> DDNode s u -> DDNode s u -> Int -> ST s (Maybe (DDNode s u))
+andLimit (STDdManager m) (DDNode x) (DDNode y) lim = unsafeIOToST $ do
+    res <- c_cuddBddAndLimit m x y (fromIntegral lim)
+    if res==nullPtr then
+        return Nothing
+    else do
+        cuddRef res
+        return $ Just $ DDNode res
 
