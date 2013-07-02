@@ -23,6 +23,20 @@ DdNode *Cudd_ReadLogicZero_s(DdManager *m){
     return r;
 }
 
+DdNode *Cudd_ReadOne_withRef_s(DdManager *m){
+    DdNode *r = Cudd_ReadOne(m);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+
+DdNode *Cudd_ReadLogicZero_withRef_s(DdManager *m){
+    DdNode *r = Cudd_ReadLogicZero(m);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+
 DdNode *Cudd_bddIthVar_s(DdManager *m, int i){
     DdNode *r = Cudd_bddIthVar(m, i);
     assert(r);

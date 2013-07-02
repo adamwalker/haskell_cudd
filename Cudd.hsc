@@ -127,12 +127,12 @@ getNodeST (STDdNode n) = DdNode n
 
 cuddReadOne :: DdManager -> DdNode
 cuddReadOne (DdManager d) = DdNode $ unsafePerformIO $ do
-	node <- c_cuddReadOne d
+	node <- c_cuddReadOneWithRef d
 	newForeignPtrEnv deref d node
 
 cuddReadLogicZero :: DdManager -> DdNode
 cuddReadLogicZero (DdManager d) = DdNode $ unsafePerformIO $ do
-	node <- c_cuddReadLogicZero d
+	node <- c_cuddReadLogicZeroWithRef d
 	newForeignPtrEnv deref d node
 
 cuddBddIthVar :: DdManager -> Int -> DdNode
