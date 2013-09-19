@@ -524,9 +524,6 @@ cuddReadPerms m = map (cuddReadPerm m) [0..(cuddReadSize m - 1)]
 cuddReadInvPerms :: DdManager -> [Int]
 cuddReadInvPerms m = map (cuddReadInvPerm m) [0..(cuddReadSize m -1)]
 
-foreign import ccall safe "cudd.h Cudd_ReadTree"
-    c_cuddReadTree :: Ptr CDdManager -> IO (Ptr CMtrNode)
-
 cuddReadTree :: DdManager -> IO MtrNode 
 cuddReadTree (DdManager m) = liftM MtrNode $ c_cuddReadTree m
 

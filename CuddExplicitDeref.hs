@@ -52,7 +52,9 @@ module CuddExplicitDeref (
     readCacheUsedSlots,
     cudd_unique_slots,
     cudd_cache_slots,
-    andLimit
+    andLimit,
+    readTree,
+    newVarAtLevel
     ) where
 
 import Foreign hiding (void)
@@ -63,6 +65,7 @@ import Control.Monad
 
 import CuddC
 import CuddInternal hiding (deref)
+import MTR
 
 newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
 
@@ -259,4 +262,10 @@ andLimit (STDdManager m) (DDNode x) (DDNode y) lim = unsafeIOToST $ do
     else do
         cuddRef res
         return $ Just $ DDNode res
+
+readTree :: STDdManager s u -> ST s MtrNode
+readTree (STDdManager m) = liftM MtrNode $ unsafeIOToST $ c_cuddReadTree m
+
+newVarAtLevel :: STDdManager s u -> Int -> ST s (DDNode s u)
+newVarAtLevel (STDdManager m) level = liftM DDNode $ unsafeIOToST $ c_cuddBddNewVarAtLevel m (fromIntegral level)
 

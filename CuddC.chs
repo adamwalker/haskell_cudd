@@ -55,12 +55,16 @@ module CuddC (
     c_cuddSetMaxCacheHard,
     c_cuddReadCacheSlots,
     c_cuddReadCacheUsedSlots,
-    c_cuddBddAndLimit
+    c_cuddBddAndLimit,
+    c_cuddBddNewVarAtLevel,
+    c_cuddReadTree
     ) where
 
 import Foreign
 import Foreign.Ptr
 import Foreign.C.Types
+
+import MTR
 
 data CDdManager
 data CDdNode = CDdNode {index :: CInt, ref :: CInt}
@@ -236,4 +240,10 @@ foreign import ccall safe "cudd.h Cudd_ReadCacheUsedSlots"
 
 foreign import ccall safe "cudd.h Cudd_bddAndLimit"
     c_cuddBddAndLimit :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> CUInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddNewVarAtLevel_s"
+    c_cuddBddNewVarAtLevel :: Ptr CDdManager -> CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_ReadTree"
+    c_cuddReadTree :: Ptr CDdManager -> IO (Ptr CMtrNode)
 
