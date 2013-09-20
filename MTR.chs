@@ -80,6 +80,18 @@ foreign import ccall unsafe "mtr.h Mtr_InitGroupTree"
 mtrInitGroupTree :: Int -> Int -> IO (MtrNode)
 mtrInitGroupTree l s = liftM MtrNode $ c_mtrInitGroupTree (fromIntegral l) (fromIntegral s)
 
+foreign import ccall unsafe "mtr.h Mtr_FindGroup"
+    c_mtrFindGroup :: Ptr CMtrNode -> CUInt -> CUInt -> IO (Ptr CMtrNode)
+
+mtrFindGroup :: MtrNode -> Int -> Int -> IO MtrNode
+mtrFindGroup (MtrNode m) x y = liftM MtrNode $ c_mtrFindGroup m (fromIntegral x) (fromIntegral y)
+
+foreign import ccall unsafe "mtr.h Mtr_DissolveGroup"
+    c_mtrDissolveGroup :: Ptr CMtrNode -> IO ()
+
+mtrDissolveGroup :: MtrNode -> IO ()
+mtrDissolveGroup (MtrNode m) = c_mtrDissolveGroup m
+
 #c
 enum MTR_TYPES {
     MTRDefault = MTR_DEFAULT,
