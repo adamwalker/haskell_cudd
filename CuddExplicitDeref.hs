@@ -197,11 +197,11 @@ xeqy (STDdManager m) xs ys = unsafeIOToST $
     res <- c_cuddXeqy m (fromIntegral xl) xp yp
     return $ DDNode res
 
-debugCheck :: STDdManager s u -> ST s ()
-debugCheck (STDdManager m) = unsafeIOToST $ c_cuddDebugCheck m
+debugCheck :: STDdManager s u -> ST s Int
+debugCheck (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddDebugCheck m
 
-checkKeys :: STDdManager s u -> ST s ()
-checkKeys (STDdManager m) = unsafeIOToST $ c_cuddCheckKeys m
+checkKeys :: STDdManager s u -> ST s Int
+checkKeys (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddCheckKeys m
 
 pickOneMinterm :: STDdManager s u -> DDNode s u -> [DDNode s u] -> ST s (DDNode s u)
 pickOneMinterm (STDdManager m) (DDNode d) vars = unsafeIOToST $ do

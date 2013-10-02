@@ -618,9 +618,9 @@ cuddBddLeq (DdManager m) (DdNode l) (DdNode r) = (==1) $ unsafePerformIO $ do
     withForeignPtr r $ \rp -> do
     c_cuddBddLeq m lp rp
 
-cuddCheckKeys :: DdManager -> ST s ()
-cuddCheckKeys (DdManager m) = unsafeIOToST $ c_cuddCheckKeys m
+cuddCheckKeys :: DdManager -> ST s Int
+cuddCheckKeys (DdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddCheckKeys m
 
-cuddDebugCheck :: DdManager -> ST s ()
-cuddDebugCheck (DdManager m) = unsafeIOToST $ c_cuddDebugCheck m
+cuddDebugCheck :: DdManager -> ST s Int
+cuddDebugCheck (DdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddDebugCheck m
 
