@@ -197,10 +197,10 @@ foreign import ccall safe "cudd.h Cudd_Xeqy_s"
 	c_cuddXeqy :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
 
 foreign import ccall safe "cudd.h Cudd_DebugCheck"
-    c_cuddDebugCheck :: Ptr CDdManager -> IO ()
+    c_cuddDebugCheck :: Ptr CDdManager -> IO CInt
 
 foreign import ccall safe "cudd.h Cudd_CheckKeys"
-    c_cuddCheckKeys :: Ptr CDdManager -> IO ()
+    c_cuddCheckKeys :: Ptr CDdManager -> IO CInt
 
 foreign import ccall safe "cudd.h Cudd_bddPickOneMinterm_s"
 	c_cuddBddPickOneMinterm :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
