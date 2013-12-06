@@ -54,7 +54,10 @@ module CuddExplicitDeref (
     cudd_cache_slots,
     andLimit,
     readTree,
-    newVarAtLevel
+    newVarAtLevel,
+    liCompaction,
+    squeeze,
+    minimize
     ) where
 
 import Foreign hiding (void)
@@ -268,4 +271,8 @@ readTree (STDdManager m) = liftM MtrNode $ unsafeIOToST $ c_cuddReadTree m
 
 newVarAtLevel :: STDdManager s u -> Int -> ST s (DDNode s u)
 newVarAtLevel (STDdManager m) level = liftM DDNode $ unsafeIOToST $ c_cuddBddNewVarAtLevel m (fromIntegral level)
+
+liCompaction = arg2 c_cuddBddLICompaction
+squeeze      = arg2 c_cuddBddSqueeze
+minimize     = arg2 c_cuddBddMinimize
 

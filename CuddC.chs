@@ -57,7 +57,10 @@ module CuddC (
     c_cuddReadCacheUsedSlots,
     c_cuddBddAndLimit,
     c_cuddBddNewVarAtLevel,
-    c_cuddReadTree
+    c_cuddReadTree,
+    c_cuddBddLICompaction,
+    c_cuddBddSqueeze,
+    c_cuddBddMinimize
     ) where
 
 import Foreign
@@ -246,4 +249,13 @@ foreign import ccall safe "cudd.h Cudd_bddNewVarAtLevel_s"
 
 foreign import ccall safe "cudd.h Cudd_ReadTree"
     c_cuddReadTree :: Ptr CDdManager -> IO (Ptr CMtrNode)
+
+foreign import ccall safe "cudd.h Cudd_bddLICompaction_s"
+    c_cuddBddLICompaction :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddSqueeze_s" 
+    c_cuddBddSqueeze :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddMinimize_s"
+    c_cuddBddMinimize :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
