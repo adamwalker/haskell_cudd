@@ -383,14 +383,14 @@ cuddIndicesToCube (DdManager m) indices = DdNode $ unsafePerformIO $
     node <- c_cuddIndicesToCube m ip (fromIntegral size)
     newForeignPtrEnv deref m node
 
-foreign import ccall safe "cudd.h Cudd_bddLICompaction_s"
-    c_cuddBddLICompaction :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+--foreign import ccall safe "cudd.h Cudd_bddLICompaction_s"
+--    c_cuddBddLICompaction :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddLICompaction :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddLICompaction = cuddArg2 c_cuddBddLICompaction
 
-foreign import ccall safe "cudd.h Cudd_bddMinimize_s"
-    c_cuddBddMinimize :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+--foreign import ccall safe "cudd.h Cudd_bddMinimize_s"
+--    c_cuddBddMinimize :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddMinimize :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddMinimize = cuddArg2 c_cuddBddMinimize
@@ -597,8 +597,8 @@ foreign import ccall safe "cudd.h Cudd_bddRestrict_s"
 cuddBddRestrict :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddRestrict = cuddArg2 c_cuddBddRestrict
 
-foreign import ccall safe "cudd.h Cudd_bddSqueeze_s" 
-    c_cuddBddSqueeze :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+--foreign import ccall safe "cudd.h Cudd_bddSqueeze_s" 
+--    c_cuddBddSqueeze :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddSqueeze :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddSqueeze = cuddArg2 c_cuddBddSqueeze
