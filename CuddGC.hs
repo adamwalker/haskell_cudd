@@ -24,9 +24,6 @@ import Control.Monad.ST
 import CuddInternal
 import CuddHook
 
-#include <stdio.h>
-#include <cudd.h>
-
 foreign import ccall safe "cudd.h Cudd_EnableGarbageCollection"
 	c_cuddEnableGarbageCollection :: Ptr CDdManager -> IO ()
 
