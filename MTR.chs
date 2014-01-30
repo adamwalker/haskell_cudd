@@ -7,90 +7,91 @@ import Foreign
 import Foreign.Ptr
 import Foreign.C.Types
 import Control.Monad
+import Control.Monad.ST
 
 #include <stdio.h>
 #include <mtr.h>
 
 data CMtrNode 
-newtype MtrNode = MtrNode (Ptr CMtrNode)
+newtype MtrNode s = MtrNode (Ptr CMtrNode)
 
 foreign import ccall unsafe "mtr.h Mtr_AllocNode"
     c_mtrAllocNode :: IO (Ptr CMtrNode)
 
-mtrAllocNode :: IO (MtrNode) 
-mtrAllocNode = liftM MtrNode c_mtrAllocNode
+mtrAllocNode :: ST s (MtrNode s) 
+mtrAllocNode = liftM MtrNode $ unsafeIOToST c_mtrAllocNode
 
 foreign import ccall unsafe "mtr.h Mtr_CreateFirstChild"
     c_mtrCreateFirstChild :: Ptr CMtrNode -> IO (Ptr CMtrNode)
 
-mtrCreateFirstChild :: MtrNode -> IO (MtrNode)
-mtrCreateFirstChild (MtrNode p) = liftM MtrNode $ c_mtrCreateFirstChild p
+mtrCreateFirstChild :: MtrNode s -> ST s (MtrNode s)
+mtrCreateFirstChild (MtrNode p) = liftM MtrNode $ unsafeIOToST $ c_mtrCreateFirstChild p
 
 foreign import ccall unsafe "mtr.h Mtr_CreateLastChild"
     c_mtrCreateLastChild :: Ptr CMtrNode -> IO (Ptr CMtrNode)
 
-mtrCreateLastChild :: MtrNode -> IO (MtrNode)
-mtrCreateLastChild (MtrNode p) = liftM MtrNode $ c_mtrCreateLastChild p
+mtrCreateLastChild :: MtrNode s -> ST s (MtrNode s)
+mtrCreateLastChild (MtrNode p) = liftM MtrNode $ unsafeIOToST $ c_mtrCreateLastChild p
 
 foreign import ccall unsafe "mtr.h Mtr_DeallocNode"
     c_mtrDeallocNode :: Ptr CMtrNode -> IO ()
 
-mtrDeallocNode :: MtrNode -> IO ()
-mtrDeallocNode (MtrNode p) = c_mtrDeallocNode p
+mtrDeallocNode :: MtrNode s -> ST s ()
+mtrDeallocNode (MtrNode p) = unsafeIOToST $ c_mtrDeallocNode p
 
 foreign import ccall unsafe "mtr.h Mtr_MakeFirstChild"
     c_mtrMakeFirstChild :: Ptr CMtrNode -> Ptr CMtrNode -> IO ()
 
-mtrMakeFirstChild :: MtrNode -> MtrNode -> IO ()
-mtrMakeFirstChild (MtrNode p) (MtrNode c) = c_mtrMakeFirstChild p c
+mtrMakeFirstChild :: MtrNode s -> MtrNode s -> ST s ()
+mtrMakeFirstChild (MtrNode p) (MtrNode c) = unsafeIOToST $ c_mtrMakeFirstChild p c
 
 foreign import ccall unsafe "mtr.h Mtr_MakeLastChild"
     c_mtrMakeLastChild :: Ptr CMtrNode -> Ptr CMtrNode -> IO ()
 
-mtrMakeLastChild :: MtrNode -> MtrNode -> IO ()
-mtrMakeLastChild (MtrNode p) (MtrNode c) = c_mtrMakeLastChild p c
+mtrMakeLastChild :: MtrNode s -> MtrNode s -> ST s ()
+mtrMakeLastChild (MtrNode p) (MtrNode c) = unsafeIOToST $ c_mtrMakeLastChild p c
 
 foreign import ccall unsafe "mtr.h Mtr_MakeNextSibling"
     c_mtrMakeNextSibling :: Ptr CMtrNode -> Ptr CMtrNode -> IO ()
 
-mtrMakeNextSibling :: MtrNode -> MtrNode -> IO ()
-mtrMakeNextSibling (MtrNode f) (MtrNode s) = c_mtrMakeNextSibling f s
+mtrMakeNextSibling :: MtrNode s -> MtrNode s -> ST s ()
+mtrMakeNextSibling (MtrNode f) (MtrNode s) = unsafeIOToST $ c_mtrMakeNextSibling f s
 
 foreign import ccall unsafe "mtr.h Mtr_PrintGroups"
     c_mtrPrintGroups :: Ptr CMtrNode -> CInt -> IO ()
 
-mtrPrintGroups :: MtrNode -> Int -> IO ()
+mtrPrintGroups :: MtrNode s -> Int -> IO ()
 mtrPrintGroups (MtrNode c) s = c_mtrPrintGroups c (fromIntegral s)
 
 foreign import ccall unsafe "mtr.h Mtr_PrintTree"
     c_mtrPrintTree :: Ptr CMtrNode -> IO ()
 
-mtrPrintTree :: MtrNode -> IO ()
-mtrPrintTree (MtrNode c) = c_mtrPrintTree c
+mtrPrintTree :: MtrNode s -> ST s ()
+mtrPrintTree (MtrNode c) = unsafeIOToST $ c_mtrPrintTree c
 
 foreign import ccall unsafe "mtr.h Mtr_MakeGroup"
     c_mtrMakeGroup :: Ptr CMtrNode -> CInt -> CInt -> CInt -> IO (Ptr CMtrNode)
 
-mtrMakeGroup :: MtrNode -> Int -> Int -> Int -> IO (MtrNode)
-mtrMakeGroup (MtrNode r) l s f = liftM MtrNode $ c_mtrMakeGroup r (fromIntegral l) (fromIntegral s) (fromIntegral f)
+mtrMakeGroup :: MtrNode s -> Int -> Int -> Int -> ST s (MtrNode s)
+mtrMakeGroup (MtrNode r) l s f = liftM MtrNode $ unsafeIOToST $ c_mtrMakeGroup r (fromIntegral l) (fromIntegral s) (fromIntegral f)
 
 foreign import ccall unsafe "mtr.h Mtr_InitGroupTree"
     c_mtrInitGroupTree :: CInt -> CInt -> IO (Ptr CMtrNode)
 
-mtrInitGroupTree :: Int -> Int -> IO (MtrNode)
-mtrInitGroupTree l s = liftM MtrNode $ c_mtrInitGroupTree (fromIntegral l) (fromIntegral s)
+mtrInitGroupTree :: Int -> Int -> ST s (MtrNode s)
+mtrInitGroupTree l s = liftM MtrNode $ unsafeIOToST $ c_mtrInitGroupTree (fromIntegral l) (fromIntegral s)
 
 foreign import ccall unsafe "mtr.h Mtr_FindGroup"
     c_mtrFindGroup :: Ptr CMtrNode -> CUInt -> CUInt -> IO (Ptr CMtrNode)
 
-mtrFindGroup :: MtrNode -> Int -> Int -> IO MtrNode
-mtrFindGroup (MtrNode m) x y = liftM MtrNode $ c_mtrFindGroup m (fromIntegral x) (fromIntegral y)
+mtrFindGroup :: MtrNode s -> Int -> Int -> ST s (MtrNode s)
+mtrFindGroup (MtrNode m) x y = liftM MtrNode $ unsafeIOToST $ c_mtrFindGroup m (fromIntegral x) (fromIntegral y)
 
 foreign import ccall unsafe "mtr.h Mtr_DissolveGroup"
     c_mtrDissolveGroup :: Ptr CMtrNode -> IO ()
 
-mtrDissolveGroup :: MtrNode -> IO ()
-mtrDissolveGroup (MtrNode m) = c_mtrDissolveGroup m
+mtrDissolveGroup :: MtrNode s -> ST s ()
+mtrDissolveGroup (MtrNode m) = unsafeIOToST $ c_mtrDissolveGroup m
 
 #c
 enum MTR_TYPES {

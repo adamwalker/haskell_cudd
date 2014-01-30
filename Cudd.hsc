@@ -512,8 +512,8 @@ cuddReadPerms m = map (cuddReadPerm m) [0..(cuddReadSize m - 1)]
 cuddReadInvPerms :: DdManager -> [Int]
 cuddReadInvPerms m = map (cuddReadInvPerm m) [0..(cuddReadSize m -1)]
 
-cuddReadTree :: DdManager -> IO MtrNode 
-cuddReadTree (DdManager m) = liftM MtrNode $ c_cuddReadTree m
+cuddReadTree :: DdManager -> IO (Ptr CMtrNode) 
+cuddReadTree (DdManager m) = c_cuddReadTree m
 
 cuddCountLeaves :: DdNode -> Int
 cuddCountLeaves (DdNode d) = fromIntegral $ unsafePerformIO $ 

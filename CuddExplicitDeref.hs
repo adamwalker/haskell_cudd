@@ -266,7 +266,7 @@ andLimit (STDdManager m) (DDNode x) (DDNode y) lim = unsafeIOToST $ do
         cuddRef res
         return $ Just $ DDNode res
 
-readTree :: STDdManager s u -> ST s MtrNode
+readTree :: STDdManager s u -> ST s (MtrNode s)
 readTree (STDdManager m) = liftM MtrNode $ unsafeIOToST $ c_cuddReadTree m
 
 newVarAtLevel :: STDdManager s u -> Int -> ST s (DDNode s u)
