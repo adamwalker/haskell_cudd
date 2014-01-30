@@ -4,6 +4,8 @@ module CuddGC (
     cuddEnableGarbageCollection,
     cuddDisableGarbageCollection,
     cuddGarbageCollectionEnabled,
+    c_PreGCHook,
+    c_PostGCHook,
     regPreGCHook,
     regPostGCHook
     ) where
@@ -49,9 +51,9 @@ foreign import ccall safe "cuddwrap.h &PreGCHook"
 foreign import ccall safe "cuddwrap.h &PostGCHook"
 	c_PostGCHook :: HookFP
 
-regPreGCHook :: STDdManager s u -> ST s Int
-regPreGCHook m = cuddAddHook m c_PreGCHook CuddPreGcHook
+regPreGCHook :: STDdManager s u -> HookFP -> ST s Int
+regPreGCHook m func = cuddAddHook m func CuddPreGcHook
 
-regPostGCHook :: STDdManager s u -> ST s Int
-regPostGCHook m = cuddAddHook m c_PostGCHook CuddPostGcHook
+regPostGCHook :: STDdManager s u -> HookFP -> ST s Int
+regPostGCHook m func = cuddAddHook m func CuddPostGcHook
 
