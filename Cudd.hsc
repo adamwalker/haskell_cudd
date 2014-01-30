@@ -183,9 +183,6 @@ cuddBddXnor = cuddArg2 c_cuddBddXnor
 cuddNot :: DdManager -> DdNode -> DdNode
 cuddNot = cuddArg1 (const c_cuddNot)
 
-foreign import ccall safe "cuddwrap.h &deref"
-	derefHook :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
-
 foreign import ccall safe "cuddwrap.h wrappedCuddDumpDot"
 	c_cuddDumpDot :: Ptr CDdManager -> Ptr CDdNode -> CString -> IO ()
 

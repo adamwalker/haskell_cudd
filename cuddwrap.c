@@ -28,10 +28,6 @@ void wrappedCuddDumpDot(DdManager *m, DdNode *f, char *filename){
 	fclose(file);
 }
 
-void deref(DdManager *m, DdNode *d){
-	printf("deref\n");
-}
-
 DdNode *wrappedCuddNot(DdNode *f){
     return Cudd_Not(f);
 }
