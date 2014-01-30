@@ -60,8 +60,8 @@ mtrMakeNextSibling (MtrNode f) (MtrNode s) = unsafeIOToST $ c_mtrMakeNextSibling
 foreign import ccall unsafe "mtr.h Mtr_PrintGroups"
     c_mtrPrintGroups :: Ptr CMtrNode -> CInt -> IO ()
 
-mtrPrintGroups :: MtrNode s -> Int -> IO ()
-mtrPrintGroups (MtrNode c) s = c_mtrPrintGroups c (fromIntegral s)
+mtrPrintGroups :: MtrNode s -> Int -> ST s ()
+mtrPrintGroups (MtrNode c) s = unsafeIOToST $ c_mtrPrintGroups c (fromIntegral s)
 
 foreign import ccall unsafe "mtr.h Mtr_PrintTree"
     c_mtrPrintTree :: Ptr CMtrNode -> IO ()
