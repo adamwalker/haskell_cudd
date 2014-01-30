@@ -1,4 +1,13 @@
+{-# LANGUAGE RankNTypes #-}
+
 module CuddExplicitDeref (
+    cuddInit,
+    cuddInitDefaults,
+    withManager, 
+    withManagerDefaults,
+    withManagerIO,
+    withManagerIODefaults,
+    shuffleHeap,
     bzero,
     bone,
     bvar,
@@ -66,11 +75,51 @@ import Foreign.Ptr
 import Foreign.C.Types
 import Control.Monad.ST
 import Control.Monad
+import Control.Monad.IO.Class
+import Data.List
 
 import CuddC
 import CuddInternal hiding (deref)
 import MTR
 import CuddCommon
+
+cuddInit :: Int -> Int -> Int -> Int -> Int -> ST s (STDdManager s u)
+cuddInit numVars numVarsZ numSlots cacheSize maxMemory = unsafeIOToST $ do
+    cm <- c_cuddInit (fromIntegral numVars) (fromIntegral numVarsZ) (fromIntegral numSlots) (fromIntegral cacheSize) (fromIntegral maxMemory)
+    return $ STDdManager cm
+
+cuddInitDefaults :: ST s (STDdManager s u)
+cuddInitDefaults = cuddInit 0 0 cudd_unique_slots cudd_cache_slots 0
+
+withManager :: Int -> Int -> Int -> Int -> Int -> (forall u. STDdManager s u -> ST s a) -> ST s a
+withManager numVars numVarsZ numSlots cacheSize maxMemory f = do
+    res <- cuddInit numVars numVarsZ numSlots cacheSize maxMemory
+    f res 
+
+withManagerDefaults :: (forall u. STDdManager s u -> ST s a) -> ST s a
+withManagerDefaults f = do
+    res <- cuddInitDefaults
+    f res 
+
+withManagerIO :: MonadIO m => Int -> Int -> Int -> Int -> Int -> (forall u. STDdManager RealWorld u -> m a) -> m a
+withManagerIO numVars numVarsZ numSlots cacheSize maxMemory f = do
+    res <- liftIO $ stToIO $ cuddInit numVars numVarsZ numSlots cacheSize maxMemory
+    f res
+
+withManagerIODefaults :: MonadIO m => (forall u. STDdManager RealWorld u -> m a) -> m a
+withManagerIODefaults f = do
+    res <- liftIO $ stToIO cuddInitDefaults
+    f res
+
+shuffleHeap :: STDdManager s u -> [Int] -> ST s ()
+shuffleHeap (STDdManager m) order = unsafeIOToST $ 
+    withArrayLen (map fromIntegral order) $ \size ptr -> do
+    when (sort order /= [0..size-1]) (error "shuffleHeap: order does not contain each variable once") 
+    res1 <- c_cuddBddIthVar m (fromIntegral (size - 1))
+    when (res1 == nullPtr) (error "shuffleHeap: Failed to resize table")
+    res2 <- c_cuddShuffleHeap m ptr
+    when (fromIntegral res2 /= 1) (error "shuffleHeap: Cudd_ShuffleHeap failed")
+    return ()
 
 newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
 
