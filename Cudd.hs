@@ -102,11 +102,6 @@ import CuddC
 import CuddCommon
 import CuddFile
 
-#include <stdio.h>
-#include "cudd.h"
-#include "cuddwrap.h"
-#include "dddmp.h"
-
 cuddInit :: DdManager
 cuddInit = DdManager $ unsafePerformIO $ c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
 
