@@ -68,7 +68,14 @@ module CuddC (
     c_cuddCountPath,
     c_cuddBddConstrain,
     c_cuddBddRestrict,
-    c_wrappedRegular
+    c_wrappedRegular,
+    c_cuddBddPermute,
+    c_cuddXgty,
+    c_cuddInequality,
+    c_cuddDisequality,
+    c_cuddBddInterval,
+    c_cuddNodeReadIndex,
+    c_cuddBddTransfer
     ) where
 
 import Foreign
@@ -290,4 +297,25 @@ foreign import ccall safe "cudd.h Cudd_bddRestrict_s"
 
 foreign import ccall safe "cudd.h wrappedRegular"
     c_wrappedRegular :: Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddPermute_s"
+    c_cuddBddPermute :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_Xgty_s"
+	c_cuddXgty :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_Inequality_s"
+	c_cuddInequality :: Ptr CDdManager -> CInt -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_Disequality_s"
+	c_cuddDisequality :: Ptr CDdManager -> CInt -> CInt -> Ptr (Ptr CDdNode) -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddInterval_s"
+    c_cuddBddInterval :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> CInt -> CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_NodeReadIndex"
+    c_cuddNodeReadIndex :: Ptr CDdNode -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_bddTransfer"
+    c_cuddBddTransfer :: Ptr CDdManager -> Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
 
