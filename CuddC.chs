@@ -60,7 +60,14 @@ module CuddC (
     c_cuddReadTree,
     c_cuddBddLICompaction,
     c_cuddBddSqueeze,
-    c_cuddBddMinimize
+    c_cuddBddMinimize,
+    c_cuddEval,
+    c_cuddCountLeaves,
+    c_cuddCountMinterm,
+    c_cuddCountPathsToNonZero,
+    c_cuddCountPath,
+    c_cuddBddConstrain,
+    c_cuddBddRestrict
     ) where
 
 import Foreign
@@ -258,4 +265,25 @@ foreign import ccall safe "cudd.h Cudd_bddSqueeze_s"
 
 foreign import ccall safe "cudd.h Cudd_bddMinimize_s"
     c_cuddBddMinimize :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_Eval"
+    c_cuddEval :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd,h Cudd_CountLeaves"
+    c_cuddCountLeaves :: Ptr CDdNode -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_CountMinterm"
+    c_cuddCountMinterm :: Ptr CDdManager -> Ptr CDdNode -> CInt -> IO CDouble
+
+foreign import ccall safe "cudd.h Cudd_CountPathsToNonZero"
+    c_cuddCountPathsToNonZero :: Ptr CDdNode -> IO CDouble
+
+foreign import ccall safe "cudd.h Cudd_CountPath"
+    c_cuddCountPath :: Ptr CDdNode -> IO CDouble
+
+foreign import ccall safe "cudd.h Cudd_bddConstrain_s"
+    c_cuddBddConstrain :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_bddRestrict_s"
+    c_cuddBddRestrict :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 

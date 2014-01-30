@@ -197,9 +197,6 @@ cuddDumpDot (DdManager m) (DdNode n) s  =
 foreign import ccall safe "cuddwrap.h wrappedCuddIsComplement"
     c_cuddIsComplement :: Ptr CDdNode -> CInt
 
-foreign import ccall safe "cudd.h Cudd_Eval"
-    c_cuddEval :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CDdNode)
-
 cuddEval :: DdManager -> DdNode -> [Int] -> Bool
 cuddEval (DdManager m) (DdNode n) a = unsafePerformIO $ do
     res <- withArray (map fromIntegral a) $ \ap -> 
@@ -274,9 +271,6 @@ cuddSupportIndex (DdManager m) (DdNode n) = unsafePerformIO $
     size <- c_cuddReadSize m
     res <- peekArray (fromIntegral size) res
     return $ map toBool res
-
-foreign import ccall safe "cudd.h Cudd_FirstCube"
-    c_cuddFirstCube :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CInt) -> Ptr CInt
 
 cuddBddExistAbstract :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddExistAbstract = cuddArg2 c_cuddBddExistAbstract
@@ -521,32 +515,20 @@ cuddReadInvPerms m = map (cuddReadInvPerm m) [0..(cuddReadSize m -1)]
 cuddReadTree :: DdManager -> IO MtrNode 
 cuddReadTree (DdManager m) = liftM MtrNode $ c_cuddReadTree m
 
-foreign import ccall safe "cudd,h Cudd_CountLeaves"
-    c_cuddCountLeaves :: Ptr CDdNode -> IO CInt
-
 cuddCountLeaves :: DdNode -> Int
 cuddCountLeaves (DdNode d) = fromIntegral $ unsafePerformIO $ 
     withForeignPtr d $ \dp -> 
     c_cuddCountLeaves dp
-
-foreign import ccall safe "cudd.h Cudd_CountMinterm"
-    c_cuddCountMinterm :: Ptr CDdManager -> Ptr CDdNode -> CInt -> IO CDouble
 
 cuddCountMinterm :: DdManager -> DdNode -> Int -> Double
 cuddCountMinterm (DdManager m) (DdNode d) n = realToFrac $ unsafePerformIO $
     withForeignPtr d $ \dp -> 
     c_cuddCountMinterm m dp (fromIntegral n) 
 
-foreign import ccall safe "cudd.h Cudd_CountPathsToNonZero"
-    c_cuddCountPathsToNonZero :: Ptr CDdNode -> IO CDouble
-
 cuddCountPathsToNonZero :: DdNode -> Double
 cuddCountPathsToNonZero (DdNode d) = realToFrac $ unsafePerformIO $
     withForeignPtr d $ \dp ->
     c_cuddCountPathsToNonZero dp
-
-foreign import ccall safe "cudd.h Cudd_CountPath"
-    c_cuddCountPath :: Ptr CDdNode -> IO CDouble
 
 cuddCountPath :: DdNode -> Double
 cuddCountPath (DdNode d) = realToFrac $ unsafePerformIO $
@@ -579,14 +561,8 @@ cuddBddTransfer (DdManager m1) (DdManager m2) (DdNode x) = DdNode $ unsafePerfor
 cuddBddMakePrime :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddMakePrime = cuddArg2 c_cuddBddMakePrime
 
-foreign import ccall safe "cudd.h Cudd_bddConstrain_s"
-    c_cuddBddConstrain :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
-
 cuddBddConstrain :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddConstrain = cuddArg2 c_cuddBddConstrain
-
-foreign import ccall safe "cudd.h Cudd_bddRestrict_s"
-    c_cuddBddRestrict :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 cuddBddRestrict :: DdManager -> DdNode -> DdNode -> DdNode
 cuddBddRestrict = cuddArg2 c_cuddBddRestrict
