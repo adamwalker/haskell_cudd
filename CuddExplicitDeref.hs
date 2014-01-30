@@ -57,7 +57,8 @@ module CuddExplicitDeref (
     newVarAtLevel,
     liCompaction,
     squeeze,
-    minimize
+    minimize,
+    module CuddCommon
     ) where
 
 import Foreign hiding (void)
@@ -69,6 +70,7 @@ import Control.Monad
 import CuddC
 import CuddInternal hiding (deref)
 import MTR
+import CuddCommon
 
 newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
 
@@ -174,13 +176,13 @@ nodesToCube (STDdManager m) nodes = unsafeIOToST $
 readSize :: STDdManager s u -> ST s Int
 readSize (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadSize m
 
-satCube :: STDdManager s u -> DDNode s u -> ST s [Int]
+satCube :: STDdManager s u -> DDNode s u -> ST s [SatBit]
 satCube ma@(STDdManager m) (DDNode x) = unsafeIOToST $ do
     size <- liftM fromIntegral $ c_cuddReadSize m
     allocaArray size $ \resptr -> do
-    c_cuddBddToCubeArray m x resptr
-    res <- peekArray size resptr
-    return $ map fromIntegral res
+        c_cuddBddToCubeArray m x resptr
+        res <- peekArray size resptr
+        return $ map (toSatBit . fromIntegral) res
 
 compose :: STDdManager s u -> DDNode s u -> DDNode s u -> Int -> ST s (DDNode s u)
 compose (STDdManager m) (DDNode f) (DDNode g) v = liftM DDNode $ unsafeIOToST $ c_cuddBddCompose m f g (fromIntegral v)

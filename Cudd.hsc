@@ -99,6 +99,7 @@ import ForeignHelpers
 import CuddInternal
 import MTR
 import CuddC
+import CuddCommon
 
 #include <stdio.h>
 #include "cudd.h"
@@ -210,14 +211,6 @@ foreign import ccall safe "cudd.h Cudd_PrintMinterm"
 cuddPrintMinterm :: DdManager -> DdNode -> IO ()
 cuddPrintMinterm (DdManager m) (DdNode n) = 
     withForeignPtr n $ c_cuddPrintMinterm m 
-
-data SatBit = Zero | One | DontCare deriving (Eq)
-
-toSatBit :: Int -> SatBit
-toSatBit 0 = Zero
-toSatBit 1 = One
-toSatBit 2 = DontCare
-toSatBit _ = error "toSatBit: Invalid sat bit returned from CUDD"
 
 foreign import ccall safe "cuddwrap.h allSat"
     c_allSat :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> Ptr CInt -> IO (Ptr (Ptr CInt))
