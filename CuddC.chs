@@ -67,7 +67,8 @@ module CuddC (
     c_cuddCountPathsToNonZero,
     c_cuddCountPath,
     c_cuddBddConstrain,
-    c_cuddBddRestrict
+    c_cuddBddRestrict,
+    c_wrappedRegular
     ) where
 
 import Foreign
@@ -286,4 +287,7 @@ foreign import ccall safe "cudd.h Cudd_bddConstrain_s"
 
 foreign import ccall safe "cudd.h Cudd_bddRestrict_s"
     c_cuddBddRestrict :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h wrappedRegular"
+    c_wrappedRegular :: Ptr CDdNode -> IO (Ptr CDdNode)
 
