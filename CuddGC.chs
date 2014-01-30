@@ -4,8 +4,8 @@ module CuddGC (
     cuddEnableGarbageCollection,
     cuddDisableGarbageCollection,
     cuddGarbageCollectionEnabled,
-    c_PreGCHook,
-    c_PostGCHook,
+    c_preGCHook_sample,
+    c_postGCHook_sample,
     regPreGCHook,
     regPostGCHook
     ) where
@@ -45,11 +45,11 @@ foreign import ccall safe "cudd.h Cudd_GarbageCollectionEnabled"
 cuddGarbageCollectionEnabled :: STDdManager s u -> ST s Int
 cuddGarbageCollectionEnabled (STDdManager m) = unsafeIOToST $ liftM fromIntegral $ c_cuddGarbageCollectionEnabled m
 
-foreign import ccall safe "cuddwrap.h &PreGCHook"
-	c_PreGCHook :: HookFP
+foreign import ccall safe "cuddwrap.h &preGCHook_sample"
+	c_preGCHook_sample :: HookFP
 
-foreign import ccall safe "cuddwrap.h &PostGCHook"
-	c_PostGCHook :: HookFP
+foreign import ccall safe "cuddwrap.h &postGCHook_sample"
+	c_postGCHook_sample :: HookFP
 
 regPreGCHook :: STDdManager s u -> HookFP -> ST s Int
 regPreGCHook m func = cuddAddHook m func CuddPreGcHook

@@ -146,12 +146,12 @@ int *onePrime(DdManager *m, DdNode *l, DdNode *u, int *nvars){
     return result;
 }
 
-int PreGCHook(DdManager *dd, const char *str, void *data){
+int preGCHook_sample(DdManager *dd, const char *str, void *data){
 	printf("Performing %s garbage collection...", str);
 	return 1;
 }
 
-int PostGCHook(DdManager *dd, const char *str, void *data){
+int postGCHook_sample(DdManager *dd, const char *str, void *data){
 	printf("%s GC done\n", str);
 	return 1;
 }
