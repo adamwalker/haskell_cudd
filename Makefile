@@ -4,7 +4,7 @@ INCLUDE=-I${CUDD_PATH}/include
 
 CFLAGS+=${INCLUDE} -g
 
-default: libcuddwrap.a CuddInternal.hs CuddReorder.hs CuddHook.hs MTR.hs CuddST.hs CuddFile.hs
+default: libcuddwrap.a CuddInternal.hs CuddReorder.hs CuddHook.hs MTR.hs CuddFile.hs
 
 cuddwrap.o: cuddwrap.c cuddwrap.h
 	@echo "[CC] $@"
