@@ -2,32 +2,15 @@
 
 module CuddFile where
 
-import System.IO
-import System.Directory
 import Foreign.Storable
 import Foreign.Ptr
 import Foreign.C.Types
 import Foreign.C.String
 import Foreign.ForeignPtr
-import Foreign.Marshal.Alloc
 import Foreign.Marshal.Array
-import Foreign.Marshal.Utils
-import System.IO.Unsafe
-import Control.Monad.ST
-import Control.Monad
-import Data.Binary
-import Data.List
-import Control.DeepSeq
 import Control.Monad.Error
-import Data.Array hiding (indices)
-import Control.Exception
-import Data.Maybe
 
-import ForeignHelpers
 import CuddInternal
-import MTR
-import CuddC
-import CuddCommon
 
 #include "dddmp.h"
 
