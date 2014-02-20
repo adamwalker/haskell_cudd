@@ -80,25 +80,3 @@ cuddBddLoad (DdManager m) matchtype auxids composeids mode fname =
                 fp <- newForeignPtrEnv deref m node
                 return $ Just $ DdNode fp
 
--- BDD from string via file
-bddFromString :: MonadError String me => DdManager -> String -> me DdNode
-bddFromString m str = unsafePerformIO $ 
-    catchError (do let fname = "_fromString.bdd"
-                   writeFile fname str
-                   node <- cuddBddLoad m DddmpVarMatchauxids [] [] DddmpModeText fname
-                   removeFile fname
-                   return $ return $ fromJust node)
-               (return . throwError . show)
-
--- Extremely ugly and unsafe way to convert BDD to String via file
-bddToString :: (MonadError String me) => DdManager -> DdNode -> me String
-bddToString m node = unsafePerformIO $ 
-    catchError (do let fname = show (unDdNode node) ++ ".bdd"
-                   ret <- cuddBddStore m fname node [] DddmpModeText DddmpVarids fname
-                   --putStrLn $ "ret = " ++ (show ret)
-                   if ret == True
-                           then do str <- readFile fname
-                                   removeFile fname
-                                   return $ return str
-                           else return $ throwError $ "Failed to serialise BDD (status: " ++ show ret ++ ")")
-               (return . throwError . show)

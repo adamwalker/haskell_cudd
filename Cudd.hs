@@ -44,8 +44,6 @@ module Cudd (
     cuddBddInterval,
     cuddDisequality,
     cuddInequality,
-    bddToString,
-    bddFromString,
     ddNodeToInt,
     cuddBddImp,
     cuddBddPickOneMinterm,
@@ -100,7 +98,6 @@ import CuddInternal
 import MTR
 import CuddC
 import CuddCommon
-import CuddFile
 
 cuddInit :: DdManager
 cuddInit = DdManager $ unsafePerformIO $ c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
