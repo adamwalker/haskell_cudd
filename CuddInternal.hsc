@@ -11,6 +11,7 @@ module CuddInternal (
 
 import Foreign.Ptr
 import Foreign.ForeignPtr
+import Control.DeepSeq
 
 import CuddC
 
@@ -29,6 +30,8 @@ newtype DdManager = DdManager (Ptr CDdManager)
 newtype STDdManager s u = STDdManager {unSTDdManager :: Ptr CDdManager}
 
 newtype DdNode = DdNode {unDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
+
+instance NFData DdNode
 
 newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
 

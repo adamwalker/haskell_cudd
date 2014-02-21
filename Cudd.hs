@@ -67,11 +67,10 @@ module Cudd (
     cuddLargestCube,
     cuddBddLeq,
     cuddDebugCheck,
-    cuddCheckKeys
+    cuddCheckKeys,
+    cuddPrintInfo
     ) where
 
-import System.IO
-import System.Directory
 import Foreign.Storable
 import Foreign.Ptr
 import Foreign.C.Types
@@ -83,10 +82,7 @@ import Foreign.Marshal.Utils
 import System.IO.Unsafe
 import Control.Monad.ST
 import Control.Monad
-import Data.Binary
 import Data.List
-import Control.DeepSeq
-import Control.Monad.Error
 import Data.Array hiding (indices)
 import Control.Exception
 
@@ -104,7 +100,7 @@ cuddInitOrder order = DdManager $ unsafePerformIO $ withArrayLen (map fromIntegr
     when (sort order /= [0..size-1]) (error "cuddInitOrder: order does not contain each variable once") 
     m <- c_cuddInit (fromIntegral size) 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
     res <- c_cuddShuffleHeap m ptr
-    when (fromIntegral res /= 1) (error "shuffleHeap failed")
+    when (res /= 1) (error "shuffleHeap failed")
     return m
 
 getManagerST :: STDdManager s u -> DdManager
@@ -187,7 +183,7 @@ cuddEval (DdManager m) (DdNode n) a = unsafePerformIO $ do
     res <- withArray (map fromIntegral a) $ \ap -> 
         withForeignPtr n $ \np -> 
             c_cuddEval m np ap
-    return $ (==0) $ fromIntegral $ c_cuddIsComplement res
+    return $ (==0) $ c_cuddIsComplement res
 
 foreign import ccall safe "cudd.h Cudd_PrintMinterm"
     c_cuddPrintMinterm :: Ptr CDdManager -> Ptr CDdNode -> IO ()
@@ -360,8 +356,6 @@ foreign import ccall safe "cudd.h Cudd_PrintInfo"
                 
 cuddPrintInfo :: DdManager -> Ptr CFile -> IO (Int)
 cuddPrintInfo (DdManager m) cf = liftM fromIntegral $ c_cuddPrintInfo m cf
-
-instance NFData DdNode
 
 cuddReadPerm :: DdManager -> Int -> Int
 cuddReadPerm (DdManager m) i = fromIntegral $ unsafePerformIO $ c_cuddReadPerm m (fromIntegral i)
