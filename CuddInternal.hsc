@@ -2,7 +2,6 @@
 module CuddInternal (
     DdManager(..), 
     STDdManager(..), 
-    CDdNode(..), 
     DdNode(..), 
     DDNode(..),
     cuddRef, 
