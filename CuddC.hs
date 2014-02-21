@@ -185,7 +185,7 @@ foreign import ccall safe "cudd.h Cudd_SupportIndex"
 	c_cuddSupportIndex :: Ptr CDdManager -> Ptr CDdNode -> IO(Ptr CInt)
 
 foreign import ccall safe "cudd.h Cudd_SupportIndices"
-    c_cuddSupportIndices :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CInt) -> IO (CInt)
+    c_cuddSupportIndices :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CInt) -> IO CInt
 
 foreign import ccall safe "cudd.h Cudd_IndicesToCube_s"
     c_cuddIndicesToCube :: Ptr CDdManager -> Ptr CInt -> CInt -> IO (Ptr CDdNode)
@@ -194,7 +194,7 @@ foreign import ccall safe "cudd.h Cudd_bddComputeCube_s"
     c_cuddBddComputeCube :: Ptr CDdManager -> Ptr (Ptr CDdNode) -> Ptr CInt -> CInt -> IO (Ptr CDdNode)
 
 foreign import ccall safe "cudd.h Cudd_BddToCubeArray"
-    c_cuddBddToCubeArray :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (CInt)
+    c_cuddBddToCubeArray :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO CInt
 
 foreign import ccall safe "cudd.h Cudd_ReadSize"
 	c_cuddReadSize :: Ptr CDdManager -> IO CInt
@@ -227,7 +227,7 @@ foreign import ccall safe "cudd.h Cudd_bddPickOneMinterm_s"
 	c_cuddBddPickOneMinterm :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> CInt -> IO (Ptr CDdNode)
 
 foreign import ccall safe "cudd.h Cudd_CheckZeroRef"
-    c_cuddCheckZeroRef :: Ptr CDdManager -> IO (CInt)
+    c_cuddCheckZeroRef :: Ptr CDdManager -> IO CInt
 
 foreign import ccall safe "cudd.h Cudd_ReadInvPerm"
     c_cuddReadInvPerm :: Ptr CDdManager -> CInt -> IO CInt

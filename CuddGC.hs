@@ -37,7 +37,7 @@ cuddDisableGarbageCollection :: STDdManager s u -> ST s ()
 cuddDisableGarbageCollection (STDdManager m) = unsafeIOToST $ c_cuddDisableGarbageCollection m
 
 foreign import ccall safe "cudd.h Cudd_GarbageCollectionEnabled"
-	c_cuddGarbageCollectionEnabled :: Ptr CDdManager -> IO (CInt)
+	c_cuddGarbageCollectionEnabled :: Ptr CDdManager -> IO CInt
 
 cuddGarbageCollectionEnabled :: STDdManager s u -> ST s Int
 cuddGarbageCollectionEnabled (STDdManager m) = unsafeIOToST $ liftM fromIntegral $ c_cuddGarbageCollectionEnabled m

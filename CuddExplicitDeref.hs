@@ -256,10 +256,10 @@ checkKeys :: STDdManager s u -> ST s Int
 checkKeys (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddCheckKeys m
 
 pickOneMinterm :: STDdManager s u -> DDNode s u -> [DDNode s u] -> ST s (DDNode s u)
-pickOneMinterm (STDdManager m) (DDNode d) vars = unsafeIOToST $ do
+pickOneMinterm (STDdManager m) (DDNode d) vars = unsafeIOToST $ 
     withArrayLen (map unDDNode vars) $ \vl vp -> do
-    res <- c_cuddBddPickOneMinterm m d vp (fromIntegral vl)
-    return $ DDNode res
+        res <- c_cuddBddPickOneMinterm m d vp (fromIntegral vl)
+        return $ DDNode res
 
 checkZeroRef :: STDdManager s u -> ST s Int
 checkZeroRef (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddCheckZeroRef m
