@@ -1,6 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
 module CuddInternal (
-    CDdManager(..), 
     DdManager(..), 
     STDdManager(..), 
     CDdNode(..), 

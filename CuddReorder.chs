@@ -47,6 +47,7 @@ import Control.Monad
 import Control.Monad.ST
 
 import CuddInternal
+import CuddC
 import CuddHook
 
 #include <stdio.h>

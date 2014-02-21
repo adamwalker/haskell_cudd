@@ -11,6 +11,7 @@ import Foreign.Marshal.Array
 import Control.Monad.Error
 
 import CuddInternal
+import CuddC
 
 #include "dddmp.h"
 

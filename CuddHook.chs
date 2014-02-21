@@ -20,6 +20,7 @@ import Control.Monad
 import Control.Monad.ST
 
 import CuddInternal
+import CuddC
 
 #include <stdio.h>
 #include <cudd.h>
