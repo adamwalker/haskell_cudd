@@ -7,7 +7,6 @@ module CuddInternal (
     DdNode(..), 
     STDdNode(..), 
     cuddRef, 
-    ddNodeToInt,
     deref,
     cudd_unique_slots,
     cudd_cache_slots
@@ -46,9 +45,6 @@ newtype DdNode = DdNode {unDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show
 newtype STDdNode s u = STDdNode {unSTDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
 
 instance NFData (STDdNode s u)
-
-ddNodeToInt :: Integral i => DdNode -> i
-ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
 
 deref = c_cuddIterDerefBddPtr
 

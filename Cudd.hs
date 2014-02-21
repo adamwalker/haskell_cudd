@@ -462,3 +462,6 @@ cuddCheckKeys (DdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddCheckKey
 cuddDebugCheck :: DdManager -> ST s Int
 cuddDebugCheck (DdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddDebugCheck m
 
+ddNodeToInt :: Integral i => DdNode -> i
+ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
+
