@@ -50,14 +50,5 @@ instance NFData (STDdNode s u)
 ddNodeToInt :: Integral i => DdNode -> i
 ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
 
-foreign import ccall safe "cudd.h &Cudd_RecursiveDeref"
-	c_cuddRecursiveDerefPtr :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
-
-foreign import ccall safe "cudd.h &Cudd_DelayedDerefBdd"
-	c_cuddDelayedDerefBddPtr :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
-
-foreign import ccall safe "cudd.h &Cudd_IterDerefBdd"
-	c_cuddIterDerefBddPtr :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
-
 deref = c_cuddIterDerefBddPtr
 

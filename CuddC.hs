@@ -75,7 +75,10 @@ module CuddC (
     c_cuddDisequality,
     c_cuddBddInterval,
     c_cuddNodeReadIndex,
-    c_cuddBddTransfer
+    c_cuddBddTransfer,
+    c_cuddRecursiveDerefPtr,
+    c_cuddDelayedDerefBddPtr,
+    c_cuddIterDerefBddPtr
     ) where
 
 import Foreign
@@ -318,4 +321,13 @@ foreign import ccall safe "cudd.h Cudd_NodeReadIndex"
 
 foreign import ccall safe "cudd.h Cudd_bddTransfer"
     c_cuddBddTransfer :: Ptr CDdManager -> Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h &Cudd_RecursiveDeref"
+	c_cuddRecursiveDerefPtr :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
+
+foreign import ccall safe "cudd.h &Cudd_DelayedDerefBdd"
+	c_cuddDelayedDerefBddPtr :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
+
+foreign import ccall safe "cudd.h &Cudd_IterDerefBdd"
+	c_cuddIterDerefBddPtr :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
 
