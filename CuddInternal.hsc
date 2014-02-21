@@ -5,6 +5,7 @@ module CuddInternal (
     STDdManager(..), 
     CDdNode(..), 
     DdNode(..), 
+    DDNode(..),
     cuddRef, 
     deref,
     cudd_unique_slots,
@@ -40,6 +41,8 @@ newtype DdManager = DdManager (Ptr CDdManager)
 newtype STDdManager s u = STDdManager {unSTDdManager :: Ptr CDdManager}
 
 newtype DdNode = DdNode {unDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
+
+newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
 
 deref = c_cuddIterDerefBddPtr
 

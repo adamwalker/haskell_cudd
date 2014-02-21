@@ -24,7 +24,7 @@ module CuddExplicitDeref (
     deref,
     setVarMap,
     mapVars,
-    DDNode(..),
+    DDNode,
     STDdManager,
     leq,
     CuddExplicitDeref.shift,
@@ -120,8 +120,6 @@ shuffleHeap (STDdManager m) order = unsafeIOToST $
     res2 <- c_cuddShuffleHeap m ptr
     when (fromIntegral res2 /= 1) (error "shuffleHeap: Cudd_ShuffleHeap failed")
     return ()
-
-newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
 
 toInt :: DDNode s u -> Int
 toInt (DDNode n) = fromIntegral $ ptrToIntPtr n
