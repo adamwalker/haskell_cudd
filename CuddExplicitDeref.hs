@@ -281,12 +281,6 @@ readNodeCount (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadNo
 readPeakNodeCount :: STDdManager s u -> ST s Integer
 readPeakNodeCount (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadPeakNodeCount m
 
-{-
-refCount :: STDdManager s u -> STDdNode s u -> ST s (DdNode s u)
-
-unRefCount :: STDdManager s u -> DdNode s u -> ST s (STDdNode s u)
--}
-
 regular :: DDNode s u -> DDNode s u
 regular (DDNode x) = DDNode $ unsafePerformIO $ c_wrappedRegular x
 

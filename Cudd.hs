@@ -35,7 +35,6 @@ module Cudd (
     cuddIndicesToCube,
     getManagerST,
     getSTManager,
-    getNodeST,
     cuddBddLICompaction,
     cuddBddMinimize,
     cuddReadSize,
@@ -57,8 +56,6 @@ module Cudd (
     cuddCountPath,
     cuddCountPathsToNonZero,
     cuddPrintDebug,
-    STDdNode,
-    STDdManager, 
     cuddBddAndAbstract,
     cuddBddXorExistAbstract,
     cuddBddTransfer,
@@ -115,9 +112,6 @@ getManagerST (STDdManager m) = DdManager m
 
 getSTManager :: DdManager -> STDdManager s u
 getSTManager (DdManager m) = STDdManager m
-
-getNodeST :: STDdNode s u -> DdNode
-getNodeST (STDdNode n) = DdNode n
 
 cuddReadOne :: DdManager -> DdNode
 cuddReadOne (DdManager d) = DdNode $ unsafePerformIO $ do
