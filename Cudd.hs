@@ -361,11 +361,6 @@ foreign import ccall safe "cudd.h Cudd_PrintInfo"
 cuddPrintInfo :: DdManager -> Ptr CFile -> IO (Int)
 cuddPrintInfo (DdManager m) cf = liftM fromIntegral $ c_cuddPrintInfo m cf
 
-foreign import ccall safe "cuddWrap.h getStdOut"
-	c_getStdOut :: IO (Ptr CFile)
-
-cStdOut = unsafePerformIO c_getStdOut
-
 instance NFData DdNode
 
 cuddReadPerm :: DdManager -> Int -> Int

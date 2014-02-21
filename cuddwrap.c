@@ -147,5 +147,3 @@ int *onePrime(DdManager *m, DdNode *l, DdNode *u, int *nvars){
     return result;
 }
 
-FILE *getStdOut() {return stdout;}
-
