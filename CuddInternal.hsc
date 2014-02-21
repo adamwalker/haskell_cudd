@@ -4,7 +4,6 @@ module CuddInternal (
     STDdManager(..), 
     DdNode(..), 
     DDNode(..),
-    cuddRef, 
     deref,
     cudd_unique_slots,
     cudd_cache_slots
