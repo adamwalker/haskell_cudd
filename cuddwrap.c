@@ -22,14 +22,7 @@ void wrappedCuddDumpDot(DdManager *m, DdNode *f, char *filename){
 	FILE *file = fopen(filename, "w");
 	assert(file);
 	Cudd_DumpDot(m, 1, &f, NULL, NULL, file);
-	//Cudd_ReadOne(m);
-	//Cudd_bddIthVar(m, 5);
-	//Cudd_RecursiveDeref(m, f);
 	fclose(file);
-}
-
-DdNode *wrappedCuddNot(DdNode *f){
-    return Cudd_Not(f);
 }
 
 int wrappedCuddIsComplement(DdNode *f){
