@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts, RankNTypes #-}
 
-module Cudd (
+module Cudd.Cudd (
     DdManager(),
     DdNode(),
     cuddInit,
@@ -87,10 +87,10 @@ import Data.Array hiding (indices)
 import Control.Exception
 
 import ForeignHelpers
-import CuddInternal
-import MTR
-import CuddC
-import CuddCommon
+import Cudd.Internal
+import Cudd.MTR
+import Cudd.C
+import Cudd.Common
 
 cuddInit :: DdManager
 cuddInit = DdManager $ unsafePerformIO $ c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
@@ -282,8 +282,8 @@ cuddBddShift (DdManager m) (DdNode d) from to = DdNode $ unsafePerformIO $
     size <- c_cuddReadSize m 
     let perm = makePermutArray (fromIntegral size) from to
     withArray (map fromIntegral perm) $ \pp -> do
-    node <- c_cuddBddPermute m dp pp
-    newForeignPtrEnv deref m node
+        node <- c_cuddBddPermute m dp pp
+        newForeignPtrEnv deref m node
 
 cuddXgty :: DdManager -> [DdNode] -> [DdNode] -> DdNode
 cuddXgty (DdManager m) x y = DdNode $ unsafePerformIO $ 

@@ -1,6 +1,6 @@
 {-#LANGUAGE ForeignFunctionInterface #-}
 
-module CuddGC (
+module Cudd.GC (
     cuddEnableGarbageCollection,
     cuddDisableGarbageCollection,
     cuddGarbageCollectionEnabled,
@@ -21,8 +21,9 @@ import Foreign.Marshal.Utils
 import Control.Monad
 import Control.Monad.ST
 
-import CuddInternal
-import CuddHook
+import Cudd.Internal
+import Cudd.Hook
+import Cudd.C
 
 foreign import ccall safe "cudd.h Cudd_EnableGarbageCollection"
 	c_cuddEnableGarbageCollection :: Ptr CDdManager -> IO ()

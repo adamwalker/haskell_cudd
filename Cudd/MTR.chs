@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
 
-module MTR where
+module Cudd.MTR where
 
 import System.IO
 import Foreign

@@ -1,11 +1,11 @@
-module CuddConvert where
+module Cudd.Convert where
 
 import System.IO.Unsafe
 import Foreign.ForeignPtr
 import Control.Monad.ST
 
-import CuddInternal
-import CuddC
+import Cudd.Internal
+import Cudd.C
 
 toDdNode :: DdManager -> DDNode s u -> DdNode
 toDdNode (DdManager m) (DDNode d) = DdNode $ unsafePerformIO $ do 

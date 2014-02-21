@@ -1,4 +1,4 @@
-module CuddCommon where
+module Cudd.Common where
 
 data SatBit = Zero | One | DontCare deriving (Eq)
 

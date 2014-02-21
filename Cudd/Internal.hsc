@@ -1,5 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
-module CuddInternal (
+module Cudd.Internal (
     DdManager(..), 
     STDdManager(..), 
     DdNode(..), 
@@ -13,7 +13,7 @@ import Foreign.Ptr
 import Foreign.ForeignPtr
 import Control.DeepSeq
 
-import CuddC
+import Cudd.C
 
 #include <stdio.h>
 #include "cudd.h"

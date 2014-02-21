@@ -1,1 +1,1 @@
- runhaskell Setup configure --user --extra-include-dirs=../../3rd_party/lib/cudd-2.4.2/include
+ runhaskell Setup configure --user --extra-include-dirs=${CUDD_PATH}/include --extra-lib-dirs=${CUDD_PATH}/cudd --extra-lib-dirs=${CUDD_PATH}/st --extra-lib-dirs=${CUDD_PATH}/dddmp --extra-lib-dirs=${CUDD_PATH}/mtr --extra-lib-dirs=${CUDD_PATH}/epd --extra-lib-dirs=${CUDD_PATH}/util

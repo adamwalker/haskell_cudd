@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts, RankNTypes #-}
 
-module CuddFile where
+module Cudd.File where
 
 import Foreign.Storable
 import Foreign.Ptr
@@ -10,8 +10,8 @@ import Foreign.ForeignPtr
 import Foreign.Marshal.Array
 import Control.Monad.Error
 
-import CuddInternal
-import CuddC
+import Cudd.Internal
+import Cudd.C
 
 #include "dddmp.h"
 

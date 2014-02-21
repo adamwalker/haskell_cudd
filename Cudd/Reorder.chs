@@ -1,6 +1,6 @@
 {-#LANGUAGE ForeignFunctionInterface #-}
 
-module CuddReorder (
+module Cudd.Reorder (
     CuddReorderingType(..),
     cuddReorderingStatus,
     cuddAutodynEnable,
@@ -46,9 +46,9 @@ import Foreign.Marshal.Utils
 import Control.Monad
 import Control.Monad.ST
 
-import CuddInternal
-import CuddC
-import CuddHook
+import Cudd.Internal
+import Cudd.C
+import Cudd.Hook
 
 #include <stdio.h>
 #include <cudd.h>

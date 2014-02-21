@@ -1,6 +1,6 @@
 {-#LANGUAGE ForeignFunctionInterface #-}
 
-module CuddHook (
+module Cudd.Hook (
     cuddAddHook,
     cuddRemoveHook,
     HookTyp,
@@ -19,8 +19,8 @@ import Foreign.Marshal.Utils
 import Control.Monad
 import Control.Monad.ST
 
-import CuddInternal
-import CuddC
+import Cudd.Internal
+import Cudd.C
 
 #include <stdio.h>
 #include <cudd.h>

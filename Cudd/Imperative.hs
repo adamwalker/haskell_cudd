@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
 
-module CuddExplicitDeref (
+module Cudd.Imperative (
     cuddInit,
     cuddInitDefaults,
     withManager, 
@@ -27,7 +27,7 @@ module CuddExplicitDeref (
     DDNode,
     STDdManager,
     leq,
-    CuddExplicitDeref.shift,
+    Cudd.Imperative.shift,
     ref,
     largestCube,
     makePrime,
@@ -68,7 +68,7 @@ module CuddExplicitDeref (
     liCompaction,
     squeeze,
     minimize,
-    module CuddCommon
+    module Cudd.Common
     ) where
 
 import Foreign hiding (void)
@@ -79,10 +79,10 @@ import Control.Monad
 import Control.Monad.IO.Class
 import Data.List
 
-import CuddC
-import CuddInternal hiding (deref)
-import MTR
-import CuddCommon
+import Cudd.C
+import Cudd.Internal hiding (deref)
+import Cudd.MTR
+import Cudd.Common
 
 cuddInit :: Int -> Int -> Int -> Int -> Int -> ST s (STDdManager s u)
 cuddInit numVars numVarsZ numSlots cacheSize maxMemory = unsafeIOToST $ do

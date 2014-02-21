@@ -1,6 +1,6 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
 
-module CuddC (
+module Cudd.C (
     CDdManager,
     CDdNode,
     c_cuddReadOne,
@@ -85,7 +85,7 @@ module CuddC (
 import Foreign
 import Foreign.C.Types
 
-import MTR
+import Cudd.MTR
 
 data CDdManager
 data CDdNode
