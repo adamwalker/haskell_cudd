@@ -215,7 +215,7 @@ cuddOneSat (DdManager m) (DdNode n) = unsafePerformIO $
     alloca $ \nvarsptr ->
     withForeignPtr n $ \np -> do
     res <- c_oneSat m np nvarsptr
-    if res==nullPtr then (return Nothing) else do
+    if res==nullPtr then return Nothing else do
         nvars <- liftM fromIntegral $ peek nvarsptr
         res <- peekArray nvars res
         return $ Just $ map (toSatBit . fromIntegral) res
@@ -229,7 +229,7 @@ cuddOnePrime (DdManager m) (DdNode l) (DdNode u) = unsafePerformIO $
     withForeignPtr l $ \lp -> 
     withForeignPtr u $ \up -> do
     res <- c_onePrime m lp up nvarsptr 
-    if res==nullPtr then (return Nothing) else do
+    if res==nullPtr then return Nothing else do
         nvars <- liftM fromIntegral $ peek nvarsptr
         res <- peekArray nvars res
         return $ Just $ map fromIntegral res
@@ -347,14 +347,14 @@ cuddBddPickOneMinterm (DdManager m) (DdNode d) vars = unsafePerformIO $
 	withForeignPtr d $ \dp -> 
 	withForeignArrayPtrLen (map unDdNode vars) $ \vs vp -> do
 	node <- c_cuddBddPickOneMinterm m dp vp (fromIntegral vs)
-	if (node == nullPtr) then return Nothing else do
+	if node == nullPtr then return Nothing else do
 		nd <- newForeignPtrEnv deref m node
 		return $ Just $ DdNode nd
 
 foreign import ccall safe "cudd.h Cudd_PrintInfo"
-       c_cuddPrintInfo :: Ptr CDdManager -> Ptr CFile -> IO (CInt)
+       c_cuddPrintInfo :: Ptr CDdManager -> Ptr CFile -> IO CInt
                 
-cuddPrintInfo :: DdManager -> Ptr CFile -> IO (Int)
+cuddPrintInfo :: DdManager -> Ptr CFile -> IO Int
 cuddPrintInfo (DdManager m) cf = liftM fromIntegral $ c_cuddPrintInfo m cf
 
 cuddReadPerm :: DdManager -> Int -> Int
@@ -393,9 +393,9 @@ cuddCountPath (DdNode d) = realToFrac $ unsafePerformIO $
     c_cuddCountPath dp
 
 foreign import ccall safe "cudd.h Cudd_PrintDebug"
-    c_cuddPrintDebug :: Ptr CDdManager -> Ptr CDdNode -> CInt -> CInt -> IO (CInt)
+    c_cuddPrintDebug :: Ptr CDdManager -> Ptr CDdNode -> CInt -> CInt -> IO CInt
 
-cuddPrintDebug :: DdManager -> DdNode -> Int -> Int -> IO (Int)
+cuddPrintDebug :: DdManager -> DdNode -> Int -> Int -> IO Int
 cuddPrintDebug (DdManager m) (DdNode d) n pr = liftM fromIntegral $ 
     withForeignPtr d $ \dp -> 
     c_cuddPrintDebug m dp (fromIntegral n) (fromIntegral pr)
@@ -407,7 +407,7 @@ cuddBddXorExistAbstract :: DdManager -> DdNode -> DdNode -> DdNode -> DdNode
 cuddBddXorExistAbstract = cuddArg3 c_cuddBddXorExistAbstract
 
 cuddBddTransfer :: DdManager -> DdManager -> DdNode -> DdNode
-cuddBddTransfer (DdManager m1) (DdManager m2) (DdNode x) = DdNode $ unsafePerformIO $ do
+cuddBddTransfer (DdManager m1) (DdManager m2) (DdNode x) = DdNode $ unsafePerformIO $ 
     withForeignPtr x $ \xp -> do
         node <- c_cuddBddTransfer m1 m2 xp
         newForeignPtrEnv deref m2 node
@@ -434,9 +434,9 @@ cuddLargestCube (DdManager m) (DdNode n) = unsafePerformIO $
     return (fromIntegral l, DdNode res)
      
 cuddBddLeq :: DdManager -> DdNode -> DdNode -> Bool
-cuddBddLeq (DdManager m) (DdNode l) (DdNode r) = (==1) $ unsafePerformIO $ do
-    withForeignPtr l $ \lp -> do
-    withForeignPtr r $ \rp -> do
+cuddBddLeq (DdManager m) (DdNode l) (DdNode r) = (==1) $ unsafePerformIO $ 
+    withForeignPtr l $ \lp -> 
+    withForeignPtr r $ \rp ->
     c_cuddBddLeq m lp rp
 
 cuddCheckKeys :: DdManager -> ST s Int
