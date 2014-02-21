@@ -7,6 +7,7 @@
 #include "util.h"
 #include "cudd.h"
 
+//Function wrappers around macros
 DdNode *wrappedRegular(DdNode *f){
     assert(f);
     return Cudd_Regular(f);
@@ -17,16 +18,27 @@ void wrappedCuddRef(DdNode *f){
 	Cudd_Ref(f);
 }
 
+int wrappedCuddIsComplement(DdNode *f){
+    return Cudd_IsComplement(f);
+}
+
+//Garbage collection hooks
+int preGCHook_sample(DdManager *dd, const char *str, void *data){
+	printf("Performing %s garbage collection...", str);
+	return 1;
+}
+
+int postGCHook_sample(DdManager *dd, const char *str, void *data){
+	printf("%s GC done\n", str);
+	return 1;
+}
+
 void wrappedCuddDumpDot(DdManager *m, DdNode *f, char *filename){
 	printf("filename: %s\n", filename);
 	FILE *file = fopen(filename, "w");
 	assert(file);
 	Cudd_DumpDot(m, 1, &f, NULL, NULL, file);
 	fclose(file);
-}
-
-int wrappedCuddIsComplement(DdNode *f){
-    return Cudd_IsComplement(f);
 }
 
 int **allSat(DdManager *m, DdNode *n, int *nterms, int *nvars){
@@ -133,16 +145,6 @@ int *onePrime(DdManager *m, DdNode *l, DdNode *u, int *nvars){
     Cudd_GenFree (gen);
 
     return result;
-}
-
-int preGCHook_sample(DdManager *dd, const char *str, void *data){
-	printf("Performing %s garbage collection...", str);
-	return 1;
-}
-
-int postGCHook_sample(DdManager *dd, const char *str, void *data){
-	printf("%s GC done\n", str);
-	return 1;
 }
 
 FILE *getStdOut() {return stdout;}
