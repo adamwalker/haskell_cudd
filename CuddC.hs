@@ -82,26 +82,12 @@ module CuddC (
     ) where
 
 import Foreign
-import Foreign.Ptr
 import Foreign.C.Types
 
 import MTR
 
 data CDdManager
-data CDdNode = CDdNode {index :: CInt, ref :: CInt}
-
-{-
-instance Storable CDdNode where
-	sizeOf _ = (#size DdNode)
-	alignment _ = alignment (undefined :: Int)
-	peek ptr = do
-		index <- (#peek DdNode, index) ptr
-		ref <- (#peek DdNode, ref) ptr
-		return $ CDdNode index ref
-	poke ptr (CDdNode index ref) = do
-		(#poke DdNode, index) ptr index
-		(#poke DdNode, ref) ptr ref
-        -}
+data CDdNode
 
 foreign import ccall safe "cudd.h Cudd_ReadOne_s"
 	c_cuddReadOne :: Ptr CDdManager -> IO (Ptr CDdNode)
