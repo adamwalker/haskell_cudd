@@ -29,6 +29,7 @@ module CuddC (
     c_cuddBddSwapVariables,
     c_cuddLargestCube,
     c_cuddBddMakePrime,
+    c_cuddSupport,
     c_cuddSupportIndex,
     c_cuddSupportIndices,
     c_cuddIndicesToCube,
@@ -166,6 +167,9 @@ foreign import ccall safe "cudd.h Cudd_LargestCube_s"
 
 foreign import ccall safe "cudd.h Cudd_bddMakePrime_s"
     c_cuddBddMakePrime :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)
+
+foreign import ccall safe "cudd.h Cudd_Support_s"
+    c_cuddSupport :: Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)
 
 foreign import ccall safe "cudd.h Cudd_SupportIndex"
 	c_cuddSupportIndex :: Ptr CDdManager -> Ptr CDdNode -> IO(Ptr CInt)

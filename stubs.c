@@ -272,3 +272,10 @@ DdNode *Cudd_bddCompose_s(DdManager *m, DdNode *f, DdNode *g, int v){
     return r;
 }
 
+DdNode *Cudd_Support_s(DdManager *m, DdNode *f) {
+    DdNode *r = Cudd_Support(m, f);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+

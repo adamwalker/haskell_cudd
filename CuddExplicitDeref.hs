@@ -31,6 +31,7 @@ module CuddExplicitDeref (
     ref,
     largestCube,
     makePrime,
+    support,
     supportIndices,
     indicesToCube,
     computeCube,
@@ -191,6 +192,9 @@ largestCube (STDdManager m) (DDNode x) = unsafeIOToST $
 
 makePrime :: STDdManager s u -> DDNode s u -> DDNode s u -> ST s (DDNode s u)
 makePrime = arg2 c_cuddBddMakePrime
+
+support :: STDdManager s u -> DDNode s u -> ST s (DDNode s u)
+support = arg1 c_cuddSupport
 
 supportIndices :: STDdManager s u -> DDNode s u -> ST s [Int]
 supportIndices (STDdManager m) (DDNode x) = unsafeIOToST $
