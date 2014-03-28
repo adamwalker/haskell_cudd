@@ -8,8 +8,9 @@ import CuddInternal
 import CuddC
 
 toDdNode :: DdManager -> DDNode s u -> DdNode
-toDdNode (DdManager m) (DDNode d) = DdNode $ unsafePerformIO $ do cuddRef d
-                                                                  newForeignPtrEnv deref m d
+toDdNode (DdManager m) (DDNode d) = DdNode $ unsafePerformIO $ do 
+    cuddRef d
+    newForeignPtrEnv deref m d
 
 toDdManager :: STDdManager s u -> DdManager
 toDdManager = DdManager . unSTDdManager
