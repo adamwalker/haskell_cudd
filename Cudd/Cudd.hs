@@ -86,7 +86,7 @@ import Data.List
 import Data.Array hiding (indices)
 import Control.Exception
 
-import ForeignHelpers
+import Cudd.ForeignHelpers
 import Cudd.Internal
 import Cudd.MTR
 import Cudd.C
