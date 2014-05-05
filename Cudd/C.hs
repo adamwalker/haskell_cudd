@@ -323,9 +323,9 @@ foreign import ccall safe "cudd.h &Cudd_DelayedDerefBdd"
 foreign import ccall safe "cudd.h &Cudd_IterDerefBdd"
 	c_cuddIterDerefBddPtr :: FunPtr (Ptr CDdManager -> Ptr CDdNode -> IO ())
 
-foreign import ccall safe "cudd.h Cudd_bddNewVar"
+foreign import ccall safe "cudd.h Cudd_bddNewVar_s"
     c_cuddBddNewVar :: Ptr CDdManager -> IO (Ptr CDdNode)
 
-foreign import ccall safe "cudd.h Cudd_bddVectorCompose"
+foreign import ccall safe "cudd.h Cudd_bddVectorCompose_s"
     c_cuddBddVectorCompose :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode) 
 

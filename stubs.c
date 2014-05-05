@@ -279,3 +279,17 @@ DdNode *Cudd_Support_s(DdManager *m, DdNode *f) {
     return r;
 }
 
+DdNode *Cudd_bddNewVar_s(DdManager *m){
+    DdNode *r = Cudd_bddNewVar(m);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+
+DdNode *Cudd_bddVectorCompose_s(DdManager *m, DdNode *x, DdNode **xs){
+    DdNode *r = Cudd_bddVectorCompose(m, x, xs);
+    assert(r);
+    Cudd_Ref(r);
+    return r;
+}
+
