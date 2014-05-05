@@ -69,6 +69,7 @@ module Cudd.Imperative (
     squeeze,
     minimize,
     newVar,
+    vectorCompose,
     module Cudd.Common
     ) where
 
@@ -326,4 +327,10 @@ minimize     = arg2 c_cuddBddMinimize
 
 newVar :: STDdManager s u -> ST s (DDNode s u)
 newVar (STDdManager m) = liftM DDNode $ unsafeIOToST $ c_cuddBddNewVar m
+
+vectorCompose :: STDdManager s u -> DDNode s u -> [DDNode s u] -> ST s (DDNode s u)
+vectorCompose (STDdManager m) (DDNode f) nodes = liftM DDNode $ unsafeIOToST $ withArrayLen (map unDDNode nodes) $ \len ptr -> do
+    sz <- c_cuddReadSize m
+    when (fromIntegral sz /= len) (error "vectorCompose: not one entry for each variable in manager")
+    c_cuddBddVectorCompose m f ptr
 
