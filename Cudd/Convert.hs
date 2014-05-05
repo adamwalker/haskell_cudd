@@ -2,7 +2,9 @@ module Cudd.Convert where
 
 import System.IO.Unsafe
 import Foreign.ForeignPtr
+import Foreign.ForeignPtr.Unsafe
 import Control.Monad.ST
+import Control.Monad.ST.Unsafe
 
 import Cudd.Internal
 import Cudd.C

@@ -18,6 +18,7 @@ import Foreign.Marshal.Array
 import Foreign.Marshal.Utils
 import Control.Monad
 import Control.Monad.ST
+import Control.Monad.ST.Unsafe
 
 import Cudd.Internal
 import Cudd.C

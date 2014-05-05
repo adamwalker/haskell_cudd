@@ -75,9 +75,11 @@ import Foreign hiding (void)
 import Foreign.Ptr
 import Foreign.C.Types
 import Control.Monad.ST
+import Control.Monad.ST.Unsafe
 import Control.Monad
 import Control.Monad.IO.Class
 import Data.List
+import System.IO.Unsafe
 
 import Cudd.C
 import Cudd.Internal hiding (deref)
