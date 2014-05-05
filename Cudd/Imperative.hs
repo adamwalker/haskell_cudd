@@ -68,6 +68,7 @@ module Cudd.Imperative (
     liCompaction,
     squeeze,
     minimize,
+    newVar,
     module Cudd.Common
     ) where
 
@@ -322,4 +323,7 @@ newVarAtLevel (STDdManager m) level = liftM DDNode $ unsafeIOToST $ c_cuddBddNew
 liCompaction = arg2 c_cuddBddLICompaction
 squeeze      = arg2 c_cuddBddSqueeze
 minimize     = arg2 c_cuddBddMinimize
+
+newVar :: STDdManager s u -> ST s (DDNode s u)
+newVar (STDdManager m) = liftM DDNode $ unsafeIOToST $ c_cuddBddNewVar m
 
