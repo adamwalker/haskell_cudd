@@ -70,6 +70,7 @@ module Cudd.Imperative (
     minimize,
     newVar,
     vectorCompose,
+    quit,
     module Cudd.Common
     ) where
 
@@ -333,4 +334,7 @@ vectorCompose (STDdManager m) (DDNode f) nodes = liftM DDNode $ unsafeIOToST $ w
     sz <- c_cuddReadSize m
     when (fromIntegral sz /= len) (error "vectorCompose: not one entry for each variable in manager")
     c_cuddBddVectorCompose m f ptr
+
+quit :: STDdManager s u -> ST s ()
+quit (STDdManager m) = unsafeIOToST $ c_cuddQuit m
 

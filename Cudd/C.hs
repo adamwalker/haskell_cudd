@@ -81,7 +81,8 @@ module Cudd.C (
     c_cuddDelayedDerefBddPtr,
     c_cuddIterDerefBddPtr,
     c_cuddBddNewVar,
-    c_cuddBddVectorCompose
+    c_cuddBddVectorCompose,
+    c_cuddQuit
     ) where
 
 import Foreign
@@ -328,4 +329,7 @@ foreign import ccall safe "cudd.h Cudd_bddNewVar_s"
 
 foreign import ccall safe "cudd.h Cudd_bddVectorCompose_s"
     c_cuddBddVectorCompose :: Ptr CDdManager -> Ptr CDdNode -> Ptr (Ptr CDdNode) -> IO (Ptr CDdNode) 
+
+foreign import ccall safe "cudd.h Cudd_Quit"
+    c_cuddQuit :: Ptr CDdManager -> IO ()
 
