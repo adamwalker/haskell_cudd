@@ -70,4 +70,4 @@ library
   
   include-dirs:        .
   c-sources:           cuddwrap.c, stubs.c
-  extra-libraries:     cudd, mtr, st, util, epd, dddmp
+  extra-libraries:     cudd, mtr, st, util, epd, dddmp, m
