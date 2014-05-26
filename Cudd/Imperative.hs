@@ -71,6 +71,8 @@ module Cudd.Imperative (
     newVar,
     vectorCompose,
     quit,
+    readIndex,
+    printMinterm,
     module Cudd.Common
     ) where
 
@@ -337,4 +339,10 @@ vectorCompose (STDdManager m) (DDNode f) nodes = liftM DDNode $ unsafeIOToST $ w
 
 quit :: STDdManager s u -> ST s ()
 quit (STDdManager m) = unsafeIOToST $ c_cuddQuit m
+
+readIndex :: DDNode s u -> ST s Int
+readIndex (DDNode x) = liftM fromIntegral $ unsafeIOToST $ c_cuddNodeReadIndex x
+
+printMinterm :: STDdManager s u -> DDNode s u -> ST s ()
+printMinterm (STDdManager m) (DDNode x) = unsafeIOToST $ c_cuddPrintMinterm m x
 

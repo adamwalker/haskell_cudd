@@ -187,9 +187,6 @@ cuddEval (DdManager m) (DdNode n) a = unsafePerformIO $ do
             c_cuddEval m np ap
     return $ (==0) $ c_cuddIsComplement res
 
-foreign import ccall safe "cudd.h Cudd_PrintMinterm"
-    c_cuddPrintMinterm :: Ptr CDdManager -> Ptr CDdNode -> IO ()
-
 cuddPrintMinterm :: DdManager -> DdNode -> IO ()
 cuddPrintMinterm (DdManager m) (DdNode n) = 
     withForeignPtr n $ c_cuddPrintMinterm m 
