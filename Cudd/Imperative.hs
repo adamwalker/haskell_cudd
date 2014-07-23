@@ -10,7 +10,7 @@ module Cudd.Imperative (
     shuffleHeap,
     bzero,
     bone,
-    bvar,
+    ithVar,
     band,
     bor,
     bnand,
@@ -23,11 +23,11 @@ module Cudd.Imperative (
     bforall,
     deref,
     setVarMap,
-    mapVars,
+    varMap,
     DDNode,
     STDdManager,
     leq,
-    Cudd.Imperative.shift,
+    swapVariables,
     ref,
     largestCube,
     makePrime,
@@ -37,7 +37,7 @@ module Cudd.Imperative (
     computeCube,
     nodesToCube,
     readSize,
-    satCube,
+    bddToCubeArray,
     compose,
     andAbstract,
     xorExistAbstract,
@@ -161,7 +161,7 @@ andAbstract      = arg3 c_cuddBddAndAbstract
 xorExistAbstract = arg3 c_cuddBddXorExistAbstract
 
 bnot (DDNode x) = DDNode $ unsafePerformIO $ c_cuddNotNoRef x
-bvar (STDdManager m) i = liftM DDNode $ unsafeIOToST $ c_cuddBddIthVar m (fromIntegral i)
+ithVar (STDdManager m) i = liftM DDNode $ unsafeIOToST $ c_cuddBddIthVar m (fromIntegral i)
 
 deref :: STDdManager s u -> DDNode s u -> ST s ()
 deref (STDdManager m) (DDNode x) = unsafeIOToST $ c_cuddIterDerefBdd m x
@@ -173,14 +173,14 @@ setVarMap (STDdManager m) xs ys = unsafeIOToST $
     when (xl /= yl) (error "setVarMap: lengths not equal")
     void $ c_cuddSetVarMap m xp yp (fromIntegral xl)
 
-mapVars :: STDdManager s u -> DDNode s u -> ST s (DDNode s u)
-mapVars (STDdManager m) (DDNode x) = liftM DDNode $ unsafeIOToST $ c_cuddBddVarMap m x
+varMap :: STDdManager s u -> DDNode s u -> ST s (DDNode s u)
+varMap (STDdManager m) (DDNode x) = liftM DDNode $ unsafeIOToST $ c_cuddBddVarMap m x
 
 leq :: STDdManager s u -> DDNode s u -> DDNode s u -> ST s Bool
 leq (STDdManager m) (DDNode x) (DDNode y) = liftM (==1) $ unsafeIOToST $ c_cuddBddLeq m x y
 
-shift :: STDdManager s u -> [DDNode s u] -> [DDNode s u] -> DDNode s u -> ST s (DDNode s u)
-shift (STDdManager m) nodesx nodesy (DDNode x) = unsafeIOToST $ 
+swapVariables :: STDdManager s u -> [DDNode s u] -> [DDNode s u] -> DDNode s u -> ST s (DDNode s u)
+swapVariables (STDdManager m) nodesx nodesy (DDNode x) = unsafeIOToST $ 
     withArrayLen (map unDDNode nodesx) $ \lx xp -> 
     withArrayLen (map unDDNode nodesy) $ \ly yp -> do
     when (lx /= ly) $ error "CuddExplicitDeref: shift: lengths not equal"
@@ -234,8 +234,8 @@ nodesToCube (STDdManager m) nodes = unsafeIOToST $
 readSize :: STDdManager s u -> ST s Int
 readSize (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadSize m
 
-satCube :: STDdManager s u -> DDNode s u -> ST s [SatBit]
-satCube ma@(STDdManager m) (DDNode x) = unsafeIOToST $ do
+bddToCubeArray :: STDdManager s u -> DDNode s u -> ST s [SatBit]
+bddToCubeArray ma@(STDdManager m) (DDNode x) = unsafeIOToST $ do
     size <- liftM fromIntegral $ c_cuddReadSize m
     allocaArray size $ \resptr -> do
         c_cuddBddToCubeArray m x resptr
@@ -308,7 +308,6 @@ readCacheSlots (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadC
 readCacheUsedSlots :: STDdManager s u -> ST s Int
 readCacheUsedSlots (STDdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddReadCacheUsedSlots m
 
---TODO handle null pointer
 andLimit :: STDdManager s u -> DDNode s u -> DDNode s u -> Int -> ST s (Maybe (DDNode s u))
 andLimit (STDdManager m) (DDNode x) (DDNode y) lim = unsafeIOToST $ do
     res <- c_cuddBddAndLimit m x y (fromIntegral lim)
