@@ -2,7 +2,6 @@
 #include <assert.h>
 #include "cudd.h"
 #include "dddmp.h"
-#include "stubs.h"
 
 DdNode *Cudd_bddVarMap_s(DdManager *m, DdNode *x){
     DdNode *r = Cudd_bddVarMap(m, x);
