@@ -24,5 +24,5 @@ library
   build-tools:         c2hs, hsc2hs
   default-language:    Haskell2010
   include-dirs:        .
-  c-sources:           cuddwrap.c, stubs.c
+  c-sources:           c_sources/cuddwrap.c, c_sources/stubs.c
   extra-libraries:     cudd, mtr, st, util, epd, dddmp, m
