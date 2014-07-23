@@ -67,20 +67,16 @@ int **allSat(DdManager *m, DdNode *n, int *nterms, int *nvars){
     return result;
 }
 
-int *oneSat(DdManager *m, DdNode *n, /*int *nterms,*/ int *nvars){
+int *oneSat(DdManager *m, DdNode *n, int *nvars){
     CUDD_VALUE_TYPE value;
     DdGen *gen;
     int *cube;
     int size = Cudd_ReadSize(m);
-    //int num = ceil(Cudd_CountPathsToNonZero(n));
     int j;
 
-    //*nterms = num;
     *nvars = size;
-    //printf("num minterms: %f %d\n", Cudd_CountPathsToNonZero(n), num);
 
     gen = Cudd_FirstCube (m, n, &cube, &value);
-    //printf("gen= %p\n", gen);
     if (Cudd_IsGenEmpty(gen)) {
         Cudd_GenFree (gen);
         return NULL;
