@@ -2,8 +2,6 @@
 #include <math.h>
 #include <assert.h>
 
-#include "cuddwrap.h"
-
 #include "util.h"
 #include "cudd.h"
 
