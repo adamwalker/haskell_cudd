@@ -16,7 +16,6 @@ import Cudd.C
 
 #include <stdio.h>
 #include "cudd.h"
-#include "cuddwrap.h"
 
 cudd_unique_slots :: Int
 cudd_unique_slots = #const CUDD_UNIQUE_SLOTS
