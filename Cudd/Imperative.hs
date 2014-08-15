@@ -73,6 +73,7 @@ module Cudd.Imperative (
     quit,
     readIndex,
     printMinterm,
+    checkCube,
     module Cudd.Common
     ) where
 
@@ -344,4 +345,7 @@ readIndex (DDNode x) = liftM fromIntegral $ unsafeIOToST $ c_cuddNodeReadIndex x
 
 printMinterm :: STDdManager s u -> DDNode s u -> ST s ()
 printMinterm (STDdManager m) (DDNode x) = unsafeIOToST $ c_cuddPrintMinterm m x
+
+checkCube :: STDdManager s u -> DDNode s u -> ST s Bool
+checkCube (STDdManager m) (DDNode x) = liftM (==1) $ unsafeIOToST $ c_cuddCheckCube m x
 
