@@ -111,20 +111,10 @@ getManagerST (STDdManager m) = DdManager m
 getSTManager :: DdManager -> STDdManager s u
 getSTManager (DdManager m) = STDdManager m
 
-readOne :: DdManager -> DdNode
-readOne (DdManager d) = DdNode $ unsafePerformIO $ do
-	node <- c_cuddReadOneWithRef d
-	newForeignPtrEnv deref d node
-
-readLogicZero :: DdManager -> DdNode
-readLogicZero (DdManager d) = DdNode $ unsafePerformIO $ do
-	node <- c_cuddReadLogicZeroWithRef d
-	newForeignPtrEnv deref d node
-
-ithVar :: DdManager -> Int -> DdNode
-ithVar (DdManager d) i = DdNode $ unsafePerformIO $ do
-	node <- c_cuddBddIthVar d (fromIntegral i)
-	newForeignPtr_ node
+cuddArg0 :: (Ptr CDdManager -> IO (Ptr CDdNode)) -> DdManager -> DdNode
+cuddArg0 f (DdManager m) = DdNode $ unsafePerformIO $ do
+    node <- f m 
+    newForeignPtrEnv deref m node
 
 cuddArg1 :: (Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)) -> DdManager -> DdNode -> DdNode
 cuddArg1 f (DdManager m) (DdNode x) = DdNode $ unsafePerformIO $ 
@@ -146,6 +136,15 @@ cuddArg3 f (DdManager m) (DdNode l) (DdNode r) (DdNode x) = DdNode $ unsafePerfo
 	withForeignPtr x $ \xp -> do
 	node <- f m lp rp xp
 	newForeignPtrEnv deref m node
+
+readOne :: DdManager -> DdNode
+readOne = cuddArg0 c_cuddReadOneWithRef
+
+readLogicZero :: DdManager -> DdNode
+readLogicZero  = cuddArg0 c_cuddReadLogicZeroWithRef
+
+ithVar :: DdManager -> Int -> DdNode
+ithVar m i = cuddArg0 (flip c_cuddBddIthVar (fromIntegral i)) m
 
 bAnd :: DdManager -> DdNode -> DdNode -> DdNode
 bAnd = cuddArg2 c_cuddBddAnd
