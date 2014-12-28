@@ -32,8 +32,6 @@ module Cudd.Cudd (
     nodeReadIndex,
     dagSize,
     indicesToCube,
-    getManagerST,
-    getSTManager,
     liCompaction,
     minimize,
     readSize,
@@ -100,12 +98,6 @@ cuddInitOrder order = DdManager $ unsafePerformIO $ withArrayLen (map fromIntegr
     res <- c_cuddShuffleHeap m ptr
     when (res /= 1) (error "shuffleHeap failed")
     return m
-
-getManagerST :: STDdManager s u -> DdManager
-getManagerST (STDdManager m) = DdManager m
-
-getSTManager :: DdManager -> STDdManager s u
-getSTManager (DdManager m) = STDdManager m
 
 cuddArg0 :: (Ptr CDdManager -> IO (Ptr CDdNode)) -> DdManager -> DdNode
 cuddArg0 f (DdManager m) = DdNode $ unsafePerformIO $ do

@@ -1,4 +1,9 @@
-module Cudd.Convert where
+module Cudd.Convert (
+    toDdNode,
+    toDdManager,
+    toDDNode,
+    getSTManager
+    ) where
 
 import System.IO.Unsafe
 import Foreign.ForeignPtr
@@ -23,3 +28,5 @@ toDDNode (DdNode fp) = unsafeIOToST $ do
     cuddRef p
     return $ DDNode p
 
+getSTManager :: DdManager -> STDdManager s u
+getSTManager (DdManager m) = STDdManager m
