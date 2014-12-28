@@ -28,7 +28,6 @@ module Cudd.Cudd (
     bForall,
     bIte,
     permute,
-    shift,
     swapVariables,
     nodeReadIndex,
     dagSize,
@@ -264,21 +263,6 @@ permute (DdManager m) (DdNode d) indexes = DdNode $ unsafePerformIO $
     withArray (map fromIntegral indexes) $ \ip -> do
     node <- c_cuddBddPermute m dp ip 
     newForeignPtrEnv deref m node
-
-makePermutArray :: Int -> [Int] -> [Int] -> [Int]
-makePermutArray size x y = elems $ accumArray (flip const) 0 (0, size-1) ascList
-    where
-    ascList = [(i, i) | i <- [0..size-1]] ++ zip x y 
-
-shift :: DdManager -> DdNode -> [Int] -> [Int] -> DdNode
-shift (DdManager m) (DdNode d) from to = DdNode $ unsafePerformIO $
-    withForeignPtr d $ \dp -> do
-    dp <- evaluate dp
-    size <- c_cuddReadSize m 
-    let perm = makePermutArray (fromIntegral size) from to
-    withArray (map fromIntegral perm) $ \pp -> do
-        node <- c_cuddBddPermute m dp pp
-        newForeignPtrEnv deref m node
 
 xGtY :: DdManager -> [DdNode] -> [DdNode] -> DdNode
 xGtY (DdManager m) x y = DdNode $ unsafePerformIO $ 
