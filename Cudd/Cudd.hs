@@ -44,7 +44,6 @@ module Cudd.Cudd (
     disequality,
     inequality,
     ddNodeToInt,
-    bImp,
     pickOneMinterm,
     readPerm,
     readInvPerm,
@@ -336,10 +335,6 @@ liCompaction = cuddArg2 c_cuddBddLICompaction
 
 minimize :: DdManager -> DdNode -> DdNode -> DdNode
 minimize = cuddArg2 c_cuddBddMinimize
-
---Bdd implication
-bImp :: DdManager -> DdNode -> DdNode -> DdNode
-bImp m l r = bOr m (bNot m l) r
 
 pickOneMinterm :: DdManager -> DdNode -> [DdNode] -> Maybe DdNode
 pickOneMinterm (DdManager m) (DdNode d) vars = unsafePerformIO $
