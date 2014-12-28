@@ -164,9 +164,6 @@ dumpDot (DdManager m) (DdNode n) s  =
 		withCAString s $ \str -> 
 			c_cuddDumpDot m np str
 
-foreign import ccall safe "cuddwrap.h wrappedCuddIsComplement"
-    c_cuddIsComplement :: Ptr CDdNode -> CInt
-
 eval :: DdManager -> DdNode -> [Int] -> Bool
 eval (DdManager m) (DdNode n) a = unsafePerformIO $ do
     res <- withArray (map fromIntegral a) $ \ap -> 

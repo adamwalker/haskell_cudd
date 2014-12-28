@@ -86,7 +86,8 @@ module Cudd.C (
     c_cuddPrintMinterm,
     c_cuddCheckCube,
     c_cuddPrintInfo,
-    c_cuddPrintDebug
+    c_cuddPrintDebug,
+    c_cuddIsComplement
     ) where
 
 import Foreign
@@ -348,4 +349,7 @@ foreign import ccall safe "cudd.h Cudd_PrintInfo"
 
 foreign import ccall safe "cudd.h Cudd_PrintDebug"
     c_cuddPrintDebug :: Ptr CDdManager -> Ptr CDdNode -> CInt -> CInt -> IO CInt
+
+foreign import ccall safe "cuddwrap.h wrappedCuddIsComplement"
+    c_cuddIsComplement :: Ptr CDdNode -> CInt
 
