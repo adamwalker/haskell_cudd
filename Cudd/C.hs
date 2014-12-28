@@ -84,7 +84,9 @@ module Cudd.C (
     c_cuddBddVectorCompose,
     c_cuddQuit,
     c_cuddPrintMinterm,
-    c_cuddCheckCube
+    c_cuddCheckCube,
+    c_cuddPrintInfo,
+    c_cuddPrintDebug
     ) where
 
 import Foreign
@@ -340,4 +342,10 @@ foreign import ccall safe "cudd.h Cudd_PrintMinterm"
 
 foreign import ccall safe "Cudd_CheckCube"
     c_cuddCheckCube :: Ptr CDdManager -> Ptr CDdNode -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_PrintInfo"
+       c_cuddPrintInfo :: Ptr CDdManager -> Ptr CFile -> IO CInt
+
+foreign import ccall safe "cudd.h Cudd_PrintDebug"
+    c_cuddPrintDebug :: Ptr CDdManager -> Ptr CDdNode -> CInt -> CInt -> IO CInt
 

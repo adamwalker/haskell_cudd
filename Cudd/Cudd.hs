@@ -349,9 +349,6 @@ pickOneMinterm (DdManager m) (DdNode d) vars = unsafePerformIO $
 		nd <- newForeignPtrEnv deref m node
 		return $ Just $ DdNode nd
 
-foreign import ccall safe "cudd.h Cudd_PrintInfo"
-       c_cuddPrintInfo :: Ptr CDdManager -> Ptr CFile -> IO CInt
-                
 printInfo :: DdManager -> Ptr CFile -> IO Int
 printInfo (DdManager m) cf = liftM fromIntegral $ c_cuddPrintInfo m cf
 
@@ -389,9 +386,6 @@ countPath :: DdNode -> Double
 countPath (DdNode d) = realToFrac $ unsafePerformIO $
     withForeignPtr d $ \dp -> 
     c_cuddCountPath dp
-
-foreign import ccall safe "cudd.h Cudd_PrintDebug"
-    c_cuddPrintDebug :: Ptr CDdManager -> Ptr CDdNode -> CInt -> CInt -> IO CInt
 
 printDebug :: DdManager -> DdNode -> Int -> Int -> IO Int
 printDebug (DdManager m) (DdNode d) n pr = liftM fromIntegral $ 
