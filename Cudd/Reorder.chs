@@ -272,9 +272,7 @@ cuddSetNumberXovers = setIntegral c_cuddSetNumberXovers
 
 reordGCHook :: HookTyp
 reordGCHook _ _ _ = do
-    --putStrLn "reordGCHook"
     performGC
-    --putStrLn "gc done"
     return (fromIntegral 1)
 
 foreign import ccall "wrapper"
