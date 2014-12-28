@@ -155,14 +155,27 @@ bXnor = cuddArg2 c_cuddBddXnor
 bNot :: DdManager -> DdNode -> DdNode
 bNot = cuddArg1 (const c_cuddNot)
 
-foreign import ccall safe "cuddwrap.h wrappedCuddDumpDot"
-	c_cuddDumpDot :: Ptr CDdManager -> Ptr CDdNode -> CString -> IO ()
+dumpDot' :: DdManager -> [DdNode] -> Maybe [String] -> Maybe [String] -> Ptr CFile -> IO Int
+dumpDot' (DdManager m) nodes iNames oNames file = liftM fromIntegral $
+    withForeignArrayPtrLen (map unDdNode nodes) $ \nn np -> 
+        maybe ($ nullPtr) withStringArrayPtr iNames $ \iNamesP -> 
+            maybe ($ nullPtr) withStringArrayPtr oNames $ \oNamesP -> do
+                c_cuddDumpDot m (fromIntegral nn) np iNamesP oNamesP file
 
-dumpDot :: DdManager -> DdNode -> String -> IO ()
-dumpDot (DdManager m) (DdNode n) s  = 
-	withForeignPtr n $ \np -> 
-		withCAString s $ \str -> 
-			c_cuddDumpDot m np str
+foreign import ccall safe "fopen" 
+    c_fopen :: CString -> CString -> IO (Ptr CFile)
+
+foreign import ccall safe "fclose"
+    c_fclose :: (Ptr CFile) -> IO ()
+
+dumpDot :: DdManager -> DdNode -> String -> IO Int
+dumpDot m n fName = 
+    withCAString fName $ \fNameP -> 
+        withCAString "w" $ \md -> do
+            file <- c_fopen fNameP md
+            res <- dumpDot' m [n] Nothing Nothing file
+            c_fclose file
+            return res
 
 eval :: DdManager -> DdNode -> [Int] -> Bool
 eval (DdManager m) (DdNode n) a = unsafePerformIO $ do

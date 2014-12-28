@@ -1,10 +1,13 @@
 module Cudd.ForeignHelpers (
     withForeignArray,
     withForeignArrayPtr,
-    withForeignArrayPtrLen
+    withForeignArrayPtrLen,
+    withStringArray,
+    withStringArrayPtr
     ) where
 
 import Foreign
+import Foreign.C.String
 
 withForeignArray :: [ForeignPtr a] -> ([Ptr a] -> IO b) -> IO b
 withForeignArray [] func = func []
@@ -16,3 +19,12 @@ withForeignArrayPtr fps func = withForeignArray fps $ \ap -> withArray ap func
 
 withForeignArrayPtrLen :: [ForeignPtr a] -> (Int -> Ptr (Ptr a) -> IO b) -> IO b
 withForeignArrayPtrLen fps func = withForeignArray fps $ \ap -> withArrayLen ap func
+
+withStringArray :: [String] -> ([CString] -> IO a) -> IO a
+withStringArray [] func = func []
+withStringArray (s:strings) func = withCString s $ \ptr -> 
+    withStringArray strings $ \x -> func (ptr : x)
+
+withStringArrayPtr :: [String] -> (Ptr CString -> IO a) -> IO a
+withStringArrayPtr strings func = withStringArray strings $ \sp -> withArray sp func
+

@@ -87,11 +87,13 @@ module Cudd.C (
     c_cuddCheckCube,
     c_cuddPrintInfo,
     c_cuddPrintDebug,
-    c_cuddIsComplement
+    c_cuddIsComplement,
+    c_cuddDumpDot
     ) where
 
 import Foreign
 import Foreign.C.Types
+import Foreign.C.String
 
 import Cudd.MTR
 
@@ -352,4 +354,7 @@ foreign import ccall safe "cudd.h Cudd_PrintDebug"
 
 foreign import ccall safe "cuddwrap.h wrappedCuddIsComplement"
     c_cuddIsComplement :: Ptr CDdNode -> CInt
+
+foreign import ccall safe "Cudd_DumpDot"
+    c_cuddDumpDot :: Ptr CDdManager -> CInt -> Ptr (Ptr CDdNode) -> Ptr CString -> Ptr CString -> Ptr CFile -> IO CInt
 

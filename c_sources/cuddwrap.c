@@ -31,14 +31,6 @@ int postGCHook_sample(DdManager *dd, const char *str, void *data){
 	return 1;
 }
 
-void wrappedCuddDumpDot(DdManager *m, DdNode *f, char *filename){
-	printf("filename: %s\n", filename);
-	FILE *file = fopen(filename, "w");
-	assert(file);
-	Cudd_DumpDot(m, 1, &f, NULL, NULL, file);
-	fclose(file);
-}
-
 int **allSat(DdManager *m, DdNode *n, int *nterms, int *nvars){
     CUDD_VALUE_TYPE value;
     DdGen *gen;
