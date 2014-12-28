@@ -65,8 +65,6 @@ module Cudd.Cudd (
     SatBit(..),
     largestCube,
     lEq,
-    debugCheck,
-    checkKeys,
     printInfo
     ) where
 
@@ -426,12 +424,6 @@ lEq (DdManager m) (DdNode l) (DdNode r) = (==1) $ unsafePerformIO $
     withForeignPtr l $ \lp -> 
     withForeignPtr r $ \rp ->
     c_cuddBddLeq m lp rp
-
-checkKeys :: DdManager -> ST s Int
-checkKeys (DdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddCheckKeys m
-
-debugCheck :: DdManager -> ST s Int
-debugCheck (DdManager m) = liftM fromIntegral $ unsafeIOToST $ c_cuddDebugCheck m
 
 ddNodeToInt :: Integral i => DdNode -> i
 ddNodeToInt = fromIntegral . ptrToIntPtr . unsafeForeignPtrToPtr . unDdNode 
