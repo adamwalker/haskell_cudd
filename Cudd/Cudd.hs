@@ -322,6 +322,7 @@ interval (DdManager m) vararr lower upper =  DdNode $ unsafePerformIO $
 nodeReadIndex :: DdNode -> Int
 nodeReadIndex (DdNode d) = fromIntegral $ unsafePerformIO $ withForeignPtr d c_cuddNodeReadIndex 
 
+dagSize :: DdNode -> Int
 dagSize (DdNode d) = fromIntegral $ unsafePerformIO $ withForeignPtr d c_cuddDagSize 
 
 indicesToCube :: DdManager -> [Int] -> DdNode
