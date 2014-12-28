@@ -8,25 +8,25 @@ module Cudd.Imperative (
     withManagerIO,
     withManagerIODefaults,
     shuffleHeap,
-    bzero,
-    bone,
+    bZero,
+    bOne,
     ithVar,
-    band,
-    bor,
-    bnand,
-    bnor,
-    bxor,
-    bxnor,
-    bnot,
-    bite,
-    bexists,
-    bforall,
+    bAnd,
+    bOr,
+    bNand,
+    bNor,
+    bXor,
+    bXnor,
+    bNot,
+    bIte,
+    bExists,
+    bForall,
     deref,
     setVarMap,
     varMap,
     DDNode,
     STDdManager,
-    leq,
+    lEq,
     swapVariables,
     ref,
     largestCube,
@@ -43,7 +43,7 @@ module Cudd.Imperative (
     xorExistAbstract,
     leqUnless,
     equivDC,
-    xeqy,
+    xEqY,
     debugCheck,
     checkKeys,
     pickOneMinterm,
@@ -145,23 +145,23 @@ arg2 f (STDdManager m) (DDNode x) (DDNode y) = liftM DDNode $ unsafeIOToST $ f m
 arg3 :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)) -> STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u  -> ST s (DDNode s u)
 arg3 f (STDdManager m) (DDNode x) (DDNode y) (DDNode z) = liftM DDNode $ unsafeIOToST $ f m x y z
 
-bzero (STDdManager m) = DDNode $ unsafePerformIO $ c_cuddReadLogicZero m
-bone  (STDdManager m) = DDNode $ unsafePerformIO $ c_cuddReadOne m
+bZero (STDdManager m) = DDNode $ unsafePerformIO $ c_cuddReadLogicZero m
+bOne  (STDdManager m) = DDNode $ unsafePerformIO $ c_cuddReadOne m
 
-band    = arg2 c_cuddBddAnd
-bor     = arg2 c_cuddBddOr
-bnand   = arg2 c_cuddBddNand
-bnor    = arg2 c_cuddBddNor
-bxor    = arg2 c_cuddBddXor
-bxnor   = arg2 c_cuddBddXnor
-bite    = arg3 c_cuddBddIte
-bexists = arg2 c_cuddBddExistAbstract
-bforall = arg2 c_cuddBddUnivAbstract
+bAnd    = arg2 c_cuddBddAnd
+bOr     = arg2 c_cuddBddOr
+bNand   = arg2 c_cuddBddNand
+bNor    = arg2 c_cuddBddNor
+bXor    = arg2 c_cuddBddXor
+bXnor   = arg2 c_cuddBddXnor
+bIte    = arg3 c_cuddBddIte
+bExists = arg2 c_cuddBddExistAbstract
+bForall = arg2 c_cuddBddUnivAbstract
 
 andAbstract      = arg3 c_cuddBddAndAbstract
 xorExistAbstract = arg3 c_cuddBddXorExistAbstract
 
-bnot (DDNode x) = DDNode $ unsafePerformIO $ c_cuddNotNoRef x
+bNot (DDNode x) = DDNode $ unsafePerformIO $ c_cuddNotNoRef x
 ithVar (STDdManager m) i = liftM DDNode $ unsafeIOToST $ c_cuddBddIthVar m (fromIntegral i)
 
 deref :: STDdManager s u -> DDNode s u -> ST s ()
@@ -177,8 +177,8 @@ setVarMap (STDdManager m) xs ys = unsafeIOToST $
 varMap :: STDdManager s u -> DDNode s u -> ST s (DDNode s u)
 varMap (STDdManager m) (DDNode x) = liftM DDNode $ unsafeIOToST $ c_cuddBddVarMap m x
 
-leq :: STDdManager s u -> DDNode s u -> DDNode s u -> ST s Bool
-leq (STDdManager m) (DDNode x) (DDNode y) = liftM (==1) $ unsafeIOToST $ c_cuddBddLeq m x y
+lEq :: STDdManager s u -> DDNode s u -> DDNode s u -> ST s Bool
+lEq (STDdManager m) (DDNode x) (DDNode y) = liftM (==1) $ unsafeIOToST $ c_cuddBddLeq m x y
 
 swapVariables :: STDdManager s u -> [DDNode s u] -> [DDNode s u] -> DDNode s u -> ST s (DDNode s u)
 swapVariables (STDdManager m) nodesx nodesy (DDNode x) = unsafeIOToST $ 
@@ -253,8 +253,8 @@ leqUnless, equivDC :: STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u 
 leqUnless = arg3Bool c_cuddBddLeqUnless
 equivDC   = arg3Bool c_cuddEquivDC
 
-xeqy :: STDdManager s u -> [DDNode s u] -> [DDNode s u] -> ST s (DDNode s u)
-xeqy (STDdManager m) xs ys = unsafeIOToST $ 
+xEqY :: STDdManager s u -> [DDNode s u] -> [DDNode s u] -> ST s (DDNode s u)
+xEqY (STDdManager m) xs ys = unsafeIOToST $ 
     withArrayLen (map unDDNode xs) $ \xl xp -> 
     withArrayLen (map unDDNode ys) $ \yl yp -> do
     when (xl /= yl) (error "xeqy: lengths not equal")
