@@ -8,7 +8,7 @@ import Foreign.C.Types
 import Foreign.C.String
 import Foreign.ForeignPtr
 import Foreign.Marshal.Array
-import Control.Monad.Error
+import Control.Monad
 
 import Cudd.Internal
 import Cudd.C

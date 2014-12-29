@@ -75,12 +75,8 @@ import Foreign.Marshal.Alloc
 import Foreign.Marshal.Array
 import Foreign.Marshal.Utils
 import System.IO.Unsafe
-import Control.Monad.ST
-import Control.Monad.ST.Unsafe
 import Control.Monad
 import Data.List
-import Data.Array hiding (indices)
-import Control.Exception
 
 import Cudd.ForeignHelpers
 import Cudd.Internal

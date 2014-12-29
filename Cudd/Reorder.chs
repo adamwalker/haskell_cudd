@@ -41,8 +41,6 @@ import Foreign.Ptr
 import Foreign.C.Types
 import Foreign.C.String
 import Foreign.ForeignPtr
-import Foreign.Marshal.Array
-import Foreign.Marshal.Utils
 import Control.Monad
 import Control.Monad.ST
 import Control.Monad.ST.Unsafe
@@ -273,7 +271,7 @@ cuddSetNumberXovers = setIntegral c_cuddSetNumberXovers
 reordGCHook :: HookTyp
 reordGCHook _ _ _ = do
     performGC
-    return (fromIntegral 1)
+    return 1
 
 foreign import ccall "wrapper"
     makeFunPtr :: HookTyp -> IO (FunPtr HookTyp)
