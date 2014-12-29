@@ -30,7 +30,7 @@ enum DddmpMode {
 
 {#enum DddmpMode {} #}
 
-foreign import ccall safe "dddmp.h Dddmp_cuddBddStore"
+foreign import ccall safe "Dddmp_cuddBddStore"
     c_dddmpBddStore :: Ptr CDdManager -> CString -> Ptr CDdNode -> Ptr CString -> Ptr CInt -> CInt -> CInt -> CString -> Ptr CFile -> IO CInt
 
 nullOnEmpty :: Storable a => [a] -> (Ptr a -> IO b) -> IO b
@@ -49,7 +49,7 @@ cuddBddStore (DdManager m) name (DdNode node) auxids mode varinfo fname = liftM 
 
 {#enum Dddmp_VarMatchType as DddmpVarMatchType {underscoreToCase} #}
 
-foreign import ccall safe "dddmp.h Dddmp_cuddBddLoad_s"
+foreign import ccall safe "Dddmp_cuddBddLoad_s"
     c_dddmpBddLoad :: Ptr CDdManager -> CInt -> Ptr CString -> Ptr CInt -> Ptr CInt -> CInt -> CString -> Ptr CFile -> IO (Ptr CDdNode)
 
 cuddBddLoad :: DdManager -> DddmpVarMatchType -> [Int] -> [Int] -> DddmpMode -> String -> IO (Maybe DdNode)

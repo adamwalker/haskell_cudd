@@ -188,10 +188,10 @@ printMinterm :: DdManager -> DdNode -> IO ()
 printMinterm (DdManager m) (DdNode n) = 
     withForeignPtr n $ c_cuddPrintMinterm m 
 
-foreign import ccall safe "cuddwrap.h allSat"
+foreign import ccall safe "allSat"
     c_allSat :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> Ptr CInt -> IO (Ptr (Ptr CInt))
 
-foreign import ccall safe "cuddwrap.h oneSat"
+foreign import ccall safe "oneSat"
     c_oneSat :: Ptr CDdManager -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CInt)
 
 allSat :: DdManager -> DdNode -> [[SatBit]]
@@ -216,7 +216,7 @@ oneSat (DdManager m) (DdNode n) = unsafePerformIO $
         res <- peekArray nvars res
         return $ Just $ map (toSatBit . fromIntegral) res
 
-foreign import ccall safe "cuddwrap.h onePrime"
+foreign import ccall safe "onePrime"
     c_onePrime :: Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CInt -> IO (Ptr CInt)
 
 onePrime :: DdManager -> DdNode -> DdNode -> Maybe [Int]
