@@ -16,13 +16,13 @@ import Cudd.Cudd as C
 import Cudd.C
 import Cudd.Imperative as I hiding (deref)
 
-fromImperativeNode :: DDManager -> I.DDNode s u -> C.DDNode
-fromImperativeNode (DDManager m) (I.DDNode d) = C.DDNode $ unsafePerformIO $ do 
+fromImperativeNode :: C.DDManager -> I.DDNode s u -> C.DDNode
+fromImperativeNode (C.DDManager m) (I.DDNode d) = C.DDNode $ unsafePerformIO $ do 
     cuddRef d
     newForeignPtrEnv deref m d
 
-fromImperativeManager :: STDdManager s u -> DDManager
-fromImperativeManager = DDManager . unSTDdManager
+fromImperativeManager :: I.DDManager s u -> C.DDManager
+fromImperativeManager = C.DDManager . I.unDDManager
 
 toImperativeNode :: C.DDNode -> ST s (I.DDNode s u)
 toImperativeNode (C.DDNode fp) = unsafeIOToST $ do
@@ -30,5 +30,5 @@ toImperativeNode (C.DDNode fp) = unsafeIOToST $ do
     cuddRef p
     return $ I.DDNode p
 
-toImperativeManager :: DDManager -> STDdManager s u
-toImperativeManager (DDManager m) = STDdManager m
+toImperativeManager :: C.DDManager -> I.DDManager s u
+toImperativeManager (C.DDManager m) = I.DDManager m

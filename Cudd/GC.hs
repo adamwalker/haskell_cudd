@@ -27,20 +27,20 @@ import Cudd.Imperative
 foreign import ccall safe "Cudd_EnableGarbageCollection"
 	c_cuddEnableGarbageCollection :: Ptr CDDManager -> IO ()
 
-cuddEnableGarbageCollection :: STDdManager s u -> ST s ()
-cuddEnableGarbageCollection (STDdManager m) = unsafeIOToST $ c_cuddEnableGarbageCollection m
+cuddEnableGarbageCollection :: DDManager s u -> ST s ()
+cuddEnableGarbageCollection (DDManager m) = unsafeIOToST $ c_cuddEnableGarbageCollection m
 
 foreign import ccall safe "Cudd_DisableGarbageCollection"
 	c_cuddDisableGarbageCollection :: Ptr CDDManager -> IO ()
 
-cuddDisableGarbageCollection :: STDdManager s u -> ST s ()
-cuddDisableGarbageCollection (STDdManager m) = unsafeIOToST $ c_cuddDisableGarbageCollection m
+cuddDisableGarbageCollection :: DDManager s u -> ST s ()
+cuddDisableGarbageCollection (DDManager m) = unsafeIOToST $ c_cuddDisableGarbageCollection m
 
 foreign import ccall safe "Cudd_GarbageCollectionEnabled"
 	c_cuddGarbageCollectionEnabled :: Ptr CDDManager -> IO CInt
 
-cuddGarbageCollectionEnabled :: STDdManager s u -> ST s Int
-cuddGarbageCollectionEnabled (STDdManager m) = unsafeIOToST $ liftM fromIntegral $ c_cuddGarbageCollectionEnabled m
+cuddGarbageCollectionEnabled :: DDManager s u -> ST s Int
+cuddGarbageCollectionEnabled (DDManager m) = unsafeIOToST $ liftM fromIntegral $ c_cuddGarbageCollectionEnabled m
 
 foreign import ccall safe "&preGCHook_sample"
 	c_preGCHook_sample :: HookFP
@@ -48,9 +48,9 @@ foreign import ccall safe "&preGCHook_sample"
 foreign import ccall safe "&postGCHook_sample"
 	c_postGCHook_sample :: HookFP
 
-regPreGCHook :: STDdManager s u -> HookFP -> ST s Int
+regPreGCHook :: DDManager s u -> HookFP -> ST s Int
 regPreGCHook m func = cuddAddHook m func CuddPreGcHook
 
-regPostGCHook :: STDdManager s u -> HookFP -> ST s Int
+regPostGCHook :: DDManager s u -> HookFP -> ST s Int
 regPostGCHook m func = cuddAddHook m func CuddPostGcHook
 

@@ -32,11 +32,11 @@ type HookFP  = FunPtr HookTyp
 foreign import ccall safe "Cudd_AddHook"
 	c_cuddAddHook :: Ptr CDDManager -> HookFP -> CInt -> IO (CInt)
 
-cuddAddHook :: STDdManager s u -> HookFP -> CuddHookType -> ST s Int
-cuddAddHook (STDdManager m) fp typ = unsafeIOToST $ liftM fromIntegral $ c_cuddAddHook m fp (fromIntegral $ fromEnum typ)
+cuddAddHook :: DDManager s u -> HookFP -> CuddHookType -> ST s Int
+cuddAddHook (DDManager m) fp typ = unsafeIOToST $ liftM fromIntegral $ c_cuddAddHook m fp (fromIntegral $ fromEnum typ)
 	
 foreign import ccall safe "Cudd_RemoveHook"
 	c_cuddRemoveHook :: Ptr CDDManager -> HookFP -> CInt -> IO (CInt)
 
-cuddRemoveHook :: STDdManager s u -> HookFP -> CuddHookType -> ST s Int
-cuddRemoveHook (STDdManager m) fp typ = unsafeIOToST $ liftM fromIntegral $ c_cuddRemoveHook m fp (fromIntegral $ fromEnum typ)
+cuddRemoveHook :: DDManager s u -> HookFP -> CuddHookType -> ST s Int
+cuddRemoveHook (DDManager m) fp typ = unsafeIOToST $ liftM fromIntegral $ c_cuddRemoveHook m fp (fromIntegral $ fromEnum typ)
