@@ -3,6 +3,7 @@
 module Cudd.Cudd (
     DDManager(..),
     DDNode(..),
+    deref,
     cuddInit,
     cuddInitOrder,
     readOne,
@@ -86,6 +87,8 @@ import Cudd.Common
 
 newtype DDManager = DDManager (Ptr CDDManager)
 newtype DDNode    = DDNode    {unDDNode :: ForeignPtr CDDNode} deriving (Ord, Eq, Show)
+
+deref = c_cuddIterDerefBddPtr
 
 cuddInit :: DDManager
 cuddInit = DDManager $ unsafePerformIO $ c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0
