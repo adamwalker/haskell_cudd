@@ -12,7 +12,9 @@ import Control.Monad.ST
 import Control.Monad.ST.Unsafe
 
 import Cudd.Internal
+import Cudd.Cudd
 import Cudd.C
+import Cudd.Imperative hiding (deref)
 
 fromImperativeNode :: DdManager -> DDNode s u -> DdNode
 fromImperativeNode (DdManager m) (DDNode d) = DdNode $ unsafePerformIO $ do 

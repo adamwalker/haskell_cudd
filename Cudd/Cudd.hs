@@ -1,8 +1,8 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts, RankNTypes #-}
 
 module Cudd.Cudd (
-    DdManager(),
-    DdNode(),
+    DdManager(..),
+    DdNode(..),
     cuddInit,
     cuddInitOrder,
     readOne,
@@ -83,6 +83,9 @@ import Cudd.Internal
 import Cudd.MTR
 import Cudd.C
 import Cudd.Common
+
+newtype DdManager = DdManager (Ptr CDdManager)
+newtype DdNode = DdNode {unDdNode :: ForeignPtr CDdNode} deriving (Ord, Eq, Show)
 
 cuddInit :: DdManager
 cuddInit = DdManager $ unsafePerformIO $ c_cuddInit 0 0 (fromIntegral cudd_unique_slots) (fromIntegral cudd_cache_slots) 0

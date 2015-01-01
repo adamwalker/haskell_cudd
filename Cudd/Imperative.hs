@@ -1,6 +1,8 @@
 {-# LANGUAGE RankNTypes #-}
 
 module Cudd.Imperative (
+    STDdManager(..),
+    DDNode(..),
     cuddInit,
     cuddInitDefaults,
     withManager, 
@@ -24,8 +26,6 @@ module Cudd.Imperative (
     deref,
     setVarMap,
     varMap,
-    DDNode,
-    STDdManager,
     lEq,
     swapVariables,
     ref,
@@ -91,6 +91,9 @@ import Cudd.C
 import Cudd.Internal hiding (deref)
 import Cudd.MTR
 import Cudd.Common
+
+newtype STDdManager s u = STDdManager {unSTDdManager :: Ptr CDdManager}
+newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
 
 cuddInit :: Int -> Int -> Int -> Int -> Int -> ST s (STDdManager s u)
 cuddInit numVars numVarsZ numSlots cacheSize maxMemory = unsafeIOToST $ do

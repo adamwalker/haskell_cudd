@@ -20,9 +20,9 @@ import Control.Monad
 import Control.Monad.ST
 import Control.Monad.ST.Unsafe
 
-import Cudd.Internal
 import Cudd.Hook
 import Cudd.C
+import Cudd.Imperative
 
 foreign import ccall safe "Cudd_EnableGarbageCollection"
 	c_cuddEnableGarbageCollection :: Ptr CDdManager -> IO ()

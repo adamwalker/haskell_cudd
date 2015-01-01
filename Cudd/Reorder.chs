@@ -45,9 +45,9 @@ import Control.Monad
 import Control.Monad.ST
 import Control.Monad.ST.Unsafe
 
-import Cudd.Internal
 import Cudd.C
 import Cudd.Hook
+import Cudd.Imperative
 
 #include <stdio.h>
 #include <cudd.h>
