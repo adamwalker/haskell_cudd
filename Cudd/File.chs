@@ -1,6 +1,12 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP, FlexibleContexts, RankNTypes #-}
 
-module Cudd.File where
+module Cudd.File (
+    DddmpVarInfoType(..),
+    DddmpMode(..),
+    DddmpVarMatchType(..),
+    cuddBddStore,
+    cuddBddLoad
+    ) where
 
 import Foreign.Storable
 import Foreign.Ptr

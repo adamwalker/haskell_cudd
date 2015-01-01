@@ -1,6 +1,23 @@
 {-# LANGUAGE ForeignFunctionInterface, EmptyDataDecls, CPP #-}
 
-module Cudd.MTR where
+module Cudd.MTR (
+    MtrNode(..),
+    CMtrNode,
+    mtrAllocNode,
+    mtrCreateFirstChild,
+    mtrCreateLastChild,
+    mtrDeallocNode,
+    mtrMakeFirstChild,
+    mtrMakeLastChild,
+    mtrMakeNextSibling,
+    mtrPrintGroups,
+    mtrPrintTree,
+    mtrMakeGroup,
+    mtrInitGroupTree,
+    mtrFindGroup,
+    mtrDissolveGroup,
+    MTRType(..)
+    ) where
 
 import System.IO
 import Foreign
