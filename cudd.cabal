@@ -18,7 +18,7 @@ cabal-version:       >=1.10
 
 
 library
-  exposed-modules:     Cudd.File, Cudd.Convert, Cudd.Reorder, Cudd.MTR, Cudd.Hook, Cudd.Common, Cudd.C, Cudd.Cudd, Cudd.GC, Cudd.Internal, Cudd.Imperative
+  exposed-modules:     Cudd.File, Cudd.Convert, Cudd.Reorder, Cudd.MTR, Cudd.Hook, Cudd.Common, Cudd.C, Cudd.Cudd, Cudd.GC, Cudd.Imperative
   other-modules:       Cudd.ForeignHelpers
   other-extensions:    ForeignFunctionInterface, CPP, FlexibleContexts, RankNTypes, EmptyDataDecls
   build-depends:       base >=4.6 && <4.8, mtl >=2.1 && <2.3, array >=0.4 && <0.6, transformers >=0.3 && <0.5

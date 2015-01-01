@@ -80,7 +80,6 @@ import Control.Monad
 import Data.List
 
 import Cudd.ForeignHelpers
-import Cudd.Internal
 import Cudd.MTR
 import Cudd.C
 import Cudd.Common

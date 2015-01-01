@@ -88,7 +88,6 @@ import Data.List
 import System.IO.Unsafe
 
 import Cudd.C
-import Cudd.Internal hiding (deref)
 import Cudd.MTR
 import Cudd.Common
 

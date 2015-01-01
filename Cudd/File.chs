@@ -16,7 +16,6 @@ import Foreign.ForeignPtr
 import Foreign.Marshal.Array
 import Control.Monad
 
-import Cudd.Internal
 import Cudd.Cudd
 import Cudd.C
 

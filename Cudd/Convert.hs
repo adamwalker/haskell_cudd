@@ -11,7 +11,6 @@ import Foreign.ForeignPtr.Unsafe
 import Control.Monad.ST
 import Control.Monad.ST.Unsafe
 
-import Cudd.Internal
 import Cudd.Cudd as C
 import Cudd.C
 import Cudd.Imperative as I hiding (deref)
