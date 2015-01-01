@@ -25,19 +25,19 @@ import Cudd.C
 import Cudd.Imperative
 
 foreign import ccall safe "Cudd_EnableGarbageCollection"
-	c_cuddEnableGarbageCollection :: Ptr CDdManager -> IO ()
+	c_cuddEnableGarbageCollection :: Ptr CDDManager -> IO ()
 
 cuddEnableGarbageCollection :: STDdManager s u -> ST s ()
 cuddEnableGarbageCollection (STDdManager m) = unsafeIOToST $ c_cuddEnableGarbageCollection m
 
 foreign import ccall safe "Cudd_DisableGarbageCollection"
-	c_cuddDisableGarbageCollection :: Ptr CDdManager -> IO ()
+	c_cuddDisableGarbageCollection :: Ptr CDDManager -> IO ()
 
 cuddDisableGarbageCollection :: STDdManager s u -> ST s ()
 cuddDisableGarbageCollection (STDdManager m) = unsafeIOToST $ c_cuddDisableGarbageCollection m
 
 foreign import ccall safe "Cudd_GarbageCollectionEnabled"
-	c_cuddGarbageCollectionEnabled :: Ptr CDdManager -> IO CInt
+	c_cuddGarbageCollectionEnabled :: Ptr CDDManager -> IO CInt
 
 cuddGarbageCollectionEnabled :: STDdManager s u -> ST s Int
 cuddGarbageCollectionEnabled (STDdManager m) = unsafeIOToST $ liftM fromIntegral $ c_cuddGarbageCollectionEnabled m

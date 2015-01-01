@@ -12,23 +12,23 @@ import Control.Monad.ST
 import Control.Monad.ST.Unsafe
 
 import Cudd.Internal
-import Cudd.Cudd
+import Cudd.Cudd as C
 import Cudd.C
-import Cudd.Imperative hiding (deref)
+import Cudd.Imperative as I hiding (deref)
 
-fromImperativeNode :: DdManager -> DDNode s u -> DdNode
-fromImperativeNode (DdManager m) (DDNode d) = DdNode $ unsafePerformIO $ do 
+fromImperativeNode :: DDManager -> I.DDNode s u -> C.DDNode
+fromImperativeNode (DDManager m) (I.DDNode d) = C.DDNode $ unsafePerformIO $ do 
     cuddRef d
     newForeignPtrEnv deref m d
 
-fromImperativeManager :: STDdManager s u -> DdManager
-fromImperativeManager = DdManager . unSTDdManager
+fromImperativeManager :: STDdManager s u -> DDManager
+fromImperativeManager = DDManager . unSTDdManager
 
-toImperativeNode :: DdNode -> ST s (DDNode s u)
-toImperativeNode (DdNode fp) = unsafeIOToST $ do
+toImperativeNode :: C.DDNode -> ST s (I.DDNode s u)
+toImperativeNode (C.DDNode fp) = unsafeIOToST $ do
     let p = unsafeForeignPtrToPtr fp
     cuddRef p
-    return $ DDNode p
+    return $ I.DDNode p
 
-toImperativeManager :: DdManager -> STDdManager s u
-toImperativeManager (DdManager m) = STDdManager m
+toImperativeManager :: DDManager -> STDdManager s u
+toImperativeManager (DDManager m) = STDdManager m

@@ -92,8 +92,8 @@ import Cudd.Internal hiding (deref)
 import Cudd.MTR
 import Cudd.Common
 
-newtype STDdManager s u = STDdManager {unSTDdManager :: Ptr CDdManager}
-newtype DDNode s u = DDNode {unDDNode :: Ptr CDdNode} deriving (Ord, Eq, Show)
+newtype STDdManager s u = STDdManager {unSTDdManager :: Ptr CDDManager}
+newtype DDNode s u = DDNode {unDDNode :: Ptr CDDNode} deriving (Ord, Eq, Show)
 
 cuddInit :: Int -> Int -> Int -> Int -> Int -> ST s (STDdManager s u)
 cuddInit numVars numVarsZ numSlots cacheSize maxMemory = unsafeIOToST $ do
@@ -136,16 +136,16 @@ shuffleHeap (STDdManager m) order = unsafeIOToST $
 toInt :: DDNode s u -> Int
 toInt (DDNode n) = fromIntegral $ ptrToIntPtr n
 
-arg0 :: (Ptr CDdManager -> IO (Ptr CDdNode)) -> STDdManager s u -> ST s (DDNode s u)
+arg0 :: (Ptr CDDManager -> IO (Ptr CDDNode)) -> STDdManager s u -> ST s (DDNode s u)
 arg0 f (STDdManager m) = liftM DDNode $ unsafeIOToST $ f m
 
-arg1 :: (Ptr CDdManager -> Ptr CDdNode -> IO (Ptr CDdNode)) -> STDdManager s u -> DDNode s u -> ST s (DDNode s u)
+arg1 :: (Ptr CDDManager -> Ptr CDDNode -> IO (Ptr CDDNode)) -> STDdManager s u -> DDNode s u -> ST s (DDNode s u)
 arg1 f (STDdManager m) (DDNode x) = liftM DDNode $ unsafeIOToST $ f m x
 
-arg2 :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)) -> STDdManager s u -> DDNode s u -> DDNode s u -> ST s (DDNode s u)
+arg2 :: (Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)) -> STDdManager s u -> DDNode s u -> DDNode s u -> ST s (DDNode s u)
 arg2 f (STDdManager m) (DDNode x) (DDNode y) = liftM DDNode $ unsafeIOToST $ f m x y
     
-arg3 :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO (Ptr CDdNode)) -> STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u  -> ST s (DDNode s u)
+arg3 :: (Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)) -> STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u  -> ST s (DDNode s u)
 arg3 f (STDdManager m) (DDNode x) (DDNode y) (DDNode z) = liftM DDNode $ unsafeIOToST $ f m x y z
 
 bZero (STDdManager m) = DDNode $ unsafePerformIO $ c_cuddReadLogicZero m
@@ -249,7 +249,7 @@ bddToCubeArray ma@(STDdManager m) (DDNode x) = unsafeIOToST $ do
 compose :: STDdManager s u -> DDNode s u -> DDNode s u -> Int -> ST s (DDNode s u)
 compose (STDdManager m) (DDNode f) (DDNode g) v = liftM DDNode $ unsafeIOToST $ c_cuddBddCompose m f g (fromIntegral v)
 
-arg3Bool :: (Ptr CDdManager -> Ptr CDdNode -> Ptr CDdNode -> Ptr CDdNode -> IO CInt) -> STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u  -> ST s Bool
+arg3Bool :: (Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> Ptr CDDNode -> IO CInt) -> STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u  -> ST s Bool
 arg3Bool f (STDdManager m) (DDNode x) (DDNode y) (DDNode z) = liftM (==1) $ unsafeIOToST $ f m x y z
 
 leqUnless, equivDC :: STDdManager s u -> DDNode s u -> DDNode s u -> DDNode s u -> ST s Bool

@@ -32,7 +32,7 @@ enum DddmpMode {
 {#enum DddmpMode {} #}
 
 foreign import ccall safe "Dddmp_cuddBddStore"
-    c_dddmpBddStore :: Ptr CDdManager -> CString -> Ptr CDdNode -> Ptr CString -> Ptr CInt -> CInt -> CInt -> CString -> Ptr CFile -> IO CInt
+    c_dddmpBddStore :: Ptr CDDManager -> CString -> Ptr CDDNode -> Ptr CString -> Ptr CInt -> CInt -> CInt -> CString -> Ptr CFile -> IO CInt
 
 nullOnEmpty :: Storable a => [a] -> (Ptr a -> IO b) -> IO b
 nullOnEmpty lst act = 
@@ -40,8 +40,8 @@ nullOnEmpty lst act =
         [] -> act nullPtr
         _  -> withArray lst act
 
-cuddBddStore :: DdManager -> String -> DdNode -> [Int] -> DddmpMode -> DddmpVarInfoType -> String -> IO Bool
-cuddBddStore (DdManager m) name (DdNode node) auxids mode varinfo fname = liftM (/= 0) $ 
+cuddBddStore :: DDManager -> String -> DDNode -> [Int] -> DddmpMode -> DddmpVarInfoType -> String -> IO Bool
+cuddBddStore (DDManager m) name (DDNode node) auxids mode varinfo fname = liftM (/= 0) $ 
     withCString name                      $ \pname ->
     withForeignPtr node                   $ \dp ->
     nullOnEmpty (map fromIntegral auxids) $ \pauxids -> 
@@ -51,10 +51,10 @@ cuddBddStore (DdManager m) name (DdNode node) auxids mode varinfo fname = liftM 
 {#enum Dddmp_VarMatchType as DddmpVarMatchType {underscoreToCase} #}
 
 foreign import ccall safe "Dddmp_cuddBddLoad_s"
-    c_dddmpBddLoad :: Ptr CDdManager -> CInt -> Ptr CString -> Ptr CInt -> Ptr CInt -> CInt -> CString -> Ptr CFile -> IO (Ptr CDdNode)
+    c_dddmpBddLoad :: Ptr CDDManager -> CInt -> Ptr CString -> Ptr CInt -> Ptr CInt -> CInt -> CString -> Ptr CFile -> IO (Ptr CDDNode)
 
-cuddBddLoad :: DdManager -> DddmpVarMatchType -> [Int] -> [Int] -> DddmpMode -> String -> IO (Maybe DdNode)
-cuddBddLoad (DdManager m) matchtype auxids composeids mode fname = 
+cuddBddLoad :: DDManager -> DddmpVarMatchType -> [Int] -> [Int] -> DddmpMode -> String -> IO (Maybe DDNode)
+cuddBddLoad (DDManager m) matchtype auxids composeids mode fname = 
     nullOnEmpty (map fromIntegral auxids)     $ \pauxids -> 
     nullOnEmpty (map fromIntegral composeids) $ \pcomposeids -> 
     withCString fname                         $ \pfname -> do
@@ -63,5 +63,5 @@ cuddBddLoad (DdManager m) matchtype auxids composeids mode fname =
             True  -> return Nothing
             False -> do
                 fp <- newForeignPtrEnv deref m node
-                return $ Just $ DdNode fp
+                return $ Just $ DDNode fp
 
