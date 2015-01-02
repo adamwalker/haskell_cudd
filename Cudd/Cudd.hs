@@ -16,6 +16,7 @@ module Cudd.Cudd (
     bXor,
     bXnor,
     bNot,
+    dumpDot',
     dumpDot,
     cudd_cache_slots,
     cudd_unique_slots,
