@@ -3,7 +3,9 @@
 name:                cudd
 version:             0.1.0.0
 synopsis:            Bindings to the CUDD binary decision diagrams library
--- description:         
+description:         Bindings to the CUDD binary decision diagrams library. 
+                     .
+                     <http://vlsi.colorado.edu/~fabio/CUDD/>
 license:             BSD3
 license-file:        LICENSE
 author:              Adam Walker
