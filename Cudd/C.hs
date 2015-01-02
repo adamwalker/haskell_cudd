@@ -3,6 +3,7 @@
 module Cudd.C (
     CDDManager,
     CDDNode,
+    CDDGen,
     c_cuddReadOne,
     c_cuddReadLogicZero,
     c_cuddReadOneWithRef,
@@ -88,7 +89,13 @@ module Cudd.C (
     c_cuddPrintInfo,
     c_cuddPrintDebug,
     c_cuddIsComplement,
-    c_cuddDumpDot
+    c_cuddDumpDot,
+    c_cuddFirstCube,
+    c_cuddNextCube,
+    c_cuddFirstPrime,
+    c_cuddNextPrime,
+    c_cuddIsGenEmpty,
+    c_cuddGenFree
     ) where
 
 import Foreign
@@ -99,6 +106,7 @@ import Cudd.MTR
 
 data CDDManager
 data CDDNode
+data CDDGen
 
 foreign import ccall safe "Cudd_ReadOne_s"
 	c_cuddReadOne :: Ptr CDDManager -> IO (Ptr CDDNode)
@@ -357,4 +365,22 @@ foreign import ccall safe "wrappedCuddIsComplement"
 
 foreign import ccall safe "Cudd_DumpDot"
     c_cuddDumpDot :: Ptr CDDManager -> CInt -> Ptr (Ptr CDDNode) -> Ptr CString -> Ptr CString -> Ptr CFile -> IO CInt
+
+foreign import ccall safe "Cudd_FirstCube"
+    c_cuddFirstCube :: Ptr CDDManager -> Ptr CDDNode -> Ptr (Ptr CInt) -> Ptr CInt -> IO (Ptr CDDGen)
+
+foreign import ccall safe "Cudd_NextCube"
+    c_cuddNextCube :: Ptr CDDGen -> Ptr (Ptr CInt) -> Ptr CInt -> IO CInt
+
+foreign import ccall safe "Cudd_FirstPrime"
+    c_cuddFirstPrime :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> Ptr (Ptr CInt) -> IO (Ptr CDDGen)
+
+foreign import ccall safe "Cudd_NextPrime"
+    c_cuddNextPrime :: Ptr CDDGen -> Ptr (Ptr CInt) -> IO CInt
+
+foreign import ccall safe "Cudd_IsGenEmpty"
+    c_cuddIsGenEmpty :: Ptr CDDGen -> IO CInt
+
+foreign import ccall safe "Cudd_GenFree"
+    c_cuddGenFree :: Ptr CDDGen -> IO CInt
 

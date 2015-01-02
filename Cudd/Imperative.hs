@@ -74,6 +74,13 @@ module Cudd.Imperative (
     readIndex,
     printMinterm,
     checkCube,
+    DDGen(..),
+    genFree,
+    isGenEmpty,
+    firstCube,
+    nextCube,
+    firstPrime,
+    nextPrime,
     module Cudd.Common
     ) where
 
@@ -350,4 +357,70 @@ printMinterm (DDManager m) (DDNode x) = unsafeIOToST $ c_cuddPrintMinterm m x
 
 checkCube :: DDManager s u -> DDNode s u -> ST s Bool
 checkCube (DDManager m) (DDNode x) = liftM (==1) $ unsafeIOToST $ c_cuddCheckCube m x
+
+data DDGen s u = DDGen (Ptr CDDGen)
+
+genFree :: DDGen s u -> ST s ()
+genFree (DDGen g) = void $ unsafeIOToST $ c_cuddGenFree g
+
+isGenEmpty :: DDGen s u -> ST s Bool
+isGenEmpty (DDGen g) = liftM (==1) $ unsafeIOToST $ c_cuddIsGenEmpty g
+
+firstCube :: DDManager s u -> DDNode s u -> ST s (Maybe ([SatBit], DDGen s u))
+firstCube (DDManager m) (DDNode n) = unsafeIOToST $ do
+    sz <- c_cuddReadSize m
+    alloca $ \cubePP -> 
+        alloca $ \valP -> do
+            gen <- c_cuddFirstCube m n cubePP valP 
+            empty <- c_cuddIsGenEmpty gen
+            if empty == 1 then do
+                c_cuddGenFree gen
+                return Nothing
+            else do
+                cubeP <- peek cubePP
+                cube <- peekArray (fromIntegral sz) cubeP
+                return $ Just (map (toSatBit . fromIntegral) cube, DDGen gen)
+
+nextCube :: DDManager s u -> DDGen s u -> ST s (Maybe [SatBit])
+nextCube (DDManager m) (DDGen g) = unsafeIOToST $ do
+    sz <- c_cuddReadSize m
+    alloca $ \cubePP -> 
+        alloca $ \valP -> do
+            c_cuddNextCube g cubePP valP
+            empty <- c_cuddIsGenEmpty g
+            if empty == 1 then do
+                c_cuddGenFree g
+                return Nothing
+            else do
+                cubeP <- peek cubePP
+                cube <- peekArray (fromIntegral sz) cubeP
+                return $ Just $ map (toSatBit . fromIntegral) cube
+
+firstPrime :: DDManager s u -> DDNode s u -> DDNode s u -> ST s (Maybe ([SatBit], DDGen s u))
+firstPrime (DDManager m) (DDNode x) (DDNode y) = unsafeIOToST $ do
+    sz <- c_cuddReadSize m
+    alloca $ \cubePP -> do
+        gen <- c_cuddFirstPrime m x y cubePP
+        empty <- c_cuddIsGenEmpty gen
+        if empty == 1 then do
+            c_cuddGenFree gen
+            return Nothing
+        else do
+            cubeP <- peek cubePP
+            cube <- peekArray (fromIntegral sz) cubeP
+            return $ Just (map (toSatBit . fromIntegral) cube, DDGen gen)
+
+nextPrime :: DDManager s u -> DDGen s u -> ST s (Maybe [SatBit])
+nextPrime (DDManager m) (DDGen g) = unsafeIOToST $ do
+    sz <- c_cuddReadSize m
+    alloca $ \cubePP -> do
+        c_cuddNextPrime g cubePP 
+        empty <- c_cuddIsGenEmpty g
+        if empty == 1 then do
+            c_cuddGenFree g
+            return Nothing
+        else do
+            cubeP <- peek cubePP
+            cube <- peekArray (fromIntegral sz) cubeP
+            return $ Just $ map (toSatBit . fromIntegral) cube
 
