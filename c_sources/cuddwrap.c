@@ -31,6 +31,7 @@ int postGCHook_sample(DdManager *dd, const char *str, void *data){
 	return 1;
 }
 
+//Wrappers around enumeration of satisfying assignments and prime implicants
 int **allSat(DdManager *m, DdNode *n, int *nterms, int *nvars){
     CUDD_VALUE_TYPE value;
     DdGen *gen;
@@ -66,7 +67,7 @@ int *oneSat(DdManager *m, DdNode *n, int *nvars){
 
     *nvars = size;
 
-    gen = Cudd_FirstCube (m, n, &cube, &value);
+    gen = Cudd_FirstCube(m, n, &cube, &value);
     if (Cudd_IsGenEmpty(gen)) {
         Cudd_GenFree (gen);
         return NULL;
