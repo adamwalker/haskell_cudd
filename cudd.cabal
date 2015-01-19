@@ -14,19 +14,19 @@ description:
     .
     If you chose the latter option you need to tell cabal where to find cudd:
     .
-    "cabal install cudd --extra-include-dirs=/path/to/cudd/src/include --extra-lib-dirs=/path/to/cudd/src/libso"
+    "cabal install cudd --extra-include-dirs=\/path\/to\/cudd\/src\/include --extra-lib-dirs=\/path\/to\/cudd\/src\/libso"
     .
     and you need to tell your program where to find the shared libraries:
     .
-    "LD_LIBRARY_PATH=/path/to/cudd/src/libso ghci"
+    "LD_LIBRARY_PATH=\/path\/to\/cudd\/src\/libso ghci"
     .
     /Usage/
     .
     This package provides two interfaces to the CUDD library:
     .
-    * A purely functional one in `Cudd.Cudd` that automatically dereferences BDDs during garbage collection.
+    * A purely functional one in "Cudd.Cudd" that automatically dereferences BDDs during garbage collection.
     .
-    * An ST Monad based one in `Cudd.Imperative` that gives you precise control over the ordering of BDD operations and when BDDs are dereferenced. Use this one if you want your code to perform well.
+    * An ST Monad based one in "Cudd.Imperative" that gives you precise control over the ordering of BDD operations and when BDDs are dereferenced. Use this one if you want your code to perform well.
 
 license:             BSD3
 license-file:        LICENSE
