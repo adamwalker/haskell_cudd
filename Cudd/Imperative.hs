@@ -176,6 +176,7 @@ arg2 f (DDManager m) (DDNode x) (DDNode y) = liftM DDNode $ unsafeIOToST $ f m x
 arg3 :: (Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)) -> DDManager s u -> DDNode s u -> DDNode s u -> DDNode s u  -> ST s (DDNode s u)
 arg3 f (DDManager m) (DDNode x) (DDNode y) (DDNode z) = liftM DDNode $ unsafeIOToST $ f m x y z
 
+bZero, bOne :: DDManager s u -> DDNode s u
 bZero (DDManager m) = DDNode $ unsafePerformIO $ c_cuddReadLogicZero m
 bOne  (DDManager m) = DDNode $ unsafePerformIO $ c_cuddReadOne m
 
@@ -192,7 +193,10 @@ bForall = arg2 c_cuddBddUnivAbstract
 andAbstract      = arg3 c_cuddBddAndAbstract
 xorExistAbstract = arg3 c_cuddBddXorExistAbstract
 
+bNot :: DDNode s u -> DDNode s u
 bNot (DDNode x) = DDNode $ unsafePerformIO $ c_cuddNotNoRef x
+
+ithVar :: DDManager s u -> Int -> ST s (DDNode s u)
 ithVar (DDManager m) i = liftM DDNode $ unsafeIOToST $ c_cuddBddIthVar m (fromIntegral i)
 
 deref :: DDManager s u -> DDNode s u -> ST s ()
