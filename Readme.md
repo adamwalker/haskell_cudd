@@ -1,6 +1,6 @@
 # Haskell-CUDD
 
-Haskell bindings to the CUDD binary decision diagram library.
+Haskell bindings to version 2.5.0 of the CUDD binary decision diagram library.
 
 http://vlsi.colorado.edu/~fabio/CUDD/
 
