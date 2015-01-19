@@ -1,5 +1,25 @@
 {-# LANGUAGE RankNTypes #-}
 
+{-| An ST Monad based interface to the CUDD BDD library
+
+This is a straightforward wrapper around the C library. See <http://vlsi.colorado.edu/~fabio/CUDD/> for documentation.
+
+Exampe usage:
+
+> import Control.Monad.ST
+> import Cudd.Imperative
+> 
+> main = do
+>     res <- stToIO $ withManagerDefaults $ \manager -> do
+>         v1      <- ithVar manager 0
+>         v2      <- ithVar manager 1
+>         conj    <- bAnd manager v1 v2
+>         implies <- lEq manager conj v1
+>         deref manager conj
+>         return implies
+>     print res
+-}
+
 module Cudd.Imperative (
     DDManager(..),
     DDNode(..),
