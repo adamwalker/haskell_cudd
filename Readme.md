@@ -15,3 +15,39 @@ If you chose the latter option you need to tell cabal where to find cudd:
 and you need to tell your program where to find the shared libraries:
 
 `LD_LIBRARY_PATH=/path/to/cudd/src/libso ghci`
+
+# Usage
+
+The purely functional interface:
+
+```haskell
+import Cudd.Cudd
+
+main = do
+    let manager = cuddInit
+        v1      = ithVar manager 0
+        v2      = ithVar manager 1
+        conj    = bAnd manager v1 v2
+        implies = lEq manager conj v1
+    print implies
+
+import Control.Monad.ST
+import Cudd.Imperative
+```
+
+The ST Monad based interface:
+
+```haskell
+import Control.Monad.ST
+import Cudd.Imperative
+
+main = do
+    res <- stToIO $ withManagerDefaults $ \manager -> do
+        v1      <- ithVar manager 0
+        v2      <- ithVar manager 1
+        conj    <- bAnd manager v1 v2
+        implies <- lEq manager conj v1
+        deref manager conj
+        return implies
+    print res
+```
