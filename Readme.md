@@ -4,6 +4,10 @@ Haskell bindings to version 2.5.0 of the CUDD binary decision diagram library.
 
 http://vlsi.colorado.edu/~fabio/CUDD/
 
+This package provides two interfaces to the CUDD library:
+* A purely functional in one `Cudd.Cudd` that automatically dereferences BDDs during garbage collection
+* An ST Monad based one in `Cudd.Imperative` that gives you precise control over the ordering of BDD operations and when BDDs are dereferenced. Use this one if you want your code to perform well.
+
 # Installation
 
 Either install CUDD using your system's package manager or download and build CUDD from here: https://github.com/adamwalker/cudd. This is a mirror of the CUDD source that has been modified to build shared object files.
