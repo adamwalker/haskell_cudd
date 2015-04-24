@@ -34,9 +34,6 @@ main = do
         conj    = bAnd manager v1 v2
         implies = lEq manager conj v1
     print implies
-
-import Control.Monad.ST
-import Cudd.Imperative
 ```
 
 The ST Monad based interface:
