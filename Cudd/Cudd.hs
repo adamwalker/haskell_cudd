@@ -88,7 +88,7 @@ import Foreign.Storable
 import Foreign.Ptr
 import Foreign.C.Types
 import Foreign.C.String
-import Foreign.ForeignPtr
+import Foreign.ForeignPtr hiding (unsafeForeignPtrToPtr)
 import Foreign.ForeignPtr.Unsafe
 import Foreign.Marshal.Alloc
 import Foreign.Marshal.Array
