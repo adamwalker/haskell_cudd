@@ -24,7 +24,7 @@ import Foreign
 import Foreign.Ptr
 import Foreign.C.Types
 import Control.Monad
-import Control.Monad.ST
+import Control.Monad.ST hiding (unsafeIOToST)
 import Control.Monad.ST.Unsafe
 
 #include <stdio.h>

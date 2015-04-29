@@ -6,9 +6,9 @@ module Cudd.Convert (
     ) where
 
 import System.IO.Unsafe
-import Foreign.ForeignPtr
+import Foreign.ForeignPtr hiding (unsafeForeignPtrToPtr)
 import Foreign.ForeignPtr.Unsafe
-import Control.Monad.ST
+import Control.Monad.ST hiding (unsafeIOToST)
 import Control.Monad.ST.Unsafe
 
 import Cudd.Cudd as C
