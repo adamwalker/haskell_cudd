@@ -56,7 +56,7 @@ library
     other-modules:       Cudd.ForeignHelpers
     other-extensions:    ForeignFunctionInterface, CPP, FlexibleContexts, RankNTypes, EmptyDataDecls
     build-depends:       
-        base         >=4.7 && <4.9, 
+        base         >=4.6 && <4.7, 
         mtl          >=2.1 && <2.3, 
         array        >=0.4 && <0.6, 
         transformers >=0.3 && <0.5
