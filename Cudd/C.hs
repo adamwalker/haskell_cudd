@@ -95,7 +95,9 @@ module Cudd.C (
     c_cuddFirstPrime,
     c_cuddNextPrime,
     c_cuddIsGenEmpty,
-    c_cuddGenFree
+    c_cuddGenFree,
+    c_cuddFirstNode,
+    c_cuddNextNode
     ) where
 
 import Foreign
@@ -383,4 +385,10 @@ foreign import ccall safe "Cudd_IsGenEmpty"
 
 foreign import ccall safe "Cudd_GenFree"
     c_cuddGenFree :: Ptr CDDGen -> IO CInt
+
+foreign import ccall safe "Cudd_FirstNode"
+    c_cuddFirstNode :: Ptr CDDManager -> Ptr CDDNode -> Ptr (Ptr CDDNode) -> IO (Ptr CDDGen)
+
+foreign import ccall safe "Cudd_NextNode"
+    c_cuddNextNode :: Ptr CDDGen -> Ptr (Ptr CDDNode) -> IO CInt
 

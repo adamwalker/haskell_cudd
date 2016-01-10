@@ -103,6 +103,8 @@ module Cudd.Imperative (
     nextCube,
     firstPrime,
     nextPrime,
+    firstNode,
+    nextNode,
     module Cudd.Common
     ) where
 
@@ -386,6 +388,7 @@ checkCube (DDManager m) (DDNode x) = liftM (==1) $ unsafeIOToST $ c_cuddCheckCub
 
 data Cube
 data Prime
+data Node
 data DDGen s u t = DDGen (Ptr CDDGen)
 
 genFree :: DDGen s u t -> ST s ()
@@ -451,4 +454,28 @@ nextPrime (DDManager m) (DDGen g) = unsafeIOToST $ do
             cubeP <- peek cubePP
             cube <- peekArray (fromIntegral sz) cubeP
             return $ Just $ map (toSatBit . fromIntegral) cube
+
+firstNode :: DDManager s u -> DDNode s u -> ST s (Maybe (DDNode s u, DDGen s u Node))
+firstNode (DDManager m) (DDNode x) = unsafeIOToST $ do
+    alloca $ \nodePP -> do
+        gen <- c_cuddFirstNode m x nodePP
+        empty <- c_cuddIsGenEmpty gen
+        if empty == 1 then do
+            c_cuddGenFree gen
+            return Nothing
+        else do
+            nodeP <- peek nodePP
+            return $ Just (DDNode nodeP, DDGen gen)
+
+nextNode :: DDManager s u -> DDGen s u Node -> ST s (Maybe (DDNode s u))
+nextNode (DDManager m) (DDGen g) = unsafeIOToST $ do
+    alloca $ \nodePP -> do
+        c_cuddNextNode g nodePP
+        empty <- c_cuddIsGenEmpty g
+        if empty == 1 then do
+            c_cuddGenFree g
+            return Nothing
+        else do
+            nodeP <- peek nodePP
+            return $ Just $ DDNode nodeP
 
