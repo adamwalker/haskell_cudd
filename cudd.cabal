@@ -32,7 +32,7 @@ license:             BSD3
 license-file:        LICENSE
 author:              Adam Walker
 maintainer:          adamwalker10@gmail.com
-copyright:           2014 Adam Walker
+copyright:           2016 Adam Walker
 category:            Data
 homepage:            https://github.com/adamwalker/haskell_cudd
 bug-reports:         https://github.com/adamwalker/haskell_cudd/issues
