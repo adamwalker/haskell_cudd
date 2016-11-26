@@ -4,7 +4,7 @@ name:                cudd
 version:             0.1.0.2
 synopsis:            Bindings to the CUDD binary decision diagrams library
 description:         
-    Bindings to version 2.5.0 of the CUDD binary decision diagrams library. 
+    Bindings to version 3.0.0 of the CUDD binary decision diagrams library. 
     .
     <http://vlsi.colorado.edu/~fabio/CUDD/>
     .
