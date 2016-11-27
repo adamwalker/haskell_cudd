@@ -66,6 +66,8 @@ module Cudd.C (
     c_cuddEval,
     c_cuddCountLeaves,
     c_cuddCountMinterm,
+    c_cuddApaCountMinterm,
+    c_cuddFreeApaNumber,
     c_cuddCountPathsToNonZero,
     c_cuddCountPath,
     c_cuddBddConstrain,
@@ -295,6 +297,12 @@ foreign import ccall safe ",h Cudd_CountLeaves"
 
 foreign import ccall safe "Cudd_CountMinterm"
     c_cuddCountMinterm :: Ptr CDDManager -> Ptr CDDNode -> CInt -> IO CDouble
+
+foreign import ccall safe "Cudd_FreeApaNumber"
+    c_cuddFreeApaNumber :: Ptr CInt -> IO () 
+
+foreign import ccall safe "Cudd_ApaCountMinterm"
+    c_cuddApaCountMinterm :: Ptr CDDManager -> Ptr CDDNode -> CInt -> Ptr CInt -> IO (Ptr CInt)
 
 foreign import ccall safe "Cudd_CountPathsToNonZero"
     c_cuddCountPathsToNonZero :: Ptr CDDNode -> IO CDouble

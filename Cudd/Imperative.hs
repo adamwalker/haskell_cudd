@@ -93,6 +93,7 @@ module Cudd.Imperative (
     quit,
     readIndex,
     printMinterm,
+    countMintermExact,
     checkCube,
     Cube,
     Prime,
@@ -382,6 +383,15 @@ readIndex (DDNode x) = liftM fromIntegral $ unsafeIOToST $ c_cuddNodeReadIndex x
 
 printMinterm :: DDManager s u -> DDNode s u -> ST s ()
 printMinterm (DDManager m) (DDNode x) = unsafeIOToST $ c_cuddPrintMinterm m x
+
+countMintermExact :: DDManager s u -> DDNode s u -> Int -> ST s Integer
+countMintermExact (DDManager m) (DDNode x) n = unsafeIOToST $
+    alloca $ \ sizep -> do
+    apa <- c_cuddApaCountMinterm m x (fromIntegral n) sizep
+    size <- fromIntegral <$> peek sizep
+    digits <- peekArray size apa
+    c_cuddFreeApaNumber apa
+    return $ foldl ( \ a d -> a * 2^32 + fromIntegral d ) 0 digits
 
 checkCube :: DDManager s u -> DDNode s u -> ST s Bool
 checkCube (DDManager m) (DDNode x) = liftM (==1) $ unsafeIOToST $ c_cuddCheckCube m x
