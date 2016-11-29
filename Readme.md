@@ -10,15 +10,11 @@ This package provides two interfaces to the CUDD library:
 
 # Installation
 
-Either install CUDD using your system's package manager or download and build CUDD from here: https://github.com/adamwalker/cudd. This is a mirror of the CUDD source that has been modified to build shared object files.
+Either install CUDD 3.0.0 using your system's package manager or download and install CUDD from here: http://vlsi.colorado.edu/~fabio/.
 
-If you chose the latter option you need to tell cabal where to find cudd:
+Then:
 
-`cabal install cudd --extra-include-dirs=/path/to/cudd/src/include --extra-lib-dirs=/path/to/cudd/src/libso`
-
-and you need to tell your program where to find the shared libraries:
-
-`LD_LIBRARY_PATH=/path/to/cudd/src/libso ghci`
+`cabal install cudd`
 
 # Usage
 
