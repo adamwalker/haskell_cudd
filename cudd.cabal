@@ -35,6 +35,7 @@ category:            Data
 homepage:            https://github.com/adamwalker/haskell_cudd
 bug-reports:         https://github.com/adamwalker/haskell_cudd/issues
 build-type:          Simple
+extra-source-files:  Readme.md
 cabal-version:       >=1.10
 
 
