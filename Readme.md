@@ -18,6 +18,10 @@ Then:
 
 `cabal install cudd`
 
+Depending on where CUDD is installed on your system, you may need to provide --extra-lib-dirs or --extra-include-dirs:
+
+`cabal install cudd --extra-lib-dirs=/usr/local/lib`
+
 # Usage
 
 The purely functional interface:
