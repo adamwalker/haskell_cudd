@@ -35,7 +35,6 @@ category:            Data
 homepage:            https://github.com/adamwalker/haskell_cudd
 bug-reports:         https://github.com/adamwalker/haskell_cudd/issues
 build-type:          Simple
--- extra-source-files:  
 cabal-version:       >=1.10
 
 
@@ -66,5 +65,4 @@ library
         c_sources/cuddwrap.c, 
         c_sources/stubs.c
     extra-libraries:     cudd, m
-    extra-lib-dirs:      /usr/local/lib
 
