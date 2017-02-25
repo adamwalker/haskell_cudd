@@ -109,10 +109,10 @@ module Cudd.Imperative (
     module Cudd.Common
     ) where
 
-import Foreign hiding (void)
+import Foreign hiding (void, unsafePerformIO)
 import Foreign.Ptr
 import Foreign.C.Types
-import Control.Monad.ST
+import Control.Monad.ST hiding (unsafeIOToST)
 import Control.Monad.ST.Unsafe
 import Control.Monad
 import Control.Monad.IO.Class

@@ -6,7 +6,7 @@ module Cudd.ForeignHelpers (
     withStringArrayPtr
     ) where
 
-import Foreign
+import Foreign hiding (unsafeForeignPtrToPtr)
 import Foreign.C.String
 import Foreign.ForeignPtr.Unsafe
 

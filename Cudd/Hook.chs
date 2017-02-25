@@ -15,7 +15,7 @@ import Foreign.C.Types
 import Foreign.C.String
 import Foreign.ForeignPtr
 import Control.Monad
-import Control.Monad.ST
+import Control.Monad.ST hiding (unsafeIOToST)
 import Control.Monad.ST.Unsafe
 
 import Cudd.C
