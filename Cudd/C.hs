@@ -113,61 +113,61 @@ data CDDNode
 data CDDGen
 
 foreign import ccall safe "Cudd_ReadOne_s"
-	c_cuddReadOne :: Ptr CDDManager -> IO (Ptr CDDNode)
+    c_cuddReadOne :: Ptr CDDManager -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_ReadLogicZero_s"
-	c_cuddReadLogicZero :: Ptr CDDManager -> IO (Ptr CDDNode)
+    c_cuddReadLogicZero :: Ptr CDDManager -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_ReadOne_withRef_s"
-	c_cuddReadOneWithRef :: Ptr CDDManager -> IO (Ptr CDDNode)
+    c_cuddReadOneWithRef :: Ptr CDDManager -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_ReadLogicZero_withRef_s"
-	c_cuddReadLogicZeroWithRef :: Ptr CDDManager -> IO (Ptr CDDNode)
+    c_cuddReadLogicZeroWithRef :: Ptr CDDManager -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddIthVar_s"
-	c_cuddBddIthVar :: Ptr CDDManager -> CInt -> IO (Ptr CDDNode)
+    c_cuddBddIthVar :: Ptr CDDManager -> CInt -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddAnd_s"
-	c_cuddBddAnd :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddBddAnd :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddOr_s"
-	c_cuddBddOr :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddBddOr :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddNand_s"
-	c_cuddBddNand :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddBddNand :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddNor_s"
-	c_cuddBddNor :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddBddNor :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddXor_s"
-	c_cuddBddXor :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddBddXor :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddXnor_s"
-	c_cuddBddXnor :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddBddXnor :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_Not_s"
-	c_cuddNot :: Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddNot :: Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_NotNoRef_s"
-	c_cuddNotNoRef :: Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddNotNoRef :: Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddIte_s"
     c_cuddBddIte :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddExistAbstract_s"
-	c_cuddBddExistAbstract :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddBddExistAbstract :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddUnivAbstract_s"
-	c_cuddBddUnivAbstract :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
+    c_cuddBddUnivAbstract :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_IterDerefBdd"
-	c_cuddIterDerefBdd :: Ptr CDDManager -> Ptr CDDNode -> IO ()
+    c_cuddIterDerefBdd :: Ptr CDDManager -> Ptr CDDNode -> IO ()
 
 foreign import ccall safe "wrappedCuddRef"
-	cuddRef :: Ptr CDDNode -> IO ()
+    cuddRef :: Ptr CDDNode -> IO ()
 
 foreign import ccall safe "Cudd_Init"
-	c_cuddInit :: CInt -> CInt -> CInt -> CInt -> CInt -> IO (Ptr CDDManager)
+    c_cuddInit :: CInt -> CInt -> CInt -> CInt -> CInt -> IO (Ptr CDDManager)
 
 foreign import ccall safe "Cudd_ShuffleHeap"
     c_cuddShuffleHeap :: Ptr CDDManager -> Ptr CInt -> IO CInt
@@ -194,7 +194,7 @@ foreign import ccall safe "Cudd_Support_s"
     c_cuddSupport :: Ptr CDDManager -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_SupportIndex"
-	c_cuddSupportIndex :: Ptr CDDManager -> Ptr CDDNode -> IO(Ptr CInt)
+    c_cuddSupportIndex :: Ptr CDDManager -> Ptr CDDNode -> IO(Ptr CInt)
 
 foreign import ccall safe "Cudd_SupportIndices"
     c_cuddSupportIndices :: Ptr CDDManager -> Ptr CDDNode -> Ptr (Ptr CInt) -> IO CInt
@@ -209,7 +209,7 @@ foreign import ccall safe "Cudd_BddToCubeArray"
     c_cuddBddToCubeArray :: Ptr CDDManager -> Ptr CDDNode -> Ptr CInt -> IO CInt
 
 foreign import ccall safe "Cudd_ReadSize"
-	c_cuddReadSize :: Ptr CDDManager -> IO CInt
+    c_cuddReadSize :: Ptr CDDManager -> IO CInt
 
 foreign import ccall safe "Cudd_bddCompose_s"
     c_cuddBddCompose :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> CInt -> IO (Ptr CDDNode)
@@ -227,7 +227,7 @@ foreign import ccall safe "Cudd_EquivDC"
     c_cuddEquivDC :: Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> Ptr CDDNode -> IO CInt
 
 foreign import ccall safe "Cudd_Xeqy_s"
-	c_cuddXeqy :: Ptr CDDManager -> CInt -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> IO (Ptr CDDNode)
+    c_cuddXeqy :: Ptr CDDManager -> CInt -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_DebugCheck"
     c_cuddDebugCheck :: Ptr CDDManager -> IO CInt
@@ -236,7 +236,7 @@ foreign import ccall safe "Cudd_CheckKeys"
     c_cuddCheckKeys :: Ptr CDDManager -> IO CInt
 
 foreign import ccall safe "Cudd_bddPickOneMinterm_s"
-	c_cuddBddPickOneMinterm :: Ptr CDDManager -> Ptr CDDNode -> Ptr (Ptr CDDNode) -> CInt -> IO (Ptr CDDNode)
+    c_cuddBddPickOneMinterm :: Ptr CDDManager -> Ptr CDDNode -> Ptr (Ptr CDDNode) -> CInt -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_CheckZeroRef"
     c_cuddCheckZeroRef :: Ptr CDDManager -> IO CInt
@@ -323,13 +323,13 @@ foreign import ccall safe "Cudd_bddPermute_s"
     c_cuddBddPermute :: Ptr CDDManager -> Ptr CDDNode -> Ptr CInt -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_Xgty_s"
-	c_cuddXgty :: Ptr CDDManager -> CInt -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> IO (Ptr CDDNode)
+    c_cuddXgty :: Ptr CDDManager -> CInt -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_Inequality_s"
-	c_cuddInequality :: Ptr CDDManager -> CInt -> CInt -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> IO (Ptr CDDNode)
+    c_cuddInequality :: Ptr CDDManager -> CInt -> CInt -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_Disequality_s"
-	c_cuddDisequality :: Ptr CDDManager -> CInt -> CInt -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> IO (Ptr CDDNode)
+    c_cuddDisequality :: Ptr CDDManager -> CInt -> CInt -> Ptr (Ptr CDDNode) -> Ptr (Ptr CDDNode) -> IO (Ptr CDDNode)
 
 foreign import ccall safe "Cudd_bddInterval_s"
     c_cuddBddInterval :: Ptr CDDManager -> CInt -> Ptr (Ptr CDDNode) -> CInt -> CInt -> IO (Ptr CDDNode)
@@ -341,13 +341,13 @@ foreign import ccall safe "Cudd_bddTransfer"
     c_cuddBddTransfer :: Ptr CDDManager -> Ptr CDDManager -> Ptr CDDNode -> IO (Ptr CDDNode)
 
 foreign import ccall safe "&Cudd_RecursiveDeref"
-	c_cuddRecursiveDerefPtr :: FunPtr (Ptr CDDManager -> Ptr CDDNode -> IO ())
+    c_cuddRecursiveDerefPtr :: FunPtr (Ptr CDDManager -> Ptr CDDNode -> IO ())
 
 foreign import ccall safe "&Cudd_DelayedDerefBdd"
-	c_cuddDelayedDerefBddPtr :: FunPtr (Ptr CDDManager -> Ptr CDDNode -> IO ())
+    c_cuddDelayedDerefBddPtr :: FunPtr (Ptr CDDManager -> Ptr CDDNode -> IO ())
 
 foreign import ccall safe "&Cudd_IterDerefBdd"
-	c_cuddIterDerefBddPtr :: FunPtr (Ptr CDDManager -> Ptr CDDNode -> IO ())
+    c_cuddIterDerefBddPtr :: FunPtr (Ptr CDDManager -> Ptr CDDNode -> IO ())
 
 foreign import ccall safe "Cudd_bddNewVar_s"
     c_cuddBddNewVar :: Ptr CDDManager -> IO (Ptr CDDNode)
