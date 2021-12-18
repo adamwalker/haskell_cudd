@@ -80,8 +80,6 @@ module Cudd.Imperative (
     setMaxCacheHard,
     readCacheSlots,
     readCacheUsedSlots,
-    cudd_unique_slots,
-    cudd_cache_slots,
     andLimit,
     readTree,
     newVarAtLevel,
