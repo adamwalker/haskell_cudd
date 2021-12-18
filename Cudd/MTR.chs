@@ -28,7 +28,7 @@ import Control.Monad.ST
 import Control.Monad.ST.Unsafe
 
 #include <stdio.h>
-#include <mtr.h>
+#include <cudd.h>
 
 data CMtrNode 
 newtype MtrNode s = MtrNode (Ptr CMtrNode)
@@ -113,11 +113,11 @@ mtrDissolveGroup (MtrNode m) = unsafeIOToST $ c_mtrDissolveGroup m
 
 #c
 enum MTR_TYPES {
-    MTRDefault = MTR_DEFAULT,
-    MTRTerminal = MTR_TERMINAL,
-    MTRSoft = MTR_SOFT,
-    MTRFixed = MTR_FIXED,
-    MTRNewNode = MTR_NEWNODE
+    MTRDefault = 0x00000000,
+    MTRTerminal = 0x00000001,
+    MTRSoft = 0x00000002,
+    MTRFixed = 0x00000004,
+    MTRNewNode = 0x00000008
 };
 #endc
 
