@@ -125,24 +125,24 @@ cuddArg0 f (DDManager m) = DDNode $ unsafePerformIO $ do
 
 cuddArg1 :: (Ptr CDDManager -> Ptr CDDNode -> IO (Ptr CDDNode)) -> DDManager -> DDNode -> DDNode
 cuddArg1 f (DDManager m) (DDNode x) = DDNode $ unsafePerformIO $ 
-	withForeignPtr x $ \xp -> do
-	node <- f m xp
-	newForeignPtrEnv deref m node
+    withForeignPtr x $ \xp -> do
+    node <- f m xp
+    newForeignPtrEnv deref m node
 
 cuddArg2 :: (Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)) -> DDManager -> DDNode -> DDNode -> DDNode
 cuddArg2 f (DDManager m) (DDNode l) (DDNode r) = DDNode $ unsafePerformIO $ 
- 	withForeignPtr l $ \lp -> 
-	withForeignPtr r $ \rp -> do
-	node <- f m lp rp
-	newForeignPtrEnv deref m node
+    withForeignPtr l $ \lp -> 
+    withForeignPtr r $ \rp -> do
+    node <- f m lp rp
+    newForeignPtrEnv deref m node
 
 cuddArg3 :: (Ptr CDDManager -> Ptr CDDNode -> Ptr CDDNode -> Ptr CDDNode -> IO (Ptr CDDNode)) -> DDManager -> DDNode -> DDNode-> DDNode -> DDNode
 cuddArg3 f (DDManager m) (DDNode l) (DDNode r) (DDNode x) = DDNode $ unsafePerformIO $ 
- 	withForeignPtr l $ \lp -> 
-	withForeignPtr r $ \rp -> 
-	withForeignPtr x $ \xp -> do
-	node <- f m lp rp xp
-	newForeignPtrEnv deref m node
+    withForeignPtr l $ \lp -> 
+    withForeignPtr r $ \rp -> 
+    withForeignPtr x $ \xp -> do
+    node <- f m lp rp xp
+    newForeignPtrEnv deref m node
 
 readOne :: DDManager -> DDNode
 readOne = cuddArg0 c_cuddReadOneWithRef
@@ -254,7 +254,7 @@ readSize (DDManager m) = fromIntegral $ unsafePerformIO $ c_cuddReadSize m
 
 supportIndex :: DDManager -> DDNode -> [Bool]
 supportIndex (DDManager m) (DDNode n) = unsafePerformIO $ 
-	withForeignPtr n $ \np -> do
+    withForeignPtr n $ \np -> do
     res <- c_cuddSupportIndex m np
     size <- c_cuddReadSize m
     res <- peekArray (fromIntegral size) res
@@ -341,12 +341,12 @@ minimize = cuddArg2 c_cuddBddMinimize
 
 pickOneMinterm :: DDManager -> DDNode -> [DDNode] -> Maybe DDNode
 pickOneMinterm (DDManager m) (DDNode d) vars = unsafePerformIO $
-	withForeignPtr d $ \dp -> 
-	withForeignArrayPtrLen (map unDDNode vars) $ \vs vp -> do
-	node <- c_cuddBddPickOneMinterm m dp vp (fromIntegral vs)
-	if node == nullPtr then return Nothing else do
-		nd <- newForeignPtrEnv deref m node
-		return $ Just $ DDNode nd
+    withForeignPtr d $ \dp -> 
+    withForeignArrayPtrLen (map unDDNode vars) $ \vs vp -> do
+    node <- c_cuddBddPickOneMinterm m dp vp (fromIntegral vs)
+    if node == nullPtr then return Nothing else do
+        nd <- newForeignPtrEnv deref m node
+        return $ Just $ DDNode nd
 
 printInfo :: DDManager -> Ptr CFile -> IO Int
 printInfo (DDManager m) cf = liftM fromIntegral $ c_cuddPrintInfo m cf
